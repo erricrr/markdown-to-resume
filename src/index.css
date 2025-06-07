@@ -111,6 +111,31 @@
   @apply bg-gray-100 px-1 rounded text-sm font-mono;
 }
 
+.resume-br {
+  @apply block;
+}
+
+.resume-hr {
+  @apply border-0 border-t border-gray-300 my-4;
+}
+
+/* Table styles */
+.resume-table {
+  @apply w-full border-collapse mb-4;
+}
+
+.resume-table-header {
+  @apply border border-gray-300 px-3 py-2 bg-gray-50 font-semibold text-left;
+}
+
+.resume-table-cell {
+  @apply border border-gray-300 px-3 py-2 align-top;
+}
+
+.resume-table-row {
+  @apply border-b border-gray-200;
+}
+
 /* Professional Template */
 .template-professional {
   @apply bg-white;
@@ -149,6 +174,14 @@
 
 .template-professional .resume-emphasis {
   @apply italic text-gray-700;
+}
+
+.template-professional .resume-table-header {
+  @apply bg-blue-50 font-semibold text-blue-900;
+}
+
+.template-professional .resume-hr {
+  @apply border-blue-200;
 }
 
 /* Modern Template */
@@ -191,6 +224,14 @@
   @apply italic text-purple-600;
 }
 
+.template-modern .resume-table-header {
+  @apply bg-purple-50 font-medium text-purple-700;
+}
+
+.template-modern .resume-hr {
+  @apply border-purple-200;
+}
+
 /* Minimalist Template */
 .template-minimalist {
   @apply bg-white;
@@ -229,6 +270,14 @@
 
 .template-minimalist .resume-emphasis {
   @apply italic font-light text-gray-800;
+}
+
+.template-minimalist .resume-table-header {
+  @apply bg-gray-50 font-normal text-black;
+}
+
+.template-minimalist .resume-hr {
+  @apply border-gray-300;
 }
 
 /* Creative Template */
@@ -276,6 +325,14 @@
   @apply italic text-green-600;
 }
 
+.template-creative .resume-table-header {
+  @apply bg-green-50 font-semibold text-green-700;
+}
+
+.template-creative .resume-hr {
+  @apply border-green-200;
+}
+
 /* Executive Template */
 .template-executive {
   @apply bg-gray-50;
@@ -316,6 +373,14 @@
   @apply italic text-red-700;
 }
 
+.template-executive .resume-table-header {
+  @apply bg-red-50 font-bold text-red-700;
+}
+
+.template-executive .resume-hr {
+  @apply border-red-200;
+}
+
 /* Print styles */
 @media print {
   .resume-template {
@@ -336,6 +401,10 @@
   
   .resume-paragraph,
   .resume-list-item {
+    page-break-inside: avoid;
+  }
+  
+  .resume-table {
     page-break-inside: avoid;
   }
 }

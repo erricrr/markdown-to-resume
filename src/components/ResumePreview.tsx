@@ -1,3 +1,4 @@
+
 import { forwardRef } from 'react';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
@@ -12,10 +13,12 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
   ({ markdown, template }, ref) => {
     const parseMarkdown = (md: string) => {
       try {
-        // Configure marked with minimal custom rendering
+        // Configure marked with enhanced options
         marked.setOptions({
           breaks: true,
           gfm: true,
+          tables: true,
+          sanitize: false,
         });
 
         // Create a custom renderer
@@ -28,9 +31,8 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
           return `<h${depth} id="${escapedText}" class="resume-heading-${depth}">${text}</h${depth}>`;
         };
 
-        // Override paragraph renderer - let marked parse inline elements
+        // Override paragraph renderer
         renderer.paragraph = ({ tokens }) => {
-          // Use marked to parse the tokens properly instead of raw text
           const parsedContent = marked.parseInline(tokens.map(token => token.raw || '').join(''));
           return `<p class="resume-paragraph">${parsedContent}</p>`;
         };
@@ -38,7 +40,6 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
         // Override list renderer
         renderer.list = (token) => {
           const body = token.items.map(item => {
-            // Parse inline content for each list item but preserve the list structure
             const itemText = item.tokens?.map(t => t.raw || '').join('') || '';
             const itemContent = marked.parseInline(itemText);
             return `<li class="resume-list-item">${itemContent}</li>`;
@@ -47,11 +48,33 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
           return `<${tag} class="resume-list">${body}</${tag}>`;
         };
 
-        // Remove the listitem renderer to let the default one handle bullets
-        // renderer.listitem = ({ tokens }) => {
-        //   const parsedContent = marked.parseInline(tokens.map(token => token.raw || '').join(''));
-        //   return `<li class="resume-list-item">${parsedContent}</li>`;
-        // };
+        // Override table renderer
+        renderer.table = ({ header, rows }) => {
+          const headerRow = header.map(cell => {
+            const cellContent = marked.parseInline(cell.tokens?.map(t => t.raw || '').join('') || '');
+            return `<th class="resume-table-header">${cellContent}</th>`;
+          }).join('');
+          
+          const bodyRows = rows.map(row => {
+            const cells = row.map(cell => {
+              const cellContent = marked.parseInline(cell.tokens?.map(t => t.raw || '').join('') || '');
+              return `<td class="resume-table-cell">${cellContent}</td>`;
+            }).join('');
+            return `<tr class="resume-table-row">${cells}</tr>`;
+          }).join('');
+
+          return `<table class="resume-table">
+            <thead class="resume-table-head">
+              <tr class="resume-table-row">${headerRow}</tr>
+            </thead>
+            <tbody class="resume-table-body">${bodyRows}</tbody>
+          </table>`;
+        };
+
+        // Override horizontal rule renderer
+        renderer.hr = () => {
+          return `<hr class="resume-hr" />`;
+        };
 
         // Override strong renderer
         renderer.strong = ({ tokens }) => {
@@ -79,6 +102,11 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
         // Override codespan renderer
         renderer.codespan = ({ text }) => {
           return `<code class="resume-code">${text}</code>`;
+        };
+
+        // Override line break renderer
+        renderer.br = () => {
+          return '<br class="resume-br" />';
         };
 
         const html = marked(md, { renderer });
