@@ -23,50 +23,46 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
         const renderer = new marked.Renderer();
 
         // Override heading renderer to add resume classes
-        renderer.heading = ({ tokens, depth }) => {
-          const text = tokens.map(token => token.raw || '').join('');
+        renderer.heading = (text: string, level: number) => {
           const escapedText = text.toLowerCase().replace(/[^\w]+/g, '-');
-          return `<h${depth} id="${escapedText}" class="resume-heading-${depth}">${text}</h${depth}>`;
+          return `<h${level} id="${escapedText}" class="resume-heading-${level}">${text}</h${level}>`;
         };
 
         // Override paragraph renderer
-        renderer.paragraph = ({ tokens }) => {
-          const parsedContent = marked.parseInline(tokens.map(token => token.raw || '').join(''));
-          return `<p class="resume-paragraph">${parsedContent}</p>`;
+        renderer.paragraph = (text: string) => {
+          return `<p class="resume-paragraph">${text}</p>`;
         };
 
         // Override list renderer
-        renderer.list = (token) => {
-          const body = token.items.map(item => {
-            const itemText = item.tokens?.map(t => t.raw || '').join('') || '';
-            const itemContent = marked.parseInline(itemText);
-            return `<li class="resume-list-item">${itemContent}</li>`;
-          }).join('');
-          const tag = token.ordered ? 'ol' : 'ul';
+        renderer.list = (body: string, ordered: boolean) => {
+          const tag = ordered ? 'ol' : 'ul';
           return `<${tag} class="resume-list">${body}</${tag}>`;
         };
 
-        // Override table renderer
-        renderer.table = ({ header, rows }) => {
-          const headerRow = header.map(cell => {
-            const cellContent = marked.parseInline(cell.tokens?.map(t => t.raw || '').join('') || '');
-            return `<th class="resume-table-header">${cellContent}</th>`;
-          }).join('');
-          
-          const bodyRows = rows.map(row => {
-            const cells = row.map(cell => {
-              const cellContent = marked.parseInline(cell.tokens?.map(t => t.raw || '').join('') || '');
-              return `<td class="resume-table-cell">${cellContent}</td>`;
-            }).join('');
-            return `<tr class="resume-table-row">${cells}</tr>`;
-          }).join('');
+        // Override list item renderer
+        renderer.listitem = (text: string) => {
+          return `<li class="resume-list-item">${text}</li>`;
+        };
 
+        // Override table renderer
+        renderer.table = (header: string, body: string) => {
           return `<table class="resume-table">
-            <thead class="resume-table-head">
-              <tr class="resume-table-row">${headerRow}</tr>
-            </thead>
-            <tbody class="resume-table-body">${bodyRows}</tbody>
+            <thead class="resume-table-head">${header}</thead>
+            <tbody class="resume-table-body">${body}</tbody>
           </table>`;
+        };
+
+        // Override table row renderer
+        renderer.tablerow = (content: string) => {
+          return `<tr class="resume-table-row">${content}</tr>`;
+        };
+
+        // Override table cell renderer
+        renderer.tablecell = (content: string, flags: { header: boolean; align: string | null }) => {
+          const tag = flags.header ? 'th' : 'td';
+          const className = flags.header ? 'resume-table-header' : 'resume-table-cell';
+          const align = flags.align ? ` style="text-align: ${flags.align}"` : '';
+          return `<${tag} class="${className}"${align}>${content}</${tag}>`;
         };
 
         // Override horizontal rule renderer
@@ -75,30 +71,27 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
         };
 
         // Override strong renderer
-        renderer.strong = ({ tokens }) => {
-          const text = tokens.map(token => token.raw || '').join('');
+        renderer.strong = (text: string) => {
           return `<strong class="resume-strong">${text}</strong>`;
         };
 
         // Override emphasis renderer
-        renderer.em = ({ tokens }) => {
-          const text = tokens.map(token => token.raw || '').join('');
+        renderer.em = (text: string) => {
           return `<em class="resume-emphasis">${text}</em>`;
         };
 
         // Override link renderer
-        renderer.link = ({ href, title, tokens }) => {
-          const text = tokens.map(token => token.raw || '').join('');
+        renderer.link = (href: string, title: string | null, text: string) => {
           return `<a href="${href}" class="resume-link"${title ? ` title="${title}"` : ''}>${text}</a>`;
         };
 
         // Override code renderer
-        renderer.code = ({ text, lang }) => {
-          return `<pre class="resume-code-block"><code>${text}</code></pre>`;
+        renderer.code = (code: string, language?: string) => {
+          return `<pre class="resume-code-block"><code>${code}</code></pre>`;
         };
 
         // Override codespan renderer
-        renderer.codespan = ({ text }) => {
+        renderer.codespan = (text: string) => {
           return `<code class="resume-code">${text}</code>`;
         };
 
