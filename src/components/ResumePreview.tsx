@@ -9,6 +9,7 @@ interface ResumePreviewProps {
   leftColumn?: string;
   rightColumn?: string;
   header?: string;
+  summary?: string;
   firstPage?: string;
   secondPage?: string;
   template: string;
@@ -17,7 +18,7 @@ interface ResumePreviewProps {
 }
 
 export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
-  ({ markdown, leftColumn = '', rightColumn = '', header = '', firstPage = '', secondPage = '', template, isTwoColumn = false, isTwoPage = false }, ref) => {
+  ({ markdown, leftColumn = '', rightColumn = '', header = '', summary = '', firstPage = '', secondPage = '', template, isTwoColumn = false, isTwoPage = false }, ref) => {
     const parseMarkdown = (md: string) => {
       try {
         // Configure marked with basic options
@@ -63,7 +64,46 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
     };
 
     const getHtmlContent = () => {
-      if (isTwoPage) {
+      if (isTwoPage && isTwoColumn) {
+        // Combined mode: Two pages with two columns each
+        const headerHtml = header ? parseMarkdown(header) : '';
+        const summaryHtml = summary ? `<p class="resume-paragraph resume-summary">${summary}</p>` : '';
+        const leftHtml = parseMarkdown(leftColumn);
+        const rightHtml = parseMarkdown(rightColumn);
+        const secondPageLeftHtml = parseMarkdown(firstPage);
+        const secondPageRightHtml = parseMarkdown(secondPage);
+        
+        return `
+          <div class="resume-two-page">
+            <div class="resume-page-first">
+              <div class="resume-two-column">
+                ${headerHtml ? `<div class="resume-header">${headerHtml}</div>` : ''}
+                ${summaryHtml ? `<div class="resume-summary-section">${summaryHtml}</div>` : ''}
+                <div class="resume-columns">
+                  <div class="resume-column-left">
+                    ${leftHtml}
+                  </div>
+                  <div class="resume-column-right">
+                    ${rightHtml}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="resume-page-second">
+              <div class="resume-two-column">
+                <div class="resume-columns">
+                  <div class="resume-column-left">
+                    ${secondPageLeftHtml}
+                  </div>
+                  <div class="resume-column-right">
+                    ${secondPageRightHtml}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (isTwoPage) {
         const firstPageHtml = parseMarkdown(firstPage);
         const secondPageHtml = parseMarkdown(secondPage);
         return `
@@ -78,11 +118,13 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
         `;
       } else if (isTwoColumn) {
         const headerHtml = header ? parseMarkdown(header) : '';
+        const summaryHtml = summary ? `<p class="resume-paragraph resume-summary">${summary}</p>` : '';
         const leftHtml = parseMarkdown(leftColumn);
         const rightHtml = parseMarkdown(rightColumn);
         return `
           <div class="resume-two-column">
             ${headerHtml ? `<div class="resume-header">${headerHtml}</div>` : ''}
+            ${summaryHtml ? `<div class="resume-summary-section">${summaryHtml}</div>` : ''}
             <div class="resume-columns">
               <div class="resume-column-left">
                 ${leftHtml}

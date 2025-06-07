@@ -12,6 +12,7 @@ interface PrintPreviewProps {
   leftColumn?: string;
   rightColumn?: string;
   header?: string;
+  summary?: string;
   firstPage?: string;
   secondPage?: string;
   template: string;
@@ -24,6 +25,7 @@ export const PrintPreview = ({
   leftColumn = '', 
   rightColumn = '', 
   header = '',
+  summary = '',
   firstPage = '', 
   secondPage = '', 
   template, 
@@ -84,6 +86,7 @@ export const PrintPreview = ({
             leftColumn={leftColumn}
             rightColumn={rightColumn}
             header={header}
+            summary={summary}
             firstPage={firstPage}
             secondPage={secondPage}
             template={template}

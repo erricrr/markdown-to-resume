@@ -11,7 +11,9 @@ interface ResumeTemplatesProps {
 export const ResumeTemplates = ({ htmlContent, template, isTwoColumn = false, isTwoPage = false }: ResumeTemplatesProps) => {
   const getTemplateClasses = () => {
     let baseClass = '';
-    if (isTwoPage) {
+    if (isTwoPage && isTwoColumn) {
+      baseClass = 'resume-two-page-layout resume-two-column-layout';
+    } else if (isTwoPage) {
       baseClass = 'resume-two-page-layout';
     } else if (isTwoColumn) {
       baseClass = 'resume-two-column-layout';
