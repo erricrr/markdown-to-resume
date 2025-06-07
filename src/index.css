@@ -435,6 +435,14 @@
 
 /* Two Column Layout Styles */
 .resume-two-column-layout .resume-two-column {
+  @apply flex flex-col;
+}
+
+.resume-two-column-layout .resume-header {
+  @apply w-full mb-6 pb-4 border-b border-gray-300;
+}
+
+.resume-two-column-layout .resume-columns {
   @apply grid grid-cols-3 gap-6;
 }
 
@@ -447,6 +455,14 @@
 }
 
 /* Two column specific heading adjustments */
+.resume-two-column-layout .resume-header .resume-heading-1 {
+  @apply text-2xl text-center;
+}
+
+.resume-two-column-layout .resume-header .resume-paragraph {
+  @apply text-center mb-2;
+}
+
 .resume-two-column-layout .resume-column-left .resume-heading-1 {
   @apply text-xl;
 }
@@ -465,7 +481,7 @@
 
 /* Responsive adjustments for two column */
 @media (max-width: 768px) {
-  .resume-two-column-layout .resume-two-column {
+  .resume-two-column-layout .resume-columns {
     @apply grid-cols-1 gap-4;
   }
   

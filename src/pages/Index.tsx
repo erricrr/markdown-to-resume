@@ -52,10 +52,10 @@ Experienced software engineer with 5+ years developing scalable web applications
 - Developed collaborative task management application
 - Technologies: Vue.js, Firebase, PWA`;
 
-const defaultLeftColumn = `# John Doe
-**Software Engineer**
+const defaultHeader = `# John Doe
+**Software Engineer** | john.doe@email.com | (555) 123-4567 | linkedin.com/in/johndoe`;
 
-## Contact
+const defaultLeftColumn = `## Contact
 - Email: john.doe@email.com
 - Phone: (555) 123-4567
 - LinkedIn: linkedin.com/in/johndoe
@@ -100,6 +100,7 @@ Experienced software engineer with 5+ years developing scalable web applications
 
 const Index = () => {
   const [markdown, setMarkdown] = useState(defaultMarkdown);
+  const [header, setHeader] = useState(defaultHeader);
   const [leftColumn, setLeftColumn] = useState(defaultLeftColumn);
   const [rightColumn, setRightColumn] = useState(defaultRightColumn);
   const [firstPage, setFirstPage] = useState(defaultMarkdown);
@@ -165,6 +166,7 @@ const Index = () => {
                 markdown={markdown}
                 leftColumn={leftColumn}
                 rightColumn={rightColumn}
+                header={header}
                 firstPage={firstPage}
                 secondPage={secondPage}
                 template={selectedTemplate}
@@ -221,6 +223,15 @@ const Index = () => {
                 </>
               ) : isTwoColumn ? (
                 <>
+                  <div className="flex-none">
+                    <label className="text-sm font-medium text-muted-foreground mb-2 block">Header</label>
+                    <Textarea
+                      value={header}
+                      onChange={(e) => setHeader(e.target.value)}
+                      placeholder="Enter header content (name, contact info) in Markdown format..."
+                      className="h-20 resize-none font-mono text-sm border-0 bg-white/50 focus:bg-white transition-colors"
+                    />
+                  </div>
                   <div className="flex-1">
                     <label className="text-sm font-medium text-muted-foreground mb-2 block">Left Column</label>
                     <Textarea
@@ -265,6 +276,7 @@ const Index = () => {
                 markdown={isTwoColumn || isTwoPage ? '' : markdown}
                 leftColumn={isTwoColumn ? leftColumn : ''}
                 rightColumn={isTwoColumn ? rightColumn : ''}
+                header={isTwoColumn ? header : ''}
                 firstPage={isTwoPage ? firstPage : ''}
                 secondPage={isTwoPage ? secondPage : ''}
                 template={selectedTemplate}

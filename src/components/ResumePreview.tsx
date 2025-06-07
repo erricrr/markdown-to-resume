@@ -8,6 +8,7 @@ interface ResumePreviewProps {
   markdown: string;
   leftColumn?: string;
   rightColumn?: string;
+  header?: string;
   firstPage?: string;
   secondPage?: string;
   template: string;
@@ -16,7 +17,7 @@ interface ResumePreviewProps {
 }
 
 export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
-  ({ markdown, leftColumn = '', rightColumn = '', firstPage = '', secondPage = '', template, isTwoColumn = false, isTwoPage = false }, ref) => {
+  ({ markdown, leftColumn = '', rightColumn = '', header = '', firstPage = '', secondPage = '', template, isTwoColumn = false, isTwoPage = false }, ref) => {
     const parseMarkdown = (md: string) => {
       try {
         // Configure marked with basic options
@@ -76,15 +77,19 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
           </div>
         `;
       } else if (isTwoColumn) {
+        const headerHtml = header ? parseMarkdown(header) : '';
         const leftHtml = parseMarkdown(leftColumn);
         const rightHtml = parseMarkdown(rightColumn);
         return `
           <div class="resume-two-column">
-            <div class="resume-column-left">
-              ${leftHtml}
-            </div>
-            <div class="resume-column-right">
-              ${rightHtml}
+            ${headerHtml ? `<div class="resume-header">${headerHtml}</div>` : ''}
+            <div class="resume-columns">
+              <div class="resume-column-left">
+                ${leftHtml}
+              </div>
+              <div class="resume-column-right">
+                ${rightHtml}
+              </div>
             </div>
           </div>
         `;
