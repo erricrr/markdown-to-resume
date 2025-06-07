@@ -94,9 +94,21 @@
 }
 
 .resume-template {
-  @apply p-8 min-h-[11in] font-sans text-gray-900 leading-relaxed;
+  @apply font-sans text-gray-900 leading-relaxed bg-white;
   width: 8.5in;
+  min-height: 11in;
   margin: 0 auto;
+  padding: 0.75in;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Common resume styles */
+.resume-link {
+  @apply text-blue-600 underline;
+}
+
+.resume-code {
+  @apply bg-gray-100 px-1 rounded text-sm font-mono;
 }
 
 /* Professional Template */
@@ -132,6 +144,10 @@
   @apply font-semibold text-gray-900;
 }
 
+.template-professional .resume-emphasis {
+  @apply italic text-gray-700;
+}
+
 /* Modern Template */
 .template-modern {
   @apply bg-gradient-to-br from-purple-50 to-blue-50;
@@ -165,6 +181,10 @@
   @apply font-medium text-purple-700;
 }
 
+.template-modern .resume-emphasis {
+  @apply italic text-purple-600;
+}
+
 /* Minimalist Template */
 .template-minimalist {
   @apply bg-white;
@@ -196,6 +216,10 @@
 
 .template-minimalist .resume-strong {
   @apply font-normal text-black;
+}
+
+.template-minimalist .resume-emphasis {
+  @apply italic font-light text-gray-800;
 }
 
 /* Creative Template */
@@ -236,6 +260,10 @@
   @apply font-semibold text-green-700;
 }
 
+.template-creative .resume-emphasis {
+  @apply italic text-green-600;
+}
+
 /* Executive Template */
 .template-executive {
   @apply bg-gray-50;
@@ -269,11 +297,30 @@
   @apply font-bold text-gray-900;
 }
 
+.template-executive .resume-emphasis {
+  @apply italic text-red-700;
+}
+
 /* Print styles */
 @media print {
   .resume-template {
     @apply shadow-none;
     margin: 0;
     max-width: none;
+    width: 100%;
+    min-height: auto;
+    padding: 0.75in;
+    page-break-inside: avoid;
+  }
+  
+  .resume-heading-1,
+  .resume-heading-2,
+  .resume-heading-3 {
+    page-break-after: avoid;
+  }
+  
+  .resume-paragraph,
+  .resume-list-item {
+    page-break-inside: avoid;
   }
 }
