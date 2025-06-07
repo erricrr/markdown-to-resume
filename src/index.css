@@ -214,6 +214,8 @@
     @apply mb-2 text-gray-700;
     display: list-item;
     list-style-type: none;
+    padding-left: 0.5rem;
+    text-indent: -0.5rem;
 }
 
 .template-professional .resume-list-item::before {
@@ -273,6 +275,8 @@
     @apply mb-2 text-gray-600;
     display: list-item;
     list-style-type: none;
+    padding-left: 1rem;
+    text-indent: -1rem;
 }
 
 .template-modern .resume-list-item::before {
@@ -332,6 +336,8 @@
     @apply mb-2 text-gray-800 font-light;
     display: list-item;
     list-style-type: none;
+    padding-left: 1rem;
+    text-indent: -1rem;
 }
 
 .template-minimalist .resume-list-item::before {
@@ -396,6 +402,8 @@
     @apply mb-2 text-gray-700;
     display: list-item;
     list-style-type: none;
+    padding-left: 1rem;
+    text-indent: -1rem;
 }
 
 .template-creative .resume-list-item::before {
@@ -453,6 +461,8 @@
     @apply mb-2 text-gray-700;
     display: list-item;
     list-style-type: none;
+    padding-left: 1rem;
+    text-indent: -1rem;
 }
 
 .template-executive .resume-list-item::before {
@@ -535,7 +545,7 @@
     @apply col-span-2;
 }
 
-/* Two column specific heading adjustments */
+/* Two column specific heading adjustments - use !important to ensure consistency */
 .resume-two-column-layout .resume-header .resume-heading-1 {
     @apply text-2xl text-center;
 }
@@ -544,20 +554,29 @@
     @apply text-center mb-2;
 }
 
+/* Column-specific sizing but preserve template colors and styling */
 .resume-two-column-layout .resume-column-left .resume-heading-1 {
-    @apply text-xl;
+    font-size: 1.25rem !important;
+    line-height: 1.75rem !important;
 }
 
 .resume-two-column-layout .resume-column-left .resume-heading-2 {
-    @apply text-base mt-4 mb-2;
+    font-size: 1rem !important;
+    line-height: 1.5rem !important;
+    margin-top: 1rem !important;
+    margin-bottom: 0.5rem !important;
 }
 
 .resume-two-column-layout .resume-column-left .resume-heading-3 {
-    @apply text-sm mt-3 mb-1;
+    font-size: 0.875rem !important;
+    line-height: 1.25rem !important;
+    margin-top: 0.75rem !important;
+    margin-bottom: 0.25rem !important;
 }
 
 .resume-two-column-layout .resume-column-right .resume-heading-2 {
-    @apply mt-0 mb-3;
+    margin-top: 0 !important;
+    margin-bottom: 0.75rem !important;
 }
 
 /* Responsive adjustments for two column */
@@ -612,11 +631,67 @@
 }
 
 .resume-two-page-layout .resume-page-first .resume-header .resume-heading-1 {
-    @apply text-xl text-center;
+    font-size: 1.25rem !important;
+    line-height: 1.75rem !important;
+    text-align: center !important;
 }
 
 .resume-two-page-layout .resume-page-first .resume-header .resume-paragraph {
-    @apply text-center mb-1;
+    text-align: center !important;
+    margin-bottom: 0.25rem !important;
+}
+
+/* Combined two-page + two-column specific adjustments */
+.resume-two-page-layout.resume-two-column-layout
+    .resume-page-first
+    .resume-column-left
+    .resume-heading-1,
+.resume-two-page-layout.resume-two-column-layout
+    .resume-page-second
+    .resume-column-left
+    .resume-heading-1 {
+    font-size: 1.125rem !important;
+    line-height: 1.625rem !important;
+}
+
+.resume-two-page-layout.resume-two-column-layout
+    .resume-page-first
+    .resume-column-left
+    .resume-heading-2,
+.resume-two-page-layout.resume-two-column-layout
+    .resume-page-second
+    .resume-column-left
+    .resume-heading-2 {
+    font-size: 0.875rem !important;
+    line-height: 1.25rem !important;
+    margin-top: 0.75rem !important;
+    margin-bottom: 0.375rem !important;
+}
+
+.resume-two-page-layout.resume-two-column-layout
+    .resume-page-first
+    .resume-column-left
+    .resume-heading-3,
+.resume-two-page-layout.resume-two-column-layout
+    .resume-page-second
+    .resume-column-left
+    .resume-heading-3 {
+    font-size: 0.75rem !important;
+    line-height: 1rem !important;
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.resume-two-page-layout.resume-two-column-layout
+    .resume-page-first
+    .resume-column-right
+    .resume-heading-2,
+.resume-two-page-layout.resume-two-column-layout
+    .resume-page-second
+    .resume-column-right
+    .resume-heading-2 {
+    margin-top: 0 !important;
+    margin-bottom: 0.5rem !important;
 }
 
 .resume-two-page-layout
@@ -654,6 +729,31 @@
 /* Disable marker bullets to prevent double bullets */
 .resume-list-item::marker {
     content: none;
+}
+
+/* Base spacing and typography that applies to all layouts */
+.resume-paragraph {
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+}
+
+.resume-heading-1,
+.resume-heading-2,
+.resume-heading-3,
+.resume-heading-4,
+.resume-heading-5,
+.resume-heading-6 {
+    font-weight: inherit;
+    color: inherit;
+}
+
+/* Ensure consistent list spacing across all layouts */
+.resume-list {
+    margin-bottom: 1rem;
+}
+
+.resume-list-item {
+    margin-bottom: 0.5rem;
 }
 
 /* Print styles - Enhanced for consistent margins */
@@ -732,12 +832,16 @@
         list-style: none !important;
     }
 
-    ul, ol, li {
+    ul,
+    ol,
+    li {
         list-style: none !important;
         list-style-type: none !important;
     }
 
-    ul::marker, ol::marker, li::marker {
+    ul::marker,
+    ol::marker,
+    li::marker {
         content: none !important;
         display: none !important;
     }
