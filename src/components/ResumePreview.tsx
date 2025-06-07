@@ -26,8 +26,8 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
           gfm: true,
         });
 
-        // Parse markdown to HTML
-        const html = marked(md) as string;
+        // Parse markdown to HTML synchronously
+        const html = marked.parse(md) as string;
         
         // Add resume classes to the HTML elements
         let processedHtml = html
