@@ -25,47 +25,39 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
       element.style.minHeight = '11in';
       element.style.backgroundColor = 'white';
       
-      // Only apply font styling if not already set
-      if (!element.style.fontFamily) {
-        element.style.fontFamily = 'system-ui, -apple-system, sans-serif';
-      }
-      if (!element.style.fontSize) {
-        element.style.fontSize = '12pt';
-      }
-      if (!element.style.lineHeight) {
-        element.style.lineHeight = '1.4';
-      }
-      
-      // Apply minimal styling to child elements to ensure PDF compatibility
+      // Apply critical bullet point fixes to match print preview
       const allElements = element.querySelectorAll('*');
       allElements.forEach(el => {
         const htmlEl = el as HTMLElement;
         
-        // Only fix list styling - the most critical issue for PDFs
-        if (htmlEl.tagName === 'UL' || htmlEl.tagName === 'OL') {
+        // Fix list styling to match print preview exactly
+        if (htmlEl.tagName === 'UL') {
           // Preserve existing styles but ensure proper list rendering
-          if (!htmlEl.style.listStyleType) {
-            htmlEl.style.listStyleType = htmlEl.tagName === 'UL' ? 'disc' : 'decimal';
-          }
-          if (!htmlEl.style.paddingLeft) {
-            htmlEl.style.paddingLeft = '20px';
-          }
+          const computedStyle = window.getComputedStyle(htmlEl);
+          htmlEl.style.listStyleType = computedStyle.listStyleType || 'disc';
+          htmlEl.style.paddingLeft = computedStyle.paddingLeft || '1.5em';
+          htmlEl.style.marginLeft = computedStyle.marginLeft || '0';
+          htmlEl.style.listStylePosition = 'outside';
+        }
+        
+        if (htmlEl.tagName === 'OL') {
+          const computedStyle = window.getComputedStyle(htmlEl);
+          htmlEl.style.listStyleType = computedStyle.listStyleType || 'decimal';
+          htmlEl.style.paddingLeft = computedStyle.paddingLeft || '1.5em';
+          htmlEl.style.marginLeft = computedStyle.marginLeft || '0';
           htmlEl.style.listStylePosition = 'outside';
         }
         
         if (htmlEl.tagName === 'LI') {
+          const computedStyle = window.getComputedStyle(htmlEl);
           htmlEl.style.display = 'list-item';
-          if (!htmlEl.style.listStyleType) {
-            htmlEl.style.listStyleType = 'inherit';
-          }
+          htmlEl.style.listStyleType = 'inherit';
           htmlEl.style.listStylePosition = 'outside';
-          // Only add minimal spacing if not already set
-          if (!htmlEl.style.marginBottom) {
-            htmlEl.style.marginBottom = '4px';
-          }
-          if (!htmlEl.style.paddingLeft) {
-            htmlEl.style.paddingLeft = '4px';
-          }
+          htmlEl.style.marginBottom = computedStyle.marginBottom || '0.25em';
+          htmlEl.style.paddingLeft = computedStyle.paddingLeft || '0';
+          htmlEl.style.marginLeft = computedStyle.marginLeft || '0';
+          // Ensure bullet alignment matches preview
+          htmlEl.style.textIndent = '0';
         }
         
         // Ensure page breaks work properly
