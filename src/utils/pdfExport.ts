@@ -13,71 +13,68 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
     // Clone the resume content
     const clonedElement = resumeElement.cloneNode(true) as HTMLElement;
     
-    // Apply comprehensive styling to ensure PDF matches preview
+    // Apply minimal PDF-specific styling while preserving existing styles
     const applyPDFStyling = (element: HTMLElement) => {
-      // Reset any preview-specific styling
+      // Only apply essential PDF-specific styles without overriding existing formatting
       element.style.boxShadow = 'none';
       element.style.border = 'none';
       element.style.transform = 'none';
       element.style.margin = '0';
-      element.style.padding = '0.5in'; // Reduced from 0.75in to 0.5in
+      element.style.padding = '0.5in';
       element.style.width = '8.5in';
       element.style.minHeight = '11in';
       element.style.backgroundColor = 'white';
-      element.style.fontFamily = 'system-ui, -apple-system, sans-serif';
-      element.style.fontSize = '12pt';
-      element.style.lineHeight = '1.4';
-      element.style.color = '#000';
       
-      // Apply styling to all child elements to ensure they render correctly
+      // Only apply font styling if not already set
+      if (!element.style.fontFamily) {
+        element.style.fontFamily = 'system-ui, -apple-system, sans-serif';
+      }
+      if (!element.style.fontSize) {
+        element.style.fontSize = '12pt';
+      }
+      if (!element.style.lineHeight) {
+        element.style.lineHeight = '1.4';
+      }
+      
+      // Apply minimal styling to child elements to ensure PDF compatibility
       const allElements = element.querySelectorAll('*');
       allElements.forEach(el => {
         const htmlEl = el as HTMLElement;
         
-        // Ensure text color is black for PDF
-        if (htmlEl.style.color === '' || htmlEl.style.color === 'inherit') {
-          htmlEl.style.color = '#000';
-        }
-        
-        // Fix list styling with proper bullets and alignment
+        // Only fix list styling - the most critical issue for PDFs
         if (htmlEl.tagName === 'UL' || htmlEl.tagName === 'OL') {
-          htmlEl.style.listStyleType = htmlEl.tagName === 'UL' ? 'disc' : 'decimal';
-          htmlEl.style.paddingLeft = '20px';
-          htmlEl.style.marginLeft = '0';
-          htmlEl.style.marginBottom = '12px';
+          // Preserve existing styles but ensure proper list rendering
+          if (!htmlEl.style.listStyleType) {
+            htmlEl.style.listStyleType = htmlEl.tagName === 'UL' ? 'disc' : 'decimal';
+          }
+          if (!htmlEl.style.paddingLeft) {
+            htmlEl.style.paddingLeft = '20px';
+          }
           htmlEl.style.listStylePosition = 'outside';
         }
         
         if (htmlEl.tagName === 'LI') {
           htmlEl.style.display = 'list-item';
-          htmlEl.style.listStyleType = 'inherit';
+          if (!htmlEl.style.listStyleType) {
+            htmlEl.style.listStyleType = 'inherit';
+          }
           htmlEl.style.listStylePosition = 'outside';
-          htmlEl.style.marginBottom = '4px';
-          htmlEl.style.paddingLeft = '4px';
-          htmlEl.style.fontSize = '12pt';
-          htmlEl.style.lineHeight = '1.4';
+          // Only add minimal spacing if not already set
+          if (!htmlEl.style.marginBottom) {
+            htmlEl.style.marginBottom = '4px';
+          }
+          if (!htmlEl.style.paddingLeft) {
+            htmlEl.style.paddingLeft = '4px';
+          }
         }
         
-        // Ensure headings have proper spacing
+        // Ensure page breaks work properly
         if (htmlEl.tagName.match(/^H[1-6]$/)) {
-          htmlEl.style.marginTop = htmlEl.tagName === 'H1' ? '0' : '16px';
-          htmlEl.style.marginBottom = '8px';
           htmlEl.style.pageBreakAfter = 'avoid';
         }
         
-        // Ensure paragraphs have proper spacing
         if (htmlEl.tagName === 'P') {
-          htmlEl.style.marginBottom = '12px';
           htmlEl.style.pageBreakInside = 'avoid';
-        }
-        
-        // Ensure strong and em elements are visible
-        if (htmlEl.tagName === 'STRONG') {
-          htmlEl.style.fontWeight = 'bold';
-        }
-        
-        if (htmlEl.tagName === 'EM') {
-          htmlEl.style.fontStyle = 'italic';
         }
       });
     };
@@ -92,7 +89,7 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
       
       if (firstPageElement && secondPageElement) {
         const pdf = new jsPDF('p', 'mm', 'a4');
-        const marginInMM = 12.7; // Reduced from 19.05mm (0.75in) to 12.7mm (0.5in)
+        const marginInMM = 12.7; // 0.5 inch in mm
         const pageWidth = 210; // A4 width in mm
         const pageHeight = 297; // A4 height in mm
         const contentWidth = pageWidth - (2 * marginInMM);
@@ -195,7 +192,7 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
     tempContainer.style.padding = '0';
     tempContainer.style.margin = '0';
     
-    // Apply comprehensive styling
+    // Apply minimal PDF styling while preserving template styles
     applyPDFStyling(clonedElement);
     
     tempContainer.appendChild(clonedElement);
@@ -220,8 +217,8 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
 
     const imgData = canvas.toDataURL('image/png');
     
-    // Use reduced 0.5 inch margins instead of 0.75 inch
-    const marginInMM = 12.7; // 0.5 inch in mm (reduced from 19.05mm)
+    // Use 0.5 inch margins
+    const marginInMM = 12.7; // 0.5 inch in mm
     const pageWidth = 210; // A4 width in mm
     const pageHeight = 297; // A4 height in mm
     const contentWidth = pageWidth - (2 * marginInMM);
