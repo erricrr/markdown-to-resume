@@ -6,11 +6,14 @@ import { ResumeTemplates } from '@/components/ResumeTemplates';
 
 interface ResumePreviewProps {
   markdown: string;
+  leftColumn?: string;
+  rightColumn?: string;
   template: string;
+  isTwoColumn?: boolean;
 }
 
 export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
-  ({ markdown, template }, ref) => {
+  ({ markdown, leftColumn = '', rightColumn = '', template, isTwoColumn = false }, ref) => {
     const parseMarkdown = (md: string) => {
       try {
         // Configure marked with basic options
@@ -55,13 +58,33 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
       }
     };
 
-    const htmlContent = parseMarkdown(markdown);
+    const getHtmlContent = () => {
+      if (isTwoColumn) {
+        const leftHtml = parseMarkdown(leftColumn);
+        const rightHtml = parseMarkdown(rightColumn);
+        return `
+          <div class="resume-two-column">
+            <div class="resume-column-left">
+              ${leftHtml}
+            </div>
+            <div class="resume-column-right">
+              ${rightHtml}
+            </div>
+          </div>
+        `;
+      } else {
+        return parseMarkdown(markdown);
+      }
+    };
+
+    const htmlContent = getHtmlContent();
 
     return (
       <div ref={ref} className="resume-container">
         <ResumeTemplates
           htmlContent={htmlContent}
           template={template}
+          isTwoColumn={isTwoColumn}
         />
       </div>
     );

@@ -421,6 +421,51 @@
   }
 }
 
+/* Two Column Layout Styles */
+.resume-two-column-layout .resume-two-column {
+  @apply grid grid-cols-3 gap-6;
+}
+
+.resume-two-column-layout .resume-column-left {
+  @apply col-span-1 pr-4;
+}
+
+.resume-two-column-layout .resume-column-right {
+  @apply col-span-2;
+}
+
+/* Two column specific heading adjustments */
+.resume-two-column-layout .resume-column-left .resume-heading-1 {
+  @apply text-xl;
+}
+
+.resume-two-column-layout .resume-column-left .resume-heading-2 {
+  @apply text-base mt-4 mb-2;
+}
+
+.resume-two-column-layout .resume-column-left .resume-heading-3 {
+  @apply text-sm mt-3 mb-1;
+}
+
+.resume-two-column-layout .resume-column-right .resume-heading-2 {
+  @apply mt-0 mb-3;
+}
+
+/* Responsive adjustments for two column */
+@media (max-width: 768px) {
+  .resume-two-column-layout .resume-two-column {
+    @apply grid-cols-1 gap-4;
+  }
+  
+  .resume-two-column-layout .resume-column-left {
+    @apply col-span-1 pr-0 pb-4 border-b border-gray-300;
+  }
+  
+  .resume-two-column-layout .resume-column-right {
+    @apply col-span-1;
+  }
+}
+
 /* Print styles */
 @media print {
   .resume-template {

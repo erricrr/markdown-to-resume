@@ -4,23 +4,25 @@ import { cn } from '@/lib/utils';
 interface ResumeTemplatesProps {
   htmlContent: string;
   template: string;
+  isTwoColumn?: boolean;
 }
 
-export const ResumeTemplates = ({ htmlContent, template }: ResumeTemplatesProps) => {
+export const ResumeTemplates = ({ htmlContent, template, isTwoColumn = false }: ResumeTemplatesProps) => {
   const getTemplateClasses = () => {
+    const baseClass = isTwoColumn ? 'resume-two-column-layout' : '';
     switch (template) {
       case 'professional':
-        return 'template-professional';
+        return cn(baseClass, 'template-professional');
       case 'modern':
-        return 'template-modern';
+        return cn(baseClass, 'template-modern');
       case 'minimalist':
-        return 'template-minimalist';
+        return cn(baseClass, 'template-minimalist');
       case 'creative':
-        return 'template-creative';
+        return cn(baseClass, 'template-creative');
       case 'executive':
-        return 'template-executive';
+        return cn(baseClass, 'template-executive');
       default:
-        return 'template-professional';
+        return cn(baseClass, 'template-professional');
     }
   };
 
