@@ -16,26 +16,47 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
 
     const imgData = canvas.toDataURL('image/png');
     
-    // Calculate dimensions
-    const imgWidth = 210; // A4 width in mm
-    const pageHeight = 295; // A4 height in mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    let heightLeft = imgHeight;
+    // Calculate dimensions with proper margins
+    const marginInMM = 20; // 0.75 inch margins (19.05mm ≈ 0.75 inch, rounded to 20mm for clean numbers)
+    const pageWidth = 210; // A4 width in mm
+    const pageHeight = 297; // A4 height in mm
+    const contentWidth = pageWidth - (2 * marginInMM); // 170mm content width
+    const contentHeight = pageHeight - (2 * marginInMM); // 257mm content height
+    
+    // Calculate image dimensions maintaining aspect ratio
+    const imgAspectRatio = canvas.width / canvas.height;
+    const contentAspectRatio = contentWidth / contentHeight;
+    
+    let imgWidth, imgHeight;
+    if (imgAspectRatio > contentAspectRatio) {
+      // Image is wider relative to content area
+      imgWidth = contentWidth;
+      imgHeight = contentWidth / imgAspectRatio;
+    } else {
+      // Image is taller relative to content area
+      imgHeight = contentHeight;
+      imgWidth = contentHeight * imgAspectRatio;
+    }
+    
+    // Center the image in the content area
+    const xOffset = marginInMM + (contentWidth - imgWidth) / 2;
+    const yOffset = marginInMM + (contentHeight - imgHeight) / 2;
 
     // Create PDF
     const pdf = new jsPDF('p', 'mm', 'a4');
-    let position = 0;
+    let heightLeft = imgHeight;
+    let position = yOffset;
 
     // Add first page
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
+    pdf.addImage(imgData, 'PNG', xOffset, position, imgWidth, imgHeight);
+    heightLeft -= contentHeight;
 
     // Add additional pages if needed
-    while (heightLeft >= 0) {
-      position = heightLeft - imgHeight;
+    while (heightLeft > 0) {
+      position = marginInMM - (imgHeight - heightLeft);
       pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+      pdf.addImage(imgData, 'PNG', xOffset, position, imgWidth, imgHeight);
+      heightLeft -= contentHeight;
     }
 
     // Save the PDF
