@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Download, FileText, Printer, Columns2 } from 'lucide-react';
 import { ResumePreview } from '@/components/ResumePreview';
+import { PrintPreview } from '@/components/PrintPreview';
 import { TemplateSelector } from '@/components/TemplateSelector';
 import { exportToPDF } from '@/utils/pdfExport';
 import { useToast } from '@/hooks/use-toast';
@@ -161,6 +162,13 @@ const Index = () => {
               <TemplateSelector
                 selectedTemplate={selectedTemplate}
                 onTemplateChange={setSelectedTemplate}
+              />
+              <PrintPreview
+                markdown={markdown}
+                leftColumn={leftColumn}
+                rightColumn={rightColumn}
+                template={selectedTemplate}
+                isTwoColumn={isTwoColumn}
               />
               <Button 
                 onClick={handlePrintPDF}
