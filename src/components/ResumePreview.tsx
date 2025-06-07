@@ -20,35 +20,41 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
     // Custom renderer for better resume formatting
     const renderer = new marked.Renderer();
     
-    // Custom heading renderer - simplified approach
-    renderer.heading = (text: string, level: number) => {
+    // Custom heading renderer - using correct API
+    renderer.heading = ({ tokens, depth }) => {
+      const text = this.parser.parseInline(tokens);
       const escapedText = text.toLowerCase().replace(/[^\w]+/g, '-');
-      return `<h${level} id="${escapedText}" class="resume-heading-${level}">${text}</h${level}>`;
+      return `<h${depth} id="${escapedText}" class="resume-heading-${depth}">${text}</h${depth}>`;
     };
 
-    // Custom list renderer - simplified approach
-    renderer.list = (body: string, ordered: boolean) => {
-      const tag = ordered ? 'ol' : 'ul';
+    // Custom list renderer - using correct API
+    renderer.list = (token) => {
+      const body = this.parser.parse(token.items);
+      const tag = token.ordered ? 'ol' : 'ul';
       return `<${tag} class="resume-list">${body}</${tag}>`;
     };
 
     // Custom list item renderer
-    renderer.listitem = (text: string) => {
+    renderer.listitem = (item) => {
+      const text = this.parser.parseInline(item.tokens);
       return `<li class="resume-list-item">${text}</li>`;
     };
 
     // Custom paragraph renderer
-    renderer.paragraph = (text: string) => {
+    renderer.paragraph = ({ tokens }) => {
+      const text = this.parser.parseInline(tokens);
       return `<p class="resume-paragraph">${text}</p>`;
     };
 
     // Custom strong/bold renderer
-    renderer.strong = (text: string) => {
+    renderer.strong = ({ tokens }) => {
+      const text = this.parser.parseInline(tokens);
       return `<strong class="resume-strong">${text}</strong>`;
     };
 
     // Custom emphasis/italic renderer
-    renderer.em = (text: string) => {
+    renderer.em = ({ tokens }) => {
+      const text = this.parser.parseInline(tokens);
       return `<em class="resume-emphasis">${text}</em>`;
     };
 
