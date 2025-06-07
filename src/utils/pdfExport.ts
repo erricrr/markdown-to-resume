@@ -1,4 +1,3 @@
-
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
@@ -13,9 +12,9 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
     // Clone the resume content
     const clonedElement = resumeElement.cloneNode(true) as HTMLElement;
     
-    // Apply PDF-specific styling while preserving ALL existing computed styles
+    // Apply PDF-specific styling while preserving formatting
     const applyPDFStyling = (element: HTMLElement) => {
-      // Only apply essential PDF-specific styles without overriding existing formatting
+      // Only apply essential PDF-specific styles
       element.style.boxShadow = 'none';
       element.style.border = 'none';
       element.style.transform = 'none';
@@ -25,68 +24,56 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
       element.style.minHeight = '11in';
       element.style.backgroundColor = 'white';
       
-      // Get ALL elements and preserve their exact computed styles for lists
+      // Get ALL elements but avoid overriding list styles
       const allElements = element.querySelectorAll('*');
       allElements.forEach(el => {
         const htmlEl = el as HTMLElement;
         const computedStyle = window.getComputedStyle(htmlEl);
         
-        // For UL elements - preserve EXACT computed styles
-        if (htmlEl.tagName === 'UL') {
-          htmlEl.style.listStyleType = computedStyle.listStyleType;
-          htmlEl.style.paddingLeft = computedStyle.paddingLeft;
-          htmlEl.style.marginLeft = computedStyle.marginLeft;
-          htmlEl.style.marginTop = computedStyle.marginTop;
-          htmlEl.style.marginBottom = computedStyle.marginBottom;
-          htmlEl.style.listStylePosition = computedStyle.listStylePosition;
-          htmlEl.style.display = computedStyle.display;
+        // For UL and OL elements - minimal intervention
+        if (htmlEl.tagName === 'UL' || htmlEl.tagName === 'OL') {
+          // Only ensure visibility and basic structure
+          htmlEl.style.display = 'block';
+          htmlEl.style.boxShadow = 'none';
+          htmlEl.style.border = 'none';
+          // Let browser handle list-style-type, padding, margins naturally
         }
         
-        // For OL elements - preserve EXACT computed styles
-        if (htmlEl.tagName === 'OL') {
-          htmlEl.style.listStyleType = computedStyle.listStyleType;
-          htmlEl.style.paddingLeft = computedStyle.paddingLeft;
-          htmlEl.style.marginLeft = computedStyle.marginLeft;
-          htmlEl.style.marginTop = computedStyle.marginTop;
-          htmlEl.style.marginBottom = computedStyle.marginBottom;
-          htmlEl.style.listStylePosition = computedStyle.listStylePosition;
-          htmlEl.style.display = computedStyle.display;
-        }
-        
-        // For LI elements - preserve EXACT computed styles
+        // For LI elements - minimal intervention to preserve bullet positioning
         if (htmlEl.tagName === 'LI') {
-          htmlEl.style.display = computedStyle.display;
-          htmlEl.style.listStyleType = computedStyle.listStyleType;
-          htmlEl.style.listStylePosition = computedStyle.listStylePosition;
-          htmlEl.style.marginBottom = computedStyle.marginBottom;
-          htmlEl.style.marginTop = computedStyle.marginTop;
-          htmlEl.style.paddingLeft = computedStyle.paddingLeft;
-          htmlEl.style.marginLeft = computedStyle.marginLeft;
-          htmlEl.style.textIndent = computedStyle.textIndent;
-          htmlEl.style.lineHeight = computedStyle.lineHeight;
-          htmlEl.style.fontSize = computedStyle.fontSize;
-          htmlEl.style.fontFamily = computedStyle.fontFamily;
-          htmlEl.style.color = computedStyle.color;
+          // Only ensure visibility and remove any conflicting styles
+          htmlEl.style.display = 'list-item';
+          htmlEl.style.boxShadow = 'none';
+          htmlEl.style.border = 'none';
+          htmlEl.style.transform = 'none';
+          // Don't override list-style-type, list-style-position, or positioning
+          // Let the browser handle bullet rendering naturally
         }
         
-        // Preserve heading styles exactly
+        // Preserve heading styles with minimal changes
         if (htmlEl.tagName.match(/^H[1-6]$/)) {
           htmlEl.style.pageBreakAfter = 'avoid';
-          htmlEl.style.fontSize = computedStyle.fontSize;
-          htmlEl.style.fontWeight = computedStyle.fontWeight;
-          htmlEl.style.color = computedStyle.color;
-          htmlEl.style.marginTop = computedStyle.marginTop;
-          htmlEl.style.marginBottom = computedStyle.marginBottom;
+          htmlEl.style.boxShadow = 'none';
+          htmlEl.style.border = 'none';
+          htmlEl.style.transform = 'none';
         }
         
-        // Preserve paragraph styles
+        // Preserve paragraph styles with minimal changes
         if (htmlEl.tagName === 'P') {
           htmlEl.style.pageBreakInside = 'avoid';
-          htmlEl.style.marginTop = computedStyle.marginTop;
-          htmlEl.style.marginBottom = computedStyle.marginBottom;
-          htmlEl.style.fontSize = computedStyle.fontSize;
-          htmlEl.style.lineHeight = computedStyle.lineHeight;
-          htmlEl.style.color = computedStyle.color;
+          htmlEl.style.boxShadow = 'none';
+          htmlEl.style.border = 'none';
+          htmlEl.style.transform = 'none';
+        }
+        
+        // Remove shadows and borders from all elements for clean PDF
+        htmlEl.style.boxShadow = 'none';
+        htmlEl.style.textShadow = 'none';
+        if (htmlEl.style.border && htmlEl.style.border !== 'none') {
+          // Only remove decorative borders, keep structural ones
+          if (!htmlEl.tagName.match(/^(TABLE|TD|TH|TR)$/)) {
+            htmlEl.style.border = 'none';
+          }
         }
       });
     };
@@ -204,14 +191,14 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
     tempContainer.style.padding = '0';
     tempContainer.style.margin = '0';
     
-    // Apply PDF styling while preserving all computed styles
+    // Apply PDF styling while preserving list formatting
     applyPDFStyling(clonedElement);
     
     tempContainer.appendChild(clonedElement);
     document.body.appendChild(tempContainer);
 
-    // Wait longer for layout to complete and styles to be applied
-    await new Promise(resolve => setTimeout(resolve, 500));
+    // Wait for layout to complete
+    await new Promise(resolve => setTimeout(resolve, 800));
 
     // Create canvas with higher scale for better quality
     const canvas = await html2canvas(tempContainer, {
