@@ -11,7 +11,7 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
     tempContainer.style.top = '0';
     tempContainer.style.width = '8.5in';
     tempContainer.style.background = 'white';
-    tempContainer.style.padding = '0.5in';
+    tempContainer.style.padding = '1in'; // Standard 1 inch margins
     tempContainer.style.fontFamily = 'system-ui, -apple-system, sans-serif';
     tempContainer.style.fontSize = '12pt';
     tempContainer.style.lineHeight = '1.4';
@@ -35,20 +35,124 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
     clonedElement.style.padding = '0';
     clonedElement.style.margin = '0';
     
+    // Check if this is a two-page layout
+    const isTwoPageLayout = clonedElement.querySelector('.resume-two-page');
+    
+    if (isTwoPageLayout) {
+      // Handle two-page layout specially
+      const firstPageElement = clonedElement.querySelector('.resume-page-first') as HTMLElement;
+      const secondPageElement = clonedElement.querySelector('.resume-page-second') as HTMLElement;
+      
+      if (firstPageElement && secondPageElement) {
+        // Create PDF with proper page breaks
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const marginInMM = 25.4; // 1 inch in mm
+        const pageWidth = 210; // A4 width in mm
+        const pageHeight = 297; // A4 height in mm
+        const contentWidth = pageWidth - (2 * marginInMM);
+        const contentHeight = pageHeight - (2 * marginInMM);
+        
+        // Render first page
+        const firstPageContainer = document.createElement('div');
+        firstPageContainer.style.position = 'absolute';
+        firstPageContainer.style.left = '-9999px';
+        firstPageContainer.style.top = '0';
+        firstPageContainer.style.width = '6.5in'; // 8.5 - 2 inch margins
+        firstPageContainer.style.height = '9in'; // 11 - 2 inch margins
+        firstPageContainer.style.background = 'white';
+        firstPageContainer.style.fontFamily = 'system-ui, -apple-system, sans-serif';
+        firstPageContainer.style.fontSize = '12pt';
+        firstPageContainer.style.lineHeight = '1.4';
+        firstPageContainer.style.color = '#000';
+        firstPageContainer.style.overflow = 'hidden';
+        
+        const clonedFirstPage = firstPageElement.cloneNode(true) as HTMLElement;
+        clonedFirstPage.style.width = '100%';
+        clonedFirstPage.style.height = '100%';
+        clonedFirstPage.style.overflow = 'hidden';
+        firstPageContainer.appendChild(clonedFirstPage);
+        document.body.appendChild(firstPageContainer);
+        
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        const firstPageCanvas = await html2canvas(firstPageContainer, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#ffffff',
+          width: Math.round(6.5 * 96),
+          height: Math.round(9 * 96),
+        });
+        
+        document.body.removeChild(firstPageContainer);
+        
+        const firstPageImgData = firstPageCanvas.toDataURL('image/png');
+        const imgWidth = contentWidth;
+        const imgHeight = contentHeight;
+        
+        pdf.addImage(firstPageImgData, 'PNG', marginInMM, marginInMM, imgWidth, imgHeight);
+        
+        // Add second page
+        if (secondPageElement.textContent?.trim()) {
+          pdf.addPage();
+          
+          const secondPageContainer = document.createElement('div');
+          secondPageContainer.style.position = 'absolute';
+          secondPageContainer.style.left = '-9999px';
+          secondPageContainer.style.top = '0';
+          secondPageContainer.style.width = '6.5in';
+          secondPageContainer.style.height = '9in';
+          secondPageContainer.style.background = 'white';
+          secondPageContainer.style.fontFamily = 'system-ui, -apple-system, sans-serif';
+          secondPageContainer.style.fontSize = '12pt';
+          secondPageContainer.style.lineHeight = '1.4';
+          secondPageContainer.style.color = '#000';
+          secondPageContainer.style.overflow = 'hidden';
+          
+          const clonedSecondPage = secondPageElement.cloneNode(true) as HTMLElement;
+          clonedSecondPage.style.width = '100%';
+          clonedSecondPage.style.height = '100%';
+          clonedSecondPage.style.overflow = 'hidden';
+          secondPageContainer.appendChild(clonedSecondPage);
+          document.body.appendChild(secondPageContainer);
+          
+          await new Promise(resolve => setTimeout(resolve, 100));
+          
+          const secondPageCanvas = await html2canvas(secondPageContainer, {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff',
+            width: Math.round(6.5 * 96),
+            height: Math.round(9 * 96),
+          });
+          
+          document.body.removeChild(secondPageContainer);
+          
+          const secondPageImgData = secondPageCanvas.toDataURL('image/png');
+          pdf.addImage(secondPageImgData, 'PNG', marginInMM, marginInMM, imgWidth, imgHeight);
+        }
+        
+        pdf.save(filename);
+        return;
+      }
+    }
+    
+    // Standard single page or multi-page handling
     tempContainer.appendChild(clonedElement);
     document.body.appendChild(tempContainer);
 
     // Wait for layout to complete
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    // Create canvas from the clean HTML element with proper height
+    // Create canvas from the clean HTML element
     const canvas = await html2canvas(tempContainer, {
       scale: 2,
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#ffffff',
-      width: Math.round(8.5 * 96), // 8.5 inches in pixels at 96 DPI
-      height: tempContainer.scrollHeight, // Use actual content height
+      width: Math.round(6.5 * 96), // 6.5 inches (8.5 - 2 inch margins)
+      height: tempContainer.scrollHeight,
     });
 
     // Clean up temporary element
@@ -56,8 +160,8 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
 
     const imgData = canvas.toDataURL('image/png');
     
-    // Use smaller margins for better content utilization
-    const marginInMM = 12.7; // 0.5 inch margins
+    // Use standard 1 inch margins
+    const marginInMM = 25.4; // 1 inch in mm
     const pageWidth = 210; // A4 width in mm
     const pageHeight = 297; // A4 height in mm
     const contentWidth = pageWidth - (2 * marginInMM);
