@@ -30,7 +30,7 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
         const html = marked.parse(md) as string;
         
         // Add resume classes to the HTML elements
-        let processedHtml = html
+        const processedHtml = html
           .replace(/<h1([^>]*)>/g, '<h1$1 class="resume-heading-1">')
           .replace(/<h2([^>]*)>/g, '<h2$1 class="resume-heading-2">')
           .replace(/<h3([^>]*)>/g, '<h3$1 class="resume-heading-3">')

@@ -206,13 +206,25 @@
 
 .template-professional .resume-list {
   @apply mb-4 ml-4;
-  list-style-type: disc;
-  padding-left: 1rem;
+  list-style-type: none;
+  padding-left: 0;
 }
 
 .template-professional .resume-list-item {
   @apply mb-2 text-gray-700;
-  display: list-item;
+  display: block;
+  position: relative;
+  padding-left: 1.2rem;
+}
+
+.template-professional .resume-list-item::before {
+  content: "• ";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #374151;
+  font-weight: bold;
+  line-height: inherit;
 }
 
 .template-professional .resume-strong {
@@ -255,13 +267,25 @@
 
 .template-modern .resume-list {
   @apply mb-4 ml-6;
-  list-style-type: disc;
-  padding-left: 1rem;
+  list-style-type: none;
+  padding-left: 0;
 }
 
 .template-modern .resume-list-item {
   @apply mb-2 text-gray-600;
-  display: list-item;
+  display: block;
+  position: relative;
+  padding-left: 1.2rem;
+}
+
+.template-modern .resume-list-item::before {
+  content: "• ";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #7c3aed;
+  font-weight: bold;
+  line-height: inherit;
 }
 
 .template-modern .resume-strong {
@@ -304,13 +328,25 @@
 
 .template-minimalist .resume-list {
   @apply mb-4 ml-0;
-  list-style-type: disc;
-  padding-left: 1rem;
+  list-style-type: none;
+  padding-left: 0;
 }
 
 .template-minimalist .resume-list-item {
   @apply mb-2 text-gray-800 font-light;
-  display: list-item;
+  display: block;
+  position: relative;
+  padding-left: 1.2rem;
+}
+
+.template-minimalist .resume-list-item::before {
+  content: "• ";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #1f2937;
+  font-weight: normal;
+  line-height: inherit;
 }
 
 .template-minimalist .resume-strong {
@@ -358,13 +394,25 @@
 
 .template-creative .resume-list {
   @apply mb-4 ml-4;
-  list-style-type: disc;
-  padding-left: 1rem;
+  list-style-type: none;
+  padding-left: 0;
 }
 
 .template-creative .resume-list-item {
   @apply mb-2 text-gray-700;
-  display: list-item;
+  display: block;
+  position: relative;
+  padding-left: 1.2rem;
+}
+
+.template-creative .resume-list-item::before {
+  content: "• ";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #059669;
+  font-weight: bold;
+  line-height: inherit;
 }
 
 .template-creative .resume-strong {
@@ -407,13 +455,25 @@
 
 .template-executive .resume-list {
   @apply mb-4 ml-4;
-  list-style-type: disc;
-  padding-left: 1rem;
+  list-style-type: none;
+  padding-left: 0;
 }
 
 .template-executive .resume-list-item {
   @apply mb-2 text-gray-700;
-  display: list-item;
+  display: block;
+  position: relative;
+  padding-left: 1.2rem;
+}
+
+.template-executive .resume-list-item::before {
+  content: "• ";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #dc2626;
+  font-weight: bold;
+  line-height: inherit;
 }
 
 .template-executive .resume-strong {
@@ -529,18 +589,45 @@
   }
 }
 
+/* PDF Export specific styles for bullet points */
+.resume-list {
+  list-style-type: none !important;
+  margin: 0 0 1rem 0 !important;
+  padding-left: 0 !important;
+}
+
+.resume-list-item {
+  display: block !important;
+  position: relative !important;
+  margin: 0.25rem 0 !important;
+  padding-left: 1.2rem !important;
+  text-indent: 0 !important;
+  list-style: none !important;
+}
+
+/* Ensure bullets are visible in PDF exports */
+.resume-list-item::before {
+  content: "• " !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  color: currentColor !important;
+  font-weight: bold !important;
+  line-height: inherit !important;
+}
+
 /* Print styles - Enhanced for consistent margins */
 @media print {
-  @page {
-    size: A4;
-    margin: 0.75in;
-  }
+@page {
+  size: A4;
+  margin: 0.75in;
+}
   
-  * {
-    -webkit-print-color-adjust: exact !important;
-    color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
+* {
+  -webkit-print-color-adjust: exact !important;
+  color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
   
   body {
     margin: 0 !important;

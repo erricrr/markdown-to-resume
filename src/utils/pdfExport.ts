@@ -14,6 +14,9 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
     
     // Apply PDF-specific styling while preserving formatting
     const applyPDFStyling = (element: HTMLElement) => {
+      // Add PDF export class for special styling
+      element.classList.add('pdf-export');
+      
       // Only apply essential PDF-specific styles
       element.style.boxShadow = 'none';
       element.style.border = 'none';
@@ -30,24 +33,27 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
         const htmlEl = el as HTMLElement;
         const computedStyle = window.getComputedStyle(htmlEl);
         
-        // For UL and OL elements - minimal intervention
+        // For UL and OL elements - use custom bullets only
         if (htmlEl.tagName === 'UL' || htmlEl.tagName === 'OL') {
-          // Only ensure visibility and basic structure
           htmlEl.style.display = 'block';
           htmlEl.style.boxShadow = 'none';
           htmlEl.style.border = 'none';
-          // Let browser handle list-style-type, padding, margins naturally
+          htmlEl.style.listStyleType = 'none';
+          htmlEl.style.paddingLeft = '0';
+          htmlEl.style.marginLeft = '0';
         }
         
-        // For LI elements - minimal intervention to preserve bullet positioning
+        // For LI elements - use block display with custom bullets
         if (htmlEl.tagName === 'LI') {
-          // Only ensure visibility and remove any conflicting styles
-          htmlEl.style.display = 'list-item';
+          htmlEl.style.display = 'block';
           htmlEl.style.boxShadow = 'none';
           htmlEl.style.border = 'none';
           htmlEl.style.transform = 'none';
-          // Don't override list-style-type, list-style-position, or positioning
-          // Let the browser handle bullet rendering naturally
+          htmlEl.style.listStyleType = 'none';
+          htmlEl.style.listStyle = 'none';
+          htmlEl.style.paddingLeft = '1.2rem';
+          htmlEl.style.marginLeft = '0';
+          htmlEl.style.position = 'relative';
         }
         
         // Preserve heading styles with minimal changes
@@ -125,7 +131,27 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
           backgroundColor: '#ffffff',
           width: Math.round(contentWidth * 3.78),
           height: Math.round(contentHeight * 3.78),
-          logging: false
+          logging: false,
+          removeContainer: true,
+          imageTimeout: 15000,
+          onclone: (clonedDoc) => {
+            const listItems = clonedDoc.querySelectorAll('li');
+            listItems.forEach((li) => {
+              const htmlLi = li as HTMLElement;
+              htmlLi.style.listStyleType = 'none';
+              htmlLi.style.listStyle = 'none';
+              htmlLi.style.display = 'block';
+              htmlLi.style.position = 'relative';
+              htmlLi.style.paddingLeft = '1.2rem';
+            });
+              
+            const lists = clonedDoc.querySelectorAll('ul, ol');
+            lists.forEach((list) => {
+              const htmlList = list as HTMLElement;
+              htmlList.style.listStyleType = 'none';
+              htmlList.style.paddingLeft = '0';
+            });
+          }
         });
         
         document.body.removeChild(firstPageContainer);
@@ -167,7 +193,27 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
             backgroundColor: '#ffffff',
             width: Math.round(contentWidth * 3.78),
             height: Math.round(contentHeight * 3.78),
-            logging: false
+            logging: false,
+            removeContainer: true,
+            imageTimeout: 15000,
+            onclone: (clonedDoc) => {
+              const listItems = clonedDoc.querySelectorAll('li');
+              listItems.forEach((li) => {
+                const htmlLi = li as HTMLElement;
+                htmlLi.style.listStyleType = 'none';
+                htmlLi.style.listStyle = 'none';
+                htmlLi.style.display = 'block';
+                htmlLi.style.position = 'relative';
+                htmlLi.style.paddingLeft = '1.2rem';
+              });
+              
+              const lists = clonedDoc.querySelectorAll('ul, ol');
+              lists.forEach((list) => {
+                const htmlList = list as HTMLElement;
+                htmlList.style.listStyleType = 'none';
+                htmlList.style.paddingLeft = '0';
+              });
+            }
           });
           
           document.body.removeChild(secondPageContainer);
@@ -208,7 +254,28 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
       backgroundColor: '#ffffff',
       width: Math.round(8.5 * 96), // 8.5 inches at 96 DPI
       height: tempContainer.scrollHeight,
-      logging: false
+      logging: false,
+      removeContainer: true,
+      imageTimeout: 15000,
+      onclone: (clonedDoc) => {
+        // Ensure list styles use custom bullets only
+        const listItems = clonedDoc.querySelectorAll('li');
+        listItems.forEach((li) => {
+          const htmlLi = li as HTMLElement;
+          htmlLi.style.listStyleType = 'none';
+          htmlLi.style.listStyle = 'none';
+          htmlLi.style.display = 'block';
+          htmlLi.style.position = 'relative';
+          htmlLi.style.paddingLeft = '1.2rem';
+        });
+        
+        const lists = clonedDoc.querySelectorAll('ul, ol');
+        lists.forEach((list) => {
+          const htmlList = list as HTMLElement;
+          htmlList.style.listStyleType = 'none';
+          htmlList.style.paddingLeft = '0';
+        });
+      }
     });
 
     // Clean up temporary element
