@@ -13,7 +13,7 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
     // Clone the resume content
     const clonedElement = resumeElement.cloneNode(true) as HTMLElement;
     
-    // Apply minimal PDF-specific styling while preserving existing styles
+    // Apply PDF-specific styling while preserving ALL existing computed styles
     const applyPDFStyling = (element: HTMLElement) => {
       // Only apply essential PDF-specific styles without overriding existing formatting
       element.style.boxShadow = 'none';
@@ -25,48 +25,68 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
       element.style.minHeight = '11in';
       element.style.backgroundColor = 'white';
       
-      // Apply critical bullet point fixes to match print preview
+      // Get ALL elements and preserve their exact computed styles for lists
       const allElements = element.querySelectorAll('*');
       allElements.forEach(el => {
         const htmlEl = el as HTMLElement;
+        const computedStyle = window.getComputedStyle(htmlEl);
         
-        // Fix list styling to match print preview exactly
+        // For UL elements - preserve EXACT computed styles
         if (htmlEl.tagName === 'UL') {
-          // Preserve existing styles but ensure proper list rendering
-          const computedStyle = window.getComputedStyle(htmlEl);
-          htmlEl.style.listStyleType = computedStyle.listStyleType || 'disc';
-          htmlEl.style.paddingLeft = computedStyle.paddingLeft || '1.5em';
-          htmlEl.style.marginLeft = computedStyle.marginLeft || '0';
-          htmlEl.style.listStylePosition = 'outside';
+          htmlEl.style.listStyleType = computedStyle.listStyleType;
+          htmlEl.style.paddingLeft = computedStyle.paddingLeft;
+          htmlEl.style.marginLeft = computedStyle.marginLeft;
+          htmlEl.style.marginTop = computedStyle.marginTop;
+          htmlEl.style.marginBottom = computedStyle.marginBottom;
+          htmlEl.style.listStylePosition = computedStyle.listStylePosition;
+          htmlEl.style.display = computedStyle.display;
         }
         
+        // For OL elements - preserve EXACT computed styles
         if (htmlEl.tagName === 'OL') {
-          const computedStyle = window.getComputedStyle(htmlEl);
-          htmlEl.style.listStyleType = computedStyle.listStyleType || 'decimal';
-          htmlEl.style.paddingLeft = computedStyle.paddingLeft || '1.5em';
-          htmlEl.style.marginLeft = computedStyle.marginLeft || '0';
-          htmlEl.style.listStylePosition = 'outside';
+          htmlEl.style.listStyleType = computedStyle.listStyleType;
+          htmlEl.style.paddingLeft = computedStyle.paddingLeft;
+          htmlEl.style.marginLeft = computedStyle.marginLeft;
+          htmlEl.style.marginTop = computedStyle.marginTop;
+          htmlEl.style.marginBottom = computedStyle.marginBottom;
+          htmlEl.style.listStylePosition = computedStyle.listStylePosition;
+          htmlEl.style.display = computedStyle.display;
         }
         
+        // For LI elements - preserve EXACT computed styles
         if (htmlEl.tagName === 'LI') {
-          const computedStyle = window.getComputedStyle(htmlEl);
-          htmlEl.style.display = 'list-item';
-          htmlEl.style.listStyleType = 'inherit';
-          htmlEl.style.listStylePosition = 'outside';
-          htmlEl.style.marginBottom = computedStyle.marginBottom || '0.25em';
-          htmlEl.style.paddingLeft = computedStyle.paddingLeft || '0';
-          htmlEl.style.marginLeft = computedStyle.marginLeft || '0';
-          // Ensure bullet alignment matches preview
-          htmlEl.style.textIndent = '0';
+          htmlEl.style.display = computedStyle.display;
+          htmlEl.style.listStyleType = computedStyle.listStyleType;
+          htmlEl.style.listStylePosition = computedStyle.listStylePosition;
+          htmlEl.style.marginBottom = computedStyle.marginBottom;
+          htmlEl.style.marginTop = computedStyle.marginTop;
+          htmlEl.style.paddingLeft = computedStyle.paddingLeft;
+          htmlEl.style.marginLeft = computedStyle.marginLeft;
+          htmlEl.style.textIndent = computedStyle.textIndent;
+          htmlEl.style.lineHeight = computedStyle.lineHeight;
+          htmlEl.style.fontSize = computedStyle.fontSize;
+          htmlEl.style.fontFamily = computedStyle.fontFamily;
+          htmlEl.style.color = computedStyle.color;
         }
         
-        // Ensure page breaks work properly
+        // Preserve heading styles exactly
         if (htmlEl.tagName.match(/^H[1-6]$/)) {
           htmlEl.style.pageBreakAfter = 'avoid';
+          htmlEl.style.fontSize = computedStyle.fontSize;
+          htmlEl.style.fontWeight = computedStyle.fontWeight;
+          htmlEl.style.color = computedStyle.color;
+          htmlEl.style.marginTop = computedStyle.marginTop;
+          htmlEl.style.marginBottom = computedStyle.marginBottom;
         }
         
+        // Preserve paragraph styles
         if (htmlEl.tagName === 'P') {
           htmlEl.style.pageBreakInside = 'avoid';
+          htmlEl.style.marginTop = computedStyle.marginTop;
+          htmlEl.style.marginBottom = computedStyle.marginBottom;
+          htmlEl.style.fontSize = computedStyle.fontSize;
+          htmlEl.style.lineHeight = computedStyle.lineHeight;
+          htmlEl.style.color = computedStyle.color;
         }
       });
     };
@@ -109,10 +129,10 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
         firstPageContainer.appendChild(firstPageClone);
         document.body.appendChild(firstPageContainer);
         
-        await new Promise(resolve => setTimeout(resolve, 300));
+        await new Promise(resolve => setTimeout(resolve, 500));
         
         const firstPageCanvas = await html2canvas(firstPageContainer, {
-          scale: 2,
+          scale: 3,
           useCORS: true,
           allowTaint: true,
           backgroundColor: '#ffffff',
@@ -151,10 +171,10 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
           secondPageContainer.appendChild(secondPageClone);
           document.body.appendChild(secondPageContainer);
           
-          await new Promise(resolve => setTimeout(resolve, 300));
+          await new Promise(resolve => setTimeout(resolve, 500));
           
           const secondPageCanvas = await html2canvas(secondPageContainer, {
-            scale: 2,
+            scale: 3,
             useCORS: true,
             allowTaint: true,
             backgroundColor: '#ffffff',
@@ -184,18 +204,18 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
     tempContainer.style.padding = '0';
     tempContainer.style.margin = '0';
     
-    // Apply minimal PDF styling while preserving template styles
+    // Apply PDF styling while preserving all computed styles
     applyPDFStyling(clonedElement);
     
     tempContainer.appendChild(clonedElement);
     document.body.appendChild(tempContainer);
 
-    // Wait for layout to complete
-    await new Promise(resolve => setTimeout(resolve, 300));
+    // Wait longer for layout to complete and styles to be applied
+    await new Promise(resolve => setTimeout(resolve, 500));
 
-    // Create canvas from the styled element
+    // Create canvas with higher scale for better quality
     const canvas = await html2canvas(tempContainer, {
-      scale: 2,
+      scale: 3,
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#ffffff',
