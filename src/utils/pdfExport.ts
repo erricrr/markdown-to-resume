@@ -1,3 +1,4 @@
+
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
@@ -34,13 +35,15 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
     clonedElement.style.padding = '0';
     clonedElement.style.margin = '0';
     
-    // Ensure list styling is preserved for PDF
+    // Enhanced list styling for PDF with better bullet alignment and size
     const lists = clonedElement.querySelectorAll('ul, ol');
     lists.forEach(list => {
       const htmlList = list as HTMLElement;
       htmlList.style.listStyleType = list.tagName === 'UL' ? 'disc' : 'decimal';
-      htmlList.style.paddingLeft = '1.5em';
+      htmlList.style.paddingLeft = '20px';
       htmlList.style.marginLeft = '0';
+      htmlList.style.marginBottom = '8px';
+      htmlList.style.fontSize = '12pt';
     });
     
     const listItems = clonedElement.querySelectorAll('li');
@@ -49,7 +52,10 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
       htmlItem.style.display = 'list-item';
       htmlItem.style.listStyleType = 'inherit';
       htmlItem.style.listStylePosition = 'outside';
-      htmlItem.style.marginBottom = '0.25em';
+      htmlItem.style.marginBottom = '4px';
+      htmlItem.style.paddingLeft = '4px';
+      htmlItem.style.fontSize = '12pt';
+      htmlItem.style.lineHeight = '1.4';
     });
     
     // Check if this is a two-page layout
@@ -61,14 +67,16 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
       const secondPageElement = clonedElement.querySelector('.resume-page-second') as HTMLElement;
       
       if (firstPageElement && secondPageElement) {
-        // Apply list styling to both pages
+        // Apply enhanced list styling to both pages
         [firstPageElement, secondPageElement].forEach(pageElement => {
           const pageLists = pageElement.querySelectorAll('ul, ol');
           pageLists.forEach(list => {
             const htmlList = list as HTMLElement;
             htmlList.style.listStyleType = list.tagName === 'UL' ? 'disc' : 'decimal';
-            htmlList.style.paddingLeft = '1.5em';
+            htmlList.style.paddingLeft = '20px';
             htmlList.style.marginLeft = '0';
+            htmlList.style.marginBottom = '8px';
+            htmlList.style.fontSize = '12pt';
           });
           
           const pageListItems = pageElement.querySelectorAll('li');
@@ -77,11 +85,14 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
             htmlItem.style.display = 'list-item';
             htmlItem.style.listStyleType = 'inherit';
             htmlItem.style.listStylePosition = 'outside';
-            htmlItem.style.marginBottom = '0.25em';
+            htmlItem.style.marginBottom = '4px';
+            htmlItem.style.paddingLeft = '4px';
+            htmlItem.style.fontSize = '12pt';
+            htmlItem.style.lineHeight = '1.4';
           });
         });
         
-        // Create PDF with proper page breaks
+        // Create PDF with proper page breaks and margins
         const pdf = new jsPDF('p', 'mm', 'a4');
         const marginInMM = 25.4; // 1 inch in mm
         const pageWidth = 210; // A4 width in mm
@@ -89,51 +100,61 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
         const contentWidth = pageWidth - (2 * marginInMM);
         const contentHeight = pageHeight - (2 * marginInMM);
         
-        // Render first page
+        // Render first page with proper content area
         const firstPageContainer = document.createElement('div');
         firstPageContainer.style.position = 'absolute';
         firstPageContainer.style.left = '-9999px';
         firstPageContainer.style.top = '0';
-        firstPageContainer.style.width = '6.5in'; // 8.5 - 2 inch margins
-        firstPageContainer.style.height = '9in'; // 11 - 2 inch margins
+        firstPageContainer.style.width = `${contentWidth}mm`;
+        firstPageContainer.style.height = `${contentHeight}mm`;
         firstPageContainer.style.background = 'white';
         firstPageContainer.style.fontFamily = 'system-ui, -apple-system, sans-serif';
         firstPageContainer.style.fontSize = '12pt';
         firstPageContainer.style.lineHeight = '1.4';
         firstPageContainer.style.color = '#000';
         firstPageContainer.style.overflow = 'hidden';
+        firstPageContainer.style.padding = '0';
+        firstPageContainer.style.margin = '0';
         
         const clonedFirstPage = firstPageElement.cloneNode(true) as HTMLElement;
         clonedFirstPage.style.width = '100%';
         clonedFirstPage.style.height = '100%';
         clonedFirstPage.style.overflow = 'hidden';
+        clonedFirstPage.style.padding = '0';
+        clonedFirstPage.style.margin = '0';
         firstPageContainer.appendChild(clonedFirstPage);
         document.body.appendChild(firstPageContainer);
         
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 200));
         
         const firstPageCanvas = await html2canvas(firstPageContainer, {
           scale: 2,
           useCORS: true,
           allowTaint: true,
           backgroundColor: '#ffffff',
-          width: Math.round(6.5 * 96),
-          height: Math.round(9 * 96),
+          width: Math.round(contentWidth * 3.78), // Convert mm to pixels (96 DPI)
+          height: Math.round(contentHeight * 3.78),
           logging: false,
           onclone: (clonedDoc) => {
-            // Ensure list styles are applied in the cloned document
+            // Ensure enhanced list styles are applied in the cloned document
             const clonedLists = clonedDoc.querySelectorAll('ul, ol');
             clonedLists.forEach(list => {
-              (list as HTMLElement).style.listStyleType = list.tagName === 'UL' ? 'disc' : 'decimal';
-              (list as HTMLElement).style.paddingLeft = '1.5em';
-              (list as HTMLElement).style.marginLeft = '0';
+              const htmlList = list as HTMLElement;
+              htmlList.style.listStyleType = list.tagName === 'UL' ? 'disc' : 'decimal';
+              htmlList.style.paddingLeft = '20px';
+              htmlList.style.marginLeft = '0';
+              htmlList.style.fontSize = '12pt';
             });
             
             const clonedListItems = clonedDoc.querySelectorAll('li');
             clonedListItems.forEach(item => {
-              (item as HTMLElement).style.display = 'list-item';
-              (item as HTMLElement).style.listStyleType = 'inherit';
-              (item as HTMLElement).style.listStylePosition = 'outside';
+              const htmlItem = item as HTMLElement;
+              htmlItem.style.display = 'list-item';
+              htmlItem.style.listStyleType = 'inherit';
+              htmlItem.style.listStylePosition = 'outside';
+              htmlItem.style.paddingLeft = '4px';
+              htmlItem.style.fontSize = '12pt';
+              htmlItem.style.lineHeight = '1.4';
             });
           }
         });
@@ -141,12 +162,9 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
         document.body.removeChild(firstPageContainer);
         
         const firstPageImgData = firstPageCanvas.toDataURL('image/png');
-        const imgWidth = contentWidth;
-        const imgHeight = contentHeight;
+        pdf.addImage(firstPageImgData, 'PNG', marginInMM, marginInMM, contentWidth, contentHeight);
         
-        pdf.addImage(firstPageImgData, 'PNG', marginInMM, marginInMM, imgWidth, imgHeight);
-        
-        // Add second page
+        // Add second page with proper margins
         if (secondPageElement.textContent?.trim()) {
           pdf.addPage();
           
@@ -154,46 +172,56 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
           secondPageContainer.style.position = 'absolute';
           secondPageContainer.style.left = '-9999px';
           secondPageContainer.style.top = '0';
-          secondPageContainer.style.width = '6.5in';
-          secondPageContainer.style.height = '9in';
+          secondPageContainer.style.width = `${contentWidth}mm`;
+          secondPageContainer.style.height = `${contentHeight}mm`;
           secondPageContainer.style.background = 'white';
           secondPageContainer.style.fontFamily = 'system-ui, -apple-system, sans-serif';
           secondPageContainer.style.fontSize = '12pt';
           secondPageContainer.style.lineHeight = '1.4';
           secondPageContainer.style.color = '#000';
           secondPageContainer.style.overflow = 'hidden';
+          secondPageContainer.style.padding = '0';
+          secondPageContainer.style.margin = '0';
           
           const clonedSecondPage = secondPageElement.cloneNode(true) as HTMLElement;
           clonedSecondPage.style.width = '100%';
           clonedSecondPage.style.height = '100%';
           clonedSecondPage.style.overflow = 'hidden';
+          clonedSecondPage.style.padding = '0';
+          clonedSecondPage.style.margin = '0';
           secondPageContainer.appendChild(clonedSecondPage);
           document.body.appendChild(secondPageContainer);
           
-          await new Promise(resolve => setTimeout(resolve, 100));
+          await new Promise(resolve => setTimeout(resolve, 200));
           
           const secondPageCanvas = await html2canvas(secondPageContainer, {
             scale: 2,
             useCORS: true,
             allowTaint: true,
             backgroundColor: '#ffffff',
-            width: Math.round(6.5 * 96),
-            height: Math.round(9 * 96),
+            width: Math.round(contentWidth * 3.78),
+            height: Math.round(contentHeight * 3.78),
             logging: false,
             onclone: (clonedDoc) => {
-              // Ensure list styles are applied in the cloned document
+              // Ensure enhanced list styles are applied in the cloned document
               const clonedLists = clonedDoc.querySelectorAll('ul, ol');
               clonedLists.forEach(list => {
-                (list as HTMLElement).style.listStyleType = list.tagName === 'UL' ? 'disc' : 'decimal';
-                (list as HTMLElement).style.paddingLeft = '1.5em';
-                (list as HTMLElement).style.marginLeft = '0';
+                const htmlList = list as HTMLElement;
+                htmlList.style.listStyleType = list.tagName === 'UL' ? 'disc' : 'decimal';
+                htmlList.style.paddingLeft = '20px';
+                htmlList.style.marginLeft = '0';
+                htmlList.style.fontSize = '12pt';
               });
               
               const clonedListItems = clonedDoc.querySelectorAll('li');
               clonedListItems.forEach(item => {
-                (item as HTMLElement).style.display = 'list-item';
-                (item as HTMLElement).style.listStyleType = 'inherit';
-                (item as HTMLElement).style.listStylePosition = 'outside';
+                const htmlItem = item as HTMLElement;
+                htmlItem.style.display = 'list-item';
+                htmlItem.style.listStyleType = 'inherit';
+                htmlItem.style.listStylePosition = 'outside';
+                htmlItem.style.paddingLeft = '4px';
+                htmlItem.style.fontSize = '12pt';
+                htmlItem.style.lineHeight = '1.4';
               });
             }
           });
@@ -201,7 +229,7 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
           document.body.removeChild(secondPageContainer);
           
           const secondPageImgData = secondPageCanvas.toDataURL('image/png');
-          pdf.addImage(secondPageImgData, 'PNG', marginInMM, marginInMM, imgWidth, imgHeight);
+          pdf.addImage(secondPageImgData, 'PNG', marginInMM, marginInMM, contentWidth, contentHeight);
         }
         
         pdf.save(filename);
@@ -214,7 +242,7 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
     document.body.appendChild(tempContainer);
 
     // Wait for layout to complete
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, 200));
 
     // Create canvas from the clean HTML element
     const canvas = await html2canvas(tempContainer, {
@@ -226,19 +254,25 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
       height: tempContainer.scrollHeight,
       logging: false,
       onclone: (clonedDoc) => {
-        // Ensure list styles are applied in the cloned document
+        // Ensure enhanced list styles are applied in the cloned document
         const clonedLists = clonedDoc.querySelectorAll('ul, ol');
         clonedLists.forEach(list => {
-          (list as HTMLElement).style.listStyleType = list.tagName === 'UL' ? 'disc' : 'decimal';
-          (list as HTMLElement).style.paddingLeft = '1.5em';
-          (list as HTMLElement).style.marginLeft = '0';
+          const htmlList = list as HTMLElement;
+          htmlList.style.listStyleType = list.tagName === 'UL' ? 'disc' : 'decimal';
+          htmlList.style.paddingLeft = '20px';
+          htmlList.style.marginLeft = '0';
+          htmlList.style.fontSize = '12pt';
         });
         
         const clonedListItems = clonedDoc.querySelectorAll('li');
         clonedListItems.forEach(item => {
-          (item as HTMLElement).style.display = 'list-item';
-          (item as HTMLElement).style.listStyleType = 'inherit';
-          (item as HTMLElement).style.listStylePosition = 'outside';
+          const htmlItem = item as HTMLElement;
+          htmlItem.style.display = 'list-item';
+          htmlItem.style.listStyleType = 'inherit';
+          htmlItem.style.listStylePosition = 'outside';
+          htmlItem.style.paddingLeft = '4px';
+          htmlItem.style.fontSize = '12pt';
+          htmlItem.style.lineHeight = '1.4';
         });
       }
     });
@@ -262,7 +296,7 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
     const imgWidth = contentWidth;
     const imgHeight = contentWidth / imgAspectRatio;
     
-    // Position image at top-left of content area
+    // Position image at top-left of content area with proper margins
     const xOffset = marginInMM;
     const yOffset = marginInMM;
 
