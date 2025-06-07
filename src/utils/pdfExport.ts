@@ -35,6 +35,22 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
     clonedElement.style.padding = '0';
     clonedElement.style.margin = '0';
     
+    // Ensure list styling is preserved for PDF
+    const lists = clonedElement.querySelectorAll('ul, ol');
+    lists.forEach(list => {
+      list.style.listStyleType = list.tagName === 'UL' ? 'disc' : 'decimal';
+      list.style.paddingLeft = '1.5em';
+      list.style.marginLeft = '0';
+    });
+    
+    const listItems = clonedElement.querySelectorAll('li');
+    listItems.forEach(item => {
+      item.style.display = 'list-item';
+      item.style.listStyleType = 'inherit';
+      item.style.listStylePosition = 'outside';
+      item.style.marginBottom = '0.25em';
+    });
+    
     // Check if this is a two-page layout
     const isTwoPageLayout = clonedElement.querySelector('.resume-two-page');
     
@@ -44,6 +60,24 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
       const secondPageElement = clonedElement.querySelector('.resume-page-second') as HTMLElement;
       
       if (firstPageElement && secondPageElement) {
+        // Apply list styling to both pages
+        [firstPageElement, secondPageElement].forEach(pageElement => {
+          const pageLists = pageElement.querySelectorAll('ul, ol');
+          pageLists.forEach(list => {
+            list.style.listStyleType = list.tagName === 'UL' ? 'disc' : 'decimal';
+            list.style.paddingLeft = '1.5em';
+            list.style.marginLeft = '0';
+          });
+          
+          const pageListItems = pageElement.querySelectorAll('li');
+          pageListItems.forEach(item => {
+            item.style.display = 'list-item';
+            item.style.listStyleType = 'inherit';
+            item.style.listStylePosition = 'outside';
+            item.style.marginBottom = '0.25em';
+          });
+        });
+        
         // Create PDF with proper page breaks
         const pdf = new jsPDF('p', 'mm', 'a4');
         const marginInMM = 25.4; // 1 inch in mm
@@ -82,6 +116,23 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
           backgroundColor: '#ffffff',
           width: Math.round(6.5 * 96),
           height: Math.round(9 * 96),
+          logging: false,
+          onclone: (clonedDoc) => {
+            // Ensure list styles are applied in the cloned document
+            const clonedLists = clonedDoc.querySelectorAll('ul, ol');
+            clonedLists.forEach(list => {
+              (list as HTMLElement).style.listStyleType = list.tagName === 'UL' ? 'disc' : 'decimal';
+              (list as HTMLElement).style.paddingLeft = '1.5em';
+              (list as HTMLElement).style.marginLeft = '0';
+            });
+            
+            const clonedListItems = clonedDoc.querySelectorAll('li');
+            clonedListItems.forEach(item => {
+              (item as HTMLElement).style.display = 'list-item';
+              (item as HTMLElement).style.listStyleType = 'inherit';
+              (item as HTMLElement).style.listStylePosition = 'outside';
+            });
+          }
         });
         
         document.body.removeChild(firstPageContainer);
@@ -125,6 +176,23 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
             backgroundColor: '#ffffff',
             width: Math.round(6.5 * 96),
             height: Math.round(9 * 96),
+            logging: false,
+            onclone: (clonedDoc) => {
+              // Ensure list styles are applied in the cloned document
+              const clonedLists = clonedDoc.querySelectorAll('ul, ol');
+              clonedLists.forEach(list => {
+                (list as HTMLElement).style.listStyleType = list.tagName === 'UL' ? 'disc' : 'decimal';
+                (list as HTMLElement).style.paddingLeft = '1.5em';
+                (list as HTMLElement).style.marginLeft = '0';
+              });
+              
+              const clonedListItems = clonedDoc.querySelectorAll('li');
+              clonedListItems.forEach(item => {
+                (item as HTMLElement).style.display = 'list-item';
+                (item as HTMLElement).style.listStyleType = 'inherit';
+                (item as HTMLElement).style.listStylePosition = 'outside';
+              });
+            }
           });
           
           document.body.removeChild(secondPageContainer);
@@ -153,6 +221,23 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
       backgroundColor: '#ffffff',
       width: Math.round(6.5 * 96), // 6.5 inches (8.5 - 2 inch margins)
       height: tempContainer.scrollHeight,
+      logging: false,
+      onclone: (clonedDoc) => {
+        // Ensure list styles are applied in the cloned document
+        const clonedLists = clonedDoc.querySelectorAll('ul, ol');
+        clonedLists.forEach(list => {
+          (list as HTMLElement).style.listStyleType = list.tagName === 'UL' ? 'disc' : 'decimal';
+          (list as HTMLElement).style.paddingLeft = '1.5em';
+          (list as HTMLElement).style.marginLeft = '0';
+        });
+        
+        const clonedListItems = clonedDoc.querySelectorAll('li');
+        clonedListItems.forEach(item => {
+          (item as HTMLElement).style.display = 'list-item';
+          (item as HTMLElement).style.listStyleType = 'inherit';
+          (item as HTMLElement).style.listStylePosition = 'outside';
+        });
+      }
     });
 
     // Clean up temporary element
