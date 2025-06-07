@@ -1,4 +1,3 @@
-
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
@@ -38,17 +37,19 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
     // Ensure list styling is preserved for PDF
     const lists = clonedElement.querySelectorAll('ul, ol');
     lists.forEach(list => {
-      list.style.listStyleType = list.tagName === 'UL' ? 'disc' : 'decimal';
-      list.style.paddingLeft = '1.5em';
-      list.style.marginLeft = '0';
+      const htmlList = list as HTMLElement;
+      htmlList.style.listStyleType = list.tagName === 'UL' ? 'disc' : 'decimal';
+      htmlList.style.paddingLeft = '1.5em';
+      htmlList.style.marginLeft = '0';
     });
     
     const listItems = clonedElement.querySelectorAll('li');
     listItems.forEach(item => {
-      item.style.display = 'list-item';
-      item.style.listStyleType = 'inherit';
-      item.style.listStylePosition = 'outside';
-      item.style.marginBottom = '0.25em';
+      const htmlItem = item as HTMLElement;
+      htmlItem.style.display = 'list-item';
+      htmlItem.style.listStyleType = 'inherit';
+      htmlItem.style.listStylePosition = 'outside';
+      htmlItem.style.marginBottom = '0.25em';
     });
     
     // Check if this is a two-page layout
@@ -64,17 +65,19 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
         [firstPageElement, secondPageElement].forEach(pageElement => {
           const pageLists = pageElement.querySelectorAll('ul, ol');
           pageLists.forEach(list => {
-            list.style.listStyleType = list.tagName === 'UL' ? 'disc' : 'decimal';
-            list.style.paddingLeft = '1.5em';
-            list.style.marginLeft = '0';
+            const htmlList = list as HTMLElement;
+            htmlList.style.listStyleType = list.tagName === 'UL' ? 'disc' : 'decimal';
+            htmlList.style.paddingLeft = '1.5em';
+            htmlList.style.marginLeft = '0';
           });
           
           const pageListItems = pageElement.querySelectorAll('li');
           pageListItems.forEach(item => {
-            item.style.display = 'list-item';
-            item.style.listStyleType = 'inherit';
-            item.style.listStylePosition = 'outside';
-            item.style.marginBottom = '0.25em';
+            const htmlItem = item as HTMLElement;
+            htmlItem.style.display = 'list-item';
+            htmlItem.style.listStyleType = 'inherit';
+            htmlItem.style.listStylePosition = 'outside';
+            htmlItem.style.marginBottom = '0.25em';
           });
         });
         
