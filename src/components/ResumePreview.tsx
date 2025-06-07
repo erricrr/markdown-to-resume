@@ -8,12 +8,15 @@ interface ResumePreviewProps {
   markdown: string;
   leftColumn?: string;
   rightColumn?: string;
+  firstPage?: string;
+  secondPage?: string;
   template: string;
   isTwoColumn?: boolean;
+  isTwoPage?: boolean;
 }
 
 export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
-  ({ markdown, leftColumn = '', rightColumn = '', template, isTwoColumn = false }, ref) => {
+  ({ markdown, leftColumn = '', rightColumn = '', firstPage = '', secondPage = '', template, isTwoColumn = false, isTwoPage = false }, ref) => {
     const parseMarkdown = (md: string) => {
       try {
         // Configure marked with basic options
@@ -59,7 +62,20 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
     };
 
     const getHtmlContent = () => {
-      if (isTwoColumn) {
+      if (isTwoPage) {
+        const firstPageHtml = parseMarkdown(firstPage);
+        const secondPageHtml = parseMarkdown(secondPage);
+        return `
+          <div class="resume-two-page">
+            <div class="resume-page-first">
+              ${firstPageHtml}
+            </div>
+            <div class="resume-page-second">
+              ${secondPageHtml}
+            </div>
+          </div>
+        `;
+      } else if (isTwoColumn) {
         const leftHtml = parseMarkdown(leftColumn);
         const rightHtml = parseMarkdown(rightColumn);
         return `
@@ -85,6 +101,7 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
           htmlContent={htmlContent}
           template={template}
           isTwoColumn={isTwoColumn}
+          isTwoPage={isTwoPage}
         />
       </div>
     );

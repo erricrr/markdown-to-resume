@@ -1,9 +1,10 @@
+
 import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
-import { FileText, Printer, Columns2 } from 'lucide-react';
+import { FileText, Printer, Columns2, FileStack } from 'lucide-react';
 import { ResumePreview } from '@/components/ResumePreview';
 import { PrintPreview } from '@/components/PrintPreview';
 import { TemplateSelector } from '@/components/TemplateSelector';
@@ -101,12 +102,21 @@ const Index = () => {
   const [markdown, setMarkdown] = useState(defaultMarkdown);
   const [leftColumn, setLeftColumn] = useState(defaultLeftColumn);
   const [rightColumn, setRightColumn] = useState(defaultRightColumn);
+  const [firstPage, setFirstPage] = useState(defaultMarkdown);
+  const [secondPage, setSecondPage] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState('professional');
   const [isTwoColumn, setIsTwoColumn] = useState(false);
+  const [isTwoPage, setIsTwoPage] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
 
   const handlePrintPDF = () => {
     window.print();
+  };
+
+  const getInputMode = () => {
+    if (isTwoPage) return 'twoPage';
+    if (isTwoColumn) return 'twoColumn';
+    return 'single';
   };
 
   return (
@@ -130,7 +140,21 @@ const Index = () => {
                 <span className="text-sm">Two Column</span>
                 <Switch
                   checked={isTwoColumn}
-                  onCheckedChange={setIsTwoColumn}
+                  onCheckedChange={(checked) => {
+                    setIsTwoColumn(checked);
+                    if (checked) setIsTwoPage(false);
+                  }}
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <FileStack className="h-4 w-4" />
+                <span className="text-sm">Two Page</span>
+                <Switch
+                  checked={isTwoPage}
+                  onCheckedChange={(checked) => {
+                    setIsTwoPage(checked);
+                    if (checked) setIsTwoColumn(false);
+                  }}
                 />
               </div>
               <TemplateSelector
@@ -141,8 +165,11 @@ const Index = () => {
                 markdown={markdown}
                 leftColumn={leftColumn}
                 rightColumn={rightColumn}
+                firstPage={firstPage}
+                secondPage={secondPage}
                 template={selectedTemplate}
                 isTwoColumn={isTwoColumn}
+                isTwoPage={isTwoPage}
               />
               <Button 
                 onClick={handlePrintPDF}
@@ -166,12 +193,33 @@ const Index = () => {
               <div className="flex items-center gap-2">
                 <FileText className="h-5 w-5 text-primary" />
                 <h2 className="text-lg font-semibold text-foreground">
-                  {isTwoColumn ? 'Markdown Input (Two Columns)' : 'Markdown Input'}
+                  {isTwoPage ? 'Markdown Input (Two Pages)' : isTwoColumn ? 'Markdown Input (Two Columns)' : 'Markdown Input'}
                 </h2>
               </div>
             </div>
             <div className="flex-1 p-6 pt-0 flex flex-col gap-4">
-              {isTwoColumn ? (
+              {isTwoPage ? (
+                <>
+                  <div className="flex-1">
+                    <label className="text-sm font-medium text-muted-foreground mb-2 block">Page 1</label>
+                    <Textarea
+                      value={firstPage}
+                      onChange={(e) => setFirstPage(e.target.value)}
+                      placeholder="Enter first page content in Markdown format..."
+                      className="h-full resize-none font-mono text-sm border-0 bg-white/50 focus:bg-white transition-colors"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label className="text-sm font-medium text-muted-foreground mb-2 block">Page 2</label>
+                    <Textarea
+                      value={secondPage}
+                      onChange={(e) => setSecondPage(e.target.value)}
+                      placeholder="Enter second page content in Markdown format..."
+                      className="h-full resize-none font-mono text-sm border-0 bg-white/50 focus:bg-white transition-colors"
+                    />
+                  </div>
+                </>
+              ) : isTwoColumn ? (
                 <>
                   <div className="flex-1">
                     <label className="text-sm font-medium text-muted-foreground mb-2 block">Left Column</label>
@@ -214,11 +262,14 @@ const Index = () => {
             <div className="flex-1 overflow-auto p-6 pt-0">
               <ResumePreview
                 ref={previewRef}
-                markdown={isTwoColumn ? '' : markdown}
+                markdown={isTwoColumn || isTwoPage ? '' : markdown}
                 leftColumn={isTwoColumn ? leftColumn : ''}
                 rightColumn={isTwoColumn ? rightColumn : ''}
+                firstPage={isTwoPage ? firstPage : ''}
+                secondPage={isTwoPage ? secondPage : ''}
                 template={selectedTemplate}
                 isTwoColumn={isTwoColumn}
+                isTwoPage={isTwoPage}
               />
             </div>
           </Card>

@@ -5,11 +5,18 @@ interface ResumeTemplatesProps {
   htmlContent: string;
   template: string;
   isTwoColumn?: boolean;
+  isTwoPage?: boolean;
 }
 
-export const ResumeTemplates = ({ htmlContent, template, isTwoColumn = false }: ResumeTemplatesProps) => {
+export const ResumeTemplates = ({ htmlContent, template, isTwoColumn = false, isTwoPage = false }: ResumeTemplatesProps) => {
   const getTemplateClasses = () => {
-    const baseClass = isTwoColumn ? 'resume-two-column-layout' : '';
+    let baseClass = '';
+    if (isTwoPage) {
+      baseClass = 'resume-two-page-layout';
+    } else if (isTwoColumn) {
+      baseClass = 'resume-two-column-layout';
+    }
+    
     switch (template) {
       case 'professional':
         return cn(baseClass, 'template-professional');

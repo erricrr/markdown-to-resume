@@ -11,11 +11,23 @@ interface PrintPreviewProps {
   markdown: string;
   leftColumn?: string;
   rightColumn?: string;
+  firstPage?: string;
+  secondPage?: string;
   template: string;
   isTwoColumn?: boolean;
+  isTwoPage?: boolean;
 }
 
-export const PrintPreview = ({ markdown, leftColumn = '', rightColumn = '', template, isTwoColumn = false }: PrintPreviewProps) => {
+export const PrintPreview = ({ 
+  markdown, 
+  leftColumn = '', 
+  rightColumn = '', 
+  firstPage = '', 
+  secondPage = '', 
+  template, 
+  isTwoColumn = false, 
+  isTwoPage = false 
+}: PrintPreviewProps) => {
   const [isExporting, setIsExporting] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -69,8 +81,11 @@ export const PrintPreview = ({ markdown, leftColumn = '', rightColumn = '', temp
             markdown={markdown}
             leftColumn={leftColumn}
             rightColumn={rightColumn}
+            firstPage={firstPage}
+            secondPage={secondPage}
             template={template}
             isTwoColumn={isTwoColumn}
+            isTwoPage={isTwoPage}
           />
         </div>
       </DialogContent>
