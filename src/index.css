@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -119,21 +118,22 @@
   @apply border-0 border-t border-gray-300 my-4;
 }
 
-/* Table styles */
+/* Table styles - borderless tables */
 .resume-table {
-  @apply w-full border-collapse mb-4;
+  @apply w-full mb-4;
+  border-collapse: collapse;
 }
 
 .resume-table-header {
-  @apply border border-gray-300 px-3 py-2 bg-gray-50 font-semibold text-left;
+  @apply px-3 py-2 font-semibold text-left;
 }
 
 .resume-table-cell {
-  @apply border border-gray-300 px-3 py-2 align-top;
+  @apply px-3 py-2 align-top;
 }
 
 .resume-table-row {
-  @apply border-b border-gray-200;
+  /* Remove border */
 }
 
 /* Professional Template */
@@ -177,7 +177,8 @@
 }
 
 .template-professional .resume-table-header {
-  @apply bg-blue-50 font-semibold text-blue-900;
+  @apply font-semibold text-gray-900;
+  background: none;
 }
 
 .template-professional .resume-hr {
@@ -225,7 +226,8 @@
 }
 
 .template-modern .resume-table-header {
-  @apply bg-purple-50 font-medium text-purple-700;
+  @apply font-medium text-purple-700;
+  background: none;
 }
 
 .template-modern .resume-hr {
@@ -273,7 +275,8 @@
 }
 
 .template-minimalist .resume-table-header {
-  @apply bg-gray-50 font-normal text-black;
+  @apply font-normal text-black;
+  background: none;
 }
 
 .template-minimalist .resume-hr {
@@ -326,7 +329,8 @@
 }
 
 .template-creative .resume-table-header {
-  @apply bg-green-50 font-semibold text-green-700;
+  @apply font-semibold text-green-700;
+  background: none;
 }
 
 .template-creative .resume-hr {
@@ -374,7 +378,8 @@
 }
 
 .template-executive .resume-table-header {
-  @apply bg-red-50 font-bold text-red-700;
+  @apply font-bold text-red-700;
+  background: none;
 }
 
 .template-executive .resume-hr {
