@@ -20,27 +20,26 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
     // Custom renderer for better resume formatting
     const renderer = new marked.Renderer();
     
-    // Helper function to parse tokens properly
-    const parseTokens = (tokens: any[]): string => {
+    // Helper function to extract text from tokens recursively
+    const extractText = (tokens: any[]): string => {
+      if (!tokens) return '';
+      
       return tokens.map(token => {
-        if (token.type === 'text') {
-          return token.text || '';
-        } else if (token.type === 'strong') {
-          return `<strong class="resume-strong">${parseTokens(token.tokens || [])}</strong>`;
-        } else if (token.type === 'em') {
-          return `<em class="resume-emphasis">${parseTokens(token.tokens || [])}</em>`;
-        } else if (token.type === 'link') {
-          return `<a href="${token.href}" class="resume-link">${parseTokens(token.tokens || [])}</a>`;
-        } else if (token.type === 'code') {
-          return `<code class="resume-code">${token.text}</code>`;
-        }
-        return token.raw || '';
+        if (typeof token === 'string') return token;
+        if (token.type === 'text') return token.text || '';
+        if (token.type === 'strong') return `<strong class="resume-strong">${extractText(token.tokens || [])}</strong>`;
+        if (token.type === 'em') return `<em class="resume-emphasis">${extractText(token.tokens || [])}</em>`;
+        if (token.type === 'link') return `<a href="${token.href}" class="resume-link">${extractText(token.tokens || [])}</a>`;
+        if (token.type === 'code') return `<code class="resume-code">${token.text}</code>`;
+        if (token.type === 'codespan') return `<code class="resume-code">${token.text}</code>`;
+        if (token.tokens) return extractText(token.tokens);
+        return token.raw || token.text || '';
       }).join('');
     };
 
     // Custom heading renderer
     renderer.heading = ({ tokens, depth }) => {
-      const text = parseTokens(tokens);
+      const text = extractText(tokens);
       const escapedText = text.toLowerCase().replace(/[^\w]+/g, '-');
       return `<h${depth} id="${escapedText}" class="resume-heading-${depth}">${text}</h${depth}>`;
     };
@@ -48,7 +47,7 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
     // Custom list renderer
     renderer.list = (token) => {
       const body = token.items.map(item => 
-        `<li class="resume-list-item">${parseTokens(item.tokens)}</li>`
+        `<li class="resume-list-item">${extractText(item.tokens)}</li>`
       ).join('');
       const tag = token.ordered ? 'ol' : 'ul';
       return `<${tag} class="resume-list">${body}</${tag}>`;
@@ -56,25 +55,25 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
 
     // Custom list item renderer
     renderer.listitem = (item) => {
-      const text = parseTokens(item.tokens);
+      const text = extractText(item.tokens);
       return `<li class="resume-list-item">${text}</li>`;
     };
 
     // Custom paragraph renderer
     renderer.paragraph = ({ tokens }) => {
-      const text = parseTokens(tokens);
+      const text = extractText(tokens);
       return `<p class="resume-paragraph">${text}</p>`;
     };
 
-    // Custom strong/bold renderer (this won't be called directly due to parseTokens handling)
+    // Custom strong/bold renderer
     renderer.strong = ({ tokens }) => {
-      const text = parseTokens(tokens);
+      const text = extractText(tokens);
       return `<strong class="resume-strong">${text}</strong>`;
     };
 
-    // Custom emphasis/italic renderer (this won't be called directly due to parseTokens handling)
+    // Custom emphasis/italic renderer
     renderer.em = ({ tokens }) => {
-      const text = parseTokens(tokens);
+      const text = extractText(tokens);
       return `<em class="resume-emphasis">${text}</em>`;
     };
 
