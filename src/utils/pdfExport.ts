@@ -16,16 +16,17 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
 
     const imgData = canvas.toDataURL('image/png');
     
-    // Calculate dimensions with proper margins
-    const marginInMM = 20; // 0.75 inch margins (19.05mm ≈ 0.75 inch, rounded to 20mm for clean numbers)
+    // Use a more reasonable margin for A4 resumes
+    const marginInMM = 10; // 10mm margins (~0.4 inch, professional and space-efficient)
     const pageWidth = 210; // A4 width in mm
     const pageHeight = 297; // A4 height in mm
-    const contentWidth = pageWidth - (2 * marginInMM); // 170mm content width
-    const contentHeight = pageHeight - (2 * marginInMM); // 257mm content height
+    const contentWidth = pageWidth - (2 * marginInMM); // 190mm content width
+    const contentHeight = pageHeight - (2 * marginInMM); // 277mm content height
     
     // Calculate image dimensions maintaining aspect ratio
     const imgAspectRatio = canvas.width / canvas.height;
     const contentAspectRatio = contentWidth / contentHeight;
+
     
     let imgWidth, imgHeight;
     if (imgAspectRatio > contentAspectRatio) {
