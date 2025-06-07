@@ -1,4 +1,3 @@
-
 import { forwardRef } from 'react';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
@@ -17,7 +16,6 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
         marked.setOptions({
           breaks: true,
           gfm: true,
-          tables: true,
           sanitize: false,
         });
 
