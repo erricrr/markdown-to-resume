@@ -1,3 +1,4 @@
+
 import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -105,7 +106,6 @@ const Index = () => {
   const [selectedTemplate, setSelectedTemplate] = useState('professional');
   const [isTwoColumn, setIsTwoColumn] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
-  const [showPrintPreview, setShowPrintPreview] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -132,10 +132,6 @@ const Index = () => {
 
   const handlePrintPDF = () => {
     window.print();
-  };
-
-  const handleShowPrintPreview = () => {
-    setShowPrintPreview(true);
   };
 
   return (
@@ -166,14 +162,6 @@ const Index = () => {
                 selectedTemplate={selectedTemplate}
                 onTemplateChange={setSelectedTemplate}
               />
-              <Button 
-                onClick={handleShowPrintPreview}
-                variant="outline"
-                className="flex items-center gap-2"
-              >
-                <Printer className="h-4 w-4" />
-                Print Preview
-              </Button>
               <Button 
                 onClick={handlePrintPDF}
                 variant="outline"
@@ -262,18 +250,6 @@ const Index = () => {
           </Card>
         </div>
       </div>
-
-      {/* Print Preview Modal */}
-      <PrintPreview
-        isOpen={showPrintPreview}
-        onClose={() => setShowPrintPreview(false)}
-        markdown={isTwoColumn ? '' : markdown}
-        leftColumn={isTwoColumn ? leftColumn : ''}
-        rightColumn={isTwoColumn ? rightColumn : ''}
-        template={selectedTemplate}
-        isTwoColumn={isTwoColumn}
-        onPrint={handlePrintPDF}
-      />
     </div>
   );
 };
