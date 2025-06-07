@@ -134,10 +134,13 @@
 
 .template-professional .resume-list {
   @apply mb-4 ml-4;
+  list-style-type: disc;
+  padding-left: 1rem;
 }
 
 .template-professional .resume-list-item {
   @apply mb-2 text-gray-700;
+  display: list-item;
 }
 
 .template-professional .resume-strong {
@@ -171,10 +174,13 @@
 
 .template-modern .resume-list {
   @apply mb-4 ml-6;
+  list-style-type: disc;
+  padding-left: 1rem;
 }
 
 .template-modern .resume-list-item {
   @apply mb-2 text-gray-600;
+  display: list-item;
 }
 
 .template-modern .resume-strong {
@@ -208,10 +214,13 @@
 
 .template-minimalist .resume-list {
   @apply mb-4 ml-0;
+  list-style-type: disc;
+  padding-left: 1rem;
 }
 
 .template-minimalist .resume-list-item {
   @apply mb-2 text-gray-800 font-light;
+  display: list-item;
 }
 
 .template-minimalist .resume-strong {
@@ -250,10 +259,13 @@
 
 .template-creative .resume-list {
   @apply mb-4 ml-4;
+  list-style-type: disc;
+  padding-left: 1rem;
 }
 
 .template-creative .resume-list-item {
   @apply mb-2 text-gray-700;
+  display: list-item;
 }
 
 .template-creative .resume-strong {
@@ -287,10 +299,13 @@
 
 .template-executive .resume-list {
   @apply mb-4 ml-4;
+  list-style-type: disc;
+  padding-left: 1rem;
 }
 
 .template-executive .resume-list-item {
   @apply mb-2 text-gray-700;
+  display: list-item;
 }
 
 .template-executive .resume-strong {
