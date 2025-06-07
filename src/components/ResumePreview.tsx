@@ -29,25 +29,28 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
           return `<h${depth} id="${escapedText}" class="resume-heading-${depth}">${text}</h${depth}>`;
         };
 
-        // Override paragraph renderer
+        // Override paragraph renderer - let marked parse inline elements
         renderer.paragraph = ({ tokens }) => {
-          const text = tokens.map(token => token.raw || '').join('');
-          return `<p class="resume-paragraph">${text}</p>`;
+          // Use marked to parse the tokens properly instead of raw text
+          const parsedContent = marked.parseInline(tokens.map(token => token.raw || '').join(''));
+          return `<p class="resume-paragraph">${parsedContent}</p>`;
         };
 
         // Override list renderer
         renderer.list = (token) => {
-          const body = token.items.map(item => 
-            `<li class="resume-list-item">${item.tokens?.map(t => t.raw || '').join('') || ''}</li>`
-          ).join('');
+          const body = token.items.map(item => {
+            // Parse inline content for each list item
+            const itemContent = marked.parseInline(item.tokens?.map(t => t.raw || '').join('') || '');
+            return `<li class="resume-list-item">${itemContent}</li>`;
+          }).join('');
           const tag = token.ordered ? 'ol' : 'ul';
           return `<${tag} class="resume-list">${body}</${tag}>`;
         };
 
         // Override list item renderer
         renderer.listitem = ({ tokens }) => {
-          const text = tokens.map(token => token.raw || '').join('');
-          return `<li class="resume-list-item">${text}</li>`;
+          const parsedContent = marked.parseInline(tokens.map(token => token.raw || '').join(''));
+          return `<li class="resume-list-item">${parsedContent}</li>`;
         };
 
         // Override strong renderer
