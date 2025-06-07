@@ -20,41 +20,43 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
     // Custom renderer for better resume formatting
     const renderer = new marked.Renderer();
     
-    // Custom heading renderer - using correct API
+    // Custom heading renderer
     renderer.heading = ({ tokens, depth }) => {
-      const text = this.parser.parseInline(tokens);
+      const text = tokens.map(token => token.raw || '').join('');
       const escapedText = text.toLowerCase().replace(/[^\w]+/g, '-');
       return `<h${depth} id="${escapedText}" class="resume-heading-${depth}">${text}</h${depth}>`;
     };
 
-    // Custom list renderer - using correct API
+    // Custom list renderer
     renderer.list = (token) => {
-      const body = this.parser.parse(token.items);
+      const body = token.items.map(item => 
+        `<li class="resume-list-item">${item.tokens.map(t => t.raw || '').join('')}</li>`
+      ).join('');
       const tag = token.ordered ? 'ol' : 'ul';
       return `<${tag} class="resume-list">${body}</${tag}>`;
     };
 
     // Custom list item renderer
     renderer.listitem = (item) => {
-      const text = this.parser.parseInline(item.tokens);
+      const text = item.tokens.map(token => token.raw || '').join('');
       return `<li class="resume-list-item">${text}</li>`;
     };
 
     // Custom paragraph renderer
     renderer.paragraph = ({ tokens }) => {
-      const text = this.parser.parseInline(tokens);
+      const text = tokens.map(token => token.raw || '').join('');
       return `<p class="resume-paragraph">${text}</p>`;
     };
 
     // Custom strong/bold renderer
     renderer.strong = ({ tokens }) => {
-      const text = this.parser.parseInline(tokens);
+      const text = tokens.map(token => token.raw || '').join('');
       return `<strong class="resume-strong">${text}</strong>`;
     };
 
     // Custom emphasis/italic renderer
     renderer.em = ({ tokens }) => {
-      const text = this.parser.parseInline(tokens);
+      const text = tokens.map(token => token.raw || '').join('');
       return `<em class="resume-emphasis">${text}</em>`;
     };
 
