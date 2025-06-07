@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { 
@@ -8,6 +7,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ChevronDown, Palette } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface TemplateSelectorProps {
   selectedTemplate: string;

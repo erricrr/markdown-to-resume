@@ -20,42 +20,49 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
     // Custom renderer for better resume formatting
     const renderer = new marked.Renderer();
     
-    // Custom heading renderer
-    renderer.heading = (text, level) => {
+    // Custom heading renderer - updated API
+    renderer.heading = ({ tokens, depth }) => {
+      const text = tokens.map(token => token.raw || '').join('');
       const escapedText = text.toLowerCase().replace(/[^\w]+/g, '-');
-      return `<h${level} id="${escapedText}" class="resume-heading-${level}">${text}</h${level}>`;
+      return `<h${depth} id="${escapedText}" class="resume-heading-${depth}">${text}</h${depth}>`;
     };
 
-    // Custom list renderer
-    renderer.list = (body, ordered) => {
-      const tag = ordered ? 'ol' : 'ul';
+    // Custom list renderer - updated API
+    renderer.list = (token) => {
+      const tag = token.ordered ? 'ol' : 'ul';
+      const body = token.items.map(item => item.raw || '').join('');
       return `<${tag} class="resume-list">${body}</${tag}>`;
     };
 
     // Custom list item renderer
-    renderer.listitem = (text) => {
+    renderer.listitem = (token) => {
+      const text = token.tokens?.map(t => t.raw || '').join('') || '';
       return `<li class="resume-list-item">${text}</li>`;
     };
 
     // Custom paragraph renderer
-    renderer.paragraph = (text) => {
+    renderer.paragraph = (token) => {
+      const text = token.tokens?.map(t => t.raw || '').join('') || '';
       return `<p class="resume-paragraph">${text}</p>`;
     };
 
     // Custom strong/bold renderer
-    renderer.strong = (text) => {
+    renderer.strong = (token) => {
+      const text = token.tokens?.map(t => t.raw || '').join('') || '';
       return `<strong class="resume-strong">${text}</strong>`;
     };
 
     // Custom emphasis/italic renderer
-    renderer.em = (text) => {
+    renderer.em = (token) => {
+      const text = token.tokens?.map(t => t.raw || '').join('') || '';
       return `<em class="resume-emphasis">${text}</em>`;
     };
 
     const parseMarkdown = (md: string) => {
       try {
-        const html = marked(md, { renderer });
-        return DOMPurify.sanitize(html);
+        // Use synchronous marked function
+        const html = marked.parse(md, { renderer });
+        return DOMPurify.sanitize(html as string);
       } catch (error) {
         console.error('Error parsing markdown:', error);
         return '<p>Error parsing markdown content</p>';
