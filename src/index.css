@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -477,15 +478,35 @@
   }
 }
 
-/* Print styles */
+/* Print styles - Enhanced for consistent margins */
 @media print {
+  @page {
+    size: A4;
+    margin: 0.75in;
+  }
+  
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 12pt !important;
+    line-height: 1.3 !important;
+  }
+  
   .resume-template {
-    @apply shadow-none;
-    margin: 0;
-    max-width: none;
-    width: 100%;
-    min-height: auto;
-    padding: 0.75in;
+    @apply shadow-none bg-white;
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: none !important;
+    width: 100% !important;
+    min-height: auto !important;
+    box-shadow: none !important;
+    border: none !important;
     page-break-inside: avoid;
   }
   
@@ -502,5 +523,18 @@
   
   .resume-table {
     page-break-inside: avoid;
+  }
+  
+  /* Hide non-printable elements */
+  .print-preview-container {
+    background: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+  }
+  
+  .print-preview-container .resume-template {
+    transform: none !important;
+    box-shadow: none !important;
+    border: none !important;
   }
 }
