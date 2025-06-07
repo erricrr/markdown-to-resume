@@ -3,8 +3,7 @@ import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Download, FileText, Palette } from 'lucide-react';
+import { Download, FileText, Printer } from 'lucide-react';
 import { ResumePreview } from '@/components/ResumePreview';
 import { TemplateSelector } from '@/components/TemplateSelector';
 import { exportToPDF } from '@/utils/pdfExport';
@@ -81,6 +80,10 @@ const Index = () => {
     }
   };
 
+  const handlePrintPDF = () => {
+    window.print();
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Header */}
@@ -102,6 +105,14 @@ const Index = () => {
                 onTemplateChange={setSelectedTemplate}
               />
               <Button 
+                onClick={handlePrintPDF}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <Printer className="h-4 w-4" />
+                Print PDF
+              </Button>
+              <Button 
                 onClick={handleExportPDF}
                 disabled={isExporting}
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
@@ -118,26 +129,32 @@ const Index = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-2 gap-8 h-[calc(100vh-200px)]">
           {/* Markdown Input */}
-          <Card className="p-6 shadow-lg border-0 bg-white/70 backdrop-blur-sm">
-            <div className="flex items-center gap-2 mb-4">
-              <Palette className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-semibold text-foreground">Markdown Input</h2>
+          <Card className="shadow-lg border-0 bg-white/70 backdrop-blur-sm flex flex-col">
+            <div className="p-6 border-b">
+              <div className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-primary" />
+                <h2 className="text-lg font-semibold text-foreground">Markdown Input</h2>
+              </div>
             </div>
-            <Textarea
-              value={markdown}
-              onChange={(e) => setMarkdown(e.target.value)}
-              placeholder="Enter your resume in Markdown format..."
-              className="h-full resize-none font-mono text-sm border-0 bg-white/50 focus:bg-white transition-colors"
-            />
+            <div className="flex-1 p-6 pt-0">
+              <Textarea
+                value={markdown}
+                onChange={(e) => setMarkdown(e.target.value)}
+                placeholder="Enter your resume in Markdown format..."
+                className="h-full resize-none font-mono text-sm border-0 bg-white/50 focus:bg-white transition-colors"
+              />
+            </div>
           </Card>
 
           {/* Resume Preview */}
-          <Card className="p-6 shadow-xl border-0 bg-white overflow-hidden">
-            <div className="flex items-center gap-2 mb-4">
-              <FileText className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-semibold text-foreground">Preview</h2>
+          <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col">
+            <div className="p-6 border-b">
+              <div className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-primary" />
+                <h2 className="text-lg font-semibold text-foreground">Preview</h2>
+              </div>
             </div>
-            <div className="h-full overflow-auto">
+            <div className="flex-1 overflow-auto p-6 pt-0">
               <ResumePreview
                 ref={previewRef}
                 markdown={markdown}
