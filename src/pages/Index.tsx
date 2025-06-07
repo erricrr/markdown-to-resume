@@ -1,15 +1,12 @@
-
 import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
-import { Download, FileText, Printer, Columns2 } from 'lucide-react';
+import { FileText, Printer, Columns2 } from 'lucide-react';
 import { ResumePreview } from '@/components/ResumePreview';
 import { PrintPreview } from '@/components/PrintPreview';
 import { TemplateSelector } from '@/components/TemplateSelector';
-import { exportToPDF } from '@/utils/pdfExport';
-import { useToast } from '@/hooks/use-toast';
 
 const defaultMarkdown = `# John Doe
 **Software Engineer** | john.doe@email.com | (555) 123-4567 | linkedin.com/in/johndoe
@@ -106,30 +103,7 @@ const Index = () => {
   const [rightColumn, setRightColumn] = useState(defaultRightColumn);
   const [selectedTemplate, setSelectedTemplate] = useState('professional');
   const [isTwoColumn, setIsTwoColumn] = useState(false);
-  const [isExporting, setIsExporting] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
-  const { toast } = useToast();
-
-  const handleExportPDF = async () => {
-    if (!previewRef.current) return;
-    
-    setIsExporting(true);
-    try {
-      await exportToPDF(previewRef.current, 'resume.pdf');
-      toast({
-        title: "PDF Downloaded!",
-        description: "Your resume has been saved as a PDF file.",
-      });
-    } catch (error) {
-      toast({
-        title: "Export Failed",
-        description: "There was an error generating your PDF. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsExporting(false);
-    }
-  };
 
   const handlePrintPDF = () => {
     window.print();
@@ -177,14 +151,6 @@ const Index = () => {
               >
                 <Printer className="h-4 w-4" />
                 Print PDF
-              </Button>
-              <Button 
-                onClick={handleExportPDF}
-                disabled={isExporting}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-              >
-                <Download className="h-4 w-4 mr-2" />
-                {isExporting ? 'Generating...' : 'Download PDF'}
               </Button>
             </div>
           </div>
