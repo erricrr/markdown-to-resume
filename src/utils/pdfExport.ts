@@ -20,7 +20,7 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
       element.style.border = 'none';
       element.style.transform = 'none';
       element.style.margin = '0';
-      element.style.padding = '0.75in';
+      element.style.padding = '0.5in'; // Reduced from 0.75in to 0.5in
       element.style.width = '8.5in';
       element.style.minHeight = '11in';
       element.style.backgroundColor = 'white';
@@ -39,20 +39,21 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
           htmlEl.style.color = '#000';
         }
         
-        // Fix list styling
+        // Fix list styling with proper bullets and alignment
         if (htmlEl.tagName === 'UL' || htmlEl.tagName === 'OL') {
           htmlEl.style.listStyleType = htmlEl.tagName === 'UL' ? 'disc' : 'decimal';
-          htmlEl.style.paddingLeft = '24px';
+          htmlEl.style.paddingLeft = '20px';
           htmlEl.style.marginLeft = '0';
           htmlEl.style.marginBottom = '12px';
+          htmlEl.style.listStylePosition = 'outside';
         }
         
         if (htmlEl.tagName === 'LI') {
           htmlEl.style.display = 'list-item';
           htmlEl.style.listStyleType = 'inherit';
           htmlEl.style.listStylePosition = 'outside';
-          htmlEl.style.marginBottom = '6px';
-          htmlEl.style.paddingLeft = '6px';
+          htmlEl.style.marginBottom = '4px';
+          htmlEl.style.paddingLeft = '4px';
           htmlEl.style.fontSize = '12pt';
           htmlEl.style.lineHeight = '1.4';
         }
@@ -91,7 +92,7 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
       
       if (firstPageElement && secondPageElement) {
         const pdf = new jsPDF('p', 'mm', 'a4');
-        const marginInMM = 19.05; // 0.75 inch in mm
+        const marginInMM = 12.7; // Reduced from 19.05mm (0.75in) to 12.7mm (0.5in)
         const pageWidth = 210; // A4 width in mm
         const pageHeight = 297; // A4 height in mm
         const contentWidth = pageWidth - (2 * marginInMM);
@@ -219,8 +220,8 @@ export const exportToPDF = async (element: HTMLElement, filename: string = 'resu
 
     const imgData = canvas.toDataURL('image/png');
     
-    // Use 0.75 inch margins (same as CSS)
-    const marginInMM = 19.05; // 0.75 inch in mm
+    // Use reduced 0.5 inch margins instead of 0.75 inch
+    const marginInMM = 12.7; // 0.5 inch in mm (reduced from 19.05mm)
     const pageWidth = 210; // A4 width in mm
     const pageHeight = 297; // A4 height in mm
     const contentWidth = pageWidth - (2 * marginInMM);
