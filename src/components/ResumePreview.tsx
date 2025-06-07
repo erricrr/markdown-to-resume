@@ -1,4 +1,3 @@
-
 import { forwardRef } from 'react';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
@@ -39,19 +38,20 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
         // Override list renderer
         renderer.list = (token) => {
           const body = token.items.map(item => {
-            // Parse inline content for each list item
-            const itemContent = marked.parseInline(item.tokens?.map(t => t.raw || '').join('') || '');
+            // Parse inline content for each list item but preserve the list structure
+            const itemText = item.tokens?.map(t => t.raw || '').join('') || '';
+            const itemContent = marked.parseInline(itemText);
             return `<li class="resume-list-item">${itemContent}</li>`;
           }).join('');
           const tag = token.ordered ? 'ol' : 'ul';
           return `<${tag} class="resume-list">${body}</${tag}>`;
         };
 
-        // Override list item renderer
-        renderer.listitem = ({ tokens }) => {
-          const parsedContent = marked.parseInline(tokens.map(token => token.raw || '').join(''));
-          return `<li class="resume-list-item">${parsedContent}</li>`;
-        };
+        // Remove the listitem renderer to let the default one handle bullets
+        // renderer.listitem = ({ tokens }) => {
+        //   const parsedContent = marked.parseInline(tokens.map(token => token.raw || '').join(''));
+        //   return `<li class="resume-list-item">${parsedContent}</li>`;
+        // };
 
         // Override strong renderer
         renderer.strong = ({ tokens }) => {
