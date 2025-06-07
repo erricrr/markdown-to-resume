@@ -1,13 +1,12 @@
-
-import { useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { FileText, Printer, Columns2, FileStack } from 'lucide-react';
-import { ResumePreview } from '@/components/ResumePreview';
-import { PrintPreview } from '@/components/PrintPreview';
-import { TemplateSelector } from '@/components/TemplateSelector';
+import { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { FileText, Printer, Columns2, FileStack } from "lucide-react";
+import { ResumePreview } from "@/components/ResumePreview";
+import { PrintPreview } from "@/components/PrintPreview";
+import { TemplateSelector } from "@/components/TemplateSelector";
 
 const defaultMarkdown = `# John Doe
 **Software Engineer** | john.doe@email.com | (555) 123-4567 | linkedin.com/in/johndoe
@@ -104,8 +103,8 @@ const Index = () => {
   const [leftColumn, setLeftColumn] = useState(defaultLeftColumn);
   const [rightColumn, setRightColumn] = useState(defaultRightColumn);
   const [firstPage, setFirstPage] = useState(defaultMarkdown);
-  const [secondPage, setSecondPage] = useState('');
-  const [selectedTemplate, setSelectedTemplate] = useState('professional');
+  const [secondPage, setSecondPage] = useState("");
+  const [selectedTemplate, setSelectedTemplate] = useState("professional");
   const [isTwoColumn, setIsTwoColumn] = useState(false);
   const [isTwoPage, setIsTwoPage] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
@@ -115,9 +114,9 @@ const Index = () => {
   };
 
   const getInputMode = () => {
-    if (isTwoPage) return 'twoPage';
-    if (isTwoColumn) return 'twoColumn';
-    return 'single';
+    if (isTwoPage) return "twoPage";
+    if (isTwoColumn) return "twoColumn";
+    return "single";
   };
 
   return (
@@ -131,8 +130,12 @@ const Index = () => {
                 <FileText className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-foreground">ResumeBuilder Pro</h1>
-                <p className="text-sm text-muted-foreground">Transform markdown into professional resumes</p>
+                <h1 className="text-2xl font-bold text-foreground">
+                  Markdown to Resume
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                  Transform markdown into professional resumes
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -173,7 +176,7 @@ const Index = () => {
                 isTwoColumn={isTwoColumn}
                 isTwoPage={isTwoPage}
               />
-              <Button 
+              <Button
                 onClick={handlePrintPDF}
                 variant="outline"
                 className="flex items-center gap-2"
@@ -195,7 +198,11 @@ const Index = () => {
               <div className="flex items-center gap-2">
                 <FileText className="h-5 w-5 text-primary" />
                 <h2 className="text-lg font-semibold text-foreground">
-                  {isTwoPage ? 'Markdown Input (Two Pages)' : isTwoColumn ? 'Markdown Input (Two Columns)' : 'Markdown Input'}
+                  {isTwoPage
+                    ? "Markdown Input (Two Pages)"
+                    : isTwoColumn
+                      ? "Markdown Input (Two Columns)"
+                      : "Markdown Input"}
                 </h2>
               </div>
             </div>
@@ -203,7 +210,9 @@ const Index = () => {
               {isTwoPage ? (
                 <>
                   <div className="flex-1">
-                    <label className="text-sm font-medium text-muted-foreground mb-2 block">Page 1</label>
+                    <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                      Page 1
+                    </label>
                     <Textarea
                       value={firstPage}
                       onChange={(e) => setFirstPage(e.target.value)}
@@ -212,7 +221,9 @@ const Index = () => {
                     />
                   </div>
                   <div className="flex-1">
-                    <label className="text-sm font-medium text-muted-foreground mb-2 block">Page 2</label>
+                    <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                      Page 2
+                    </label>
                     <Textarea
                       value={secondPage}
                       onChange={(e) => setSecondPage(e.target.value)}
@@ -224,7 +235,9 @@ const Index = () => {
               ) : isTwoColumn ? (
                 <>
                   <div className="flex-none">
-                    <label className="text-sm font-medium text-muted-foreground mb-2 block">Header</label>
+                    <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                      Header
+                    </label>
                     <Textarea
                       value={header}
                       onChange={(e) => setHeader(e.target.value)}
@@ -233,7 +246,9 @@ const Index = () => {
                     />
                   </div>
                   <div className="flex-1">
-                    <label className="text-sm font-medium text-muted-foreground mb-2 block">Left Column</label>
+                    <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                      Left Column
+                    </label>
                     <Textarea
                       value={leftColumn}
                       onChange={(e) => setLeftColumn(e.target.value)}
@@ -242,7 +257,9 @@ const Index = () => {
                     />
                   </div>
                   <div className="flex-1">
-                    <label className="text-sm font-medium text-muted-foreground mb-2 block">Right Column</label>
+                    <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                      Right Column
+                    </label>
                     <Textarea
                       value={rightColumn}
                       onChange={(e) => setRightColumn(e.target.value)}
@@ -267,18 +284,20 @@ const Index = () => {
             <div className="p-6 border-b">
               <div className="flex items-center gap-2">
                 <FileText className="h-5 w-5 text-primary" />
-                <h2 className="text-lg font-semibold text-foreground">Preview</h2>
+                <h2 className="text-lg font-semibold text-foreground">
+                  Preview
+                </h2>
               </div>
             </div>
             <div className="flex-1 overflow-auto p-6 pt-0">
               <ResumePreview
                 ref={previewRef}
-                markdown={isTwoColumn || isTwoPage ? '' : markdown}
-                leftColumn={isTwoColumn ? leftColumn : ''}
-                rightColumn={isTwoColumn ? rightColumn : ''}
-                header={isTwoColumn ? header : ''}
-                firstPage={isTwoPage ? firstPage : ''}
-                secondPage={isTwoPage ? secondPage : ''}
+                markdown={isTwoColumn || isTwoPage ? "" : markdown}
+                leftColumn={isTwoColumn ? leftColumn : ""}
+                rightColumn={isTwoColumn ? rightColumn : ""}
+                header={isTwoColumn ? header : ""}
+                firstPage={isTwoPage ? firstPage : ""}
+                secondPage={isTwoPage ? secondPage : ""}
                 template={selectedTemplate}
                 isTwoColumn={isTwoColumn}
                 isTwoPage={isTwoPage}
