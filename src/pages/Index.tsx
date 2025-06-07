@@ -176,14 +176,6 @@ const Index = () => {
                 isTwoColumn={isTwoColumn}
                 isTwoPage={isTwoPage}
               />
-              <Button
-                onClick={handlePrintPDF}
-                variant="outline"
-                className="flex items-center gap-2"
-              >
-                <Printer className="h-4 w-4" />
-                Print PDF
-              </Button>
             </div>
           </div>
         </div>
