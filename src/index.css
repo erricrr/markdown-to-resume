@@ -386,6 +386,41 @@
   @apply border-red-200;
 }
 
+/* Custom Resume Styles - Add your own custom classes here */
+@layer components {
+  .custom-highlight {
+    @apply bg-yellow-200 px-2 py-1 rounded;
+  }
+  
+  .custom-badge {
+    @apply inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded-full;
+  }
+  
+  .custom-quote {
+    @apply border-l-4 border-gray-300 pl-4 italic text-gray-600 my-4;
+  }
+  
+  .custom-skill-tag {
+    @apply inline-block bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full mr-2 mb-2;
+  }
+  
+  .custom-section-divider {
+    @apply w-full h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent my-6;
+  }
+  
+  .custom-company-name {
+    @apply font-bold text-blue-600;
+  }
+  
+  .custom-date-range {
+    @apply text-gray-500 font-medium;
+  }
+  
+  .custom-achievement {
+    @apply bg-green-50 border-l-4 border-green-400 p-3 my-2;
+  }
+}
+
 /* Print styles */
 @media print {
   .resume-template {
