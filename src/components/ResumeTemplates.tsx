@@ -8,7 +8,12 @@ interface ResumeTemplatesProps {
   isPreview?: boolean;
 }
 
-export const ResumeTemplates = ({ htmlContent, template, isTwoColumn = false, isTwoPage = false, isPreview = true }: ResumeTemplatesProps) => {
+// List of valid template IDs
+const validTemplates = ['professional', 'modern', 'minimalist', 'creative', 'executive'];
+
+export const ResumeTemplates = ({ htmlContent, template: propTemplate, isTwoColumn = false, isTwoPage = false, isPreview = true }: ResumeTemplatesProps) => {
+  // Ensure we always have a valid template
+  const template = validTemplates.includes(propTemplate) ? propTemplate : 'professional';
   const getTemplateClasses = () => {
     let baseClass = '';
     if (isTwoPage && isTwoColumn) {

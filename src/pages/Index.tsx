@@ -129,12 +129,21 @@ const Index = () => {
 - Contributor to popular React libraries
 - Maintained documentation for 5+ projects
 - Active in developer community discussions`);
-  const [selectedTemplate, setSelectedTemplate] = useState("professional");
+  const [selectedTemplate, setSelectedTemplate] = useState<string>(() => {
+    // Ensure we always start with 'professional' as the default template
+    console.log('🔵 Initializing selectedTemplate with default value: professional');
+    return 'professional';
+  });
   const [isTwoColumn, setIsTwoColumn] = useState(false);
   const [isTwoPage, setIsTwoPage] = useState(false);
   const [activeTab, setActiveTab] = useState("editor");
   const previewRef = useRef<HTMLDivElement>(null);
   const { addTemplateCSS, debugCSS } = useDynamicCSS();
+
+  // Log when the selected template changes
+  useEffect(() => {
+    console.log('🔄 Selected template changed to:', selectedTemplate);
+  }, [selectedTemplate]);
 
   const handlePrintPDF = () => {
     window.print();

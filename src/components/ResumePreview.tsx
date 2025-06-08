@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, useEffect } from 'react';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import { ResumeTemplates } from '@/components/ResumeTemplates';
@@ -16,8 +16,22 @@ interface ResumePreviewProps {
   isTwoPage?: boolean;
 }
 
+// List of valid template IDs
+const validTemplates = ['professional', 'modern', 'minimalist', 'creative', 'executive'] as const;
+
+type TemplateType = typeof validTemplates[number];
+
 export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
-  ({ markdown, leftColumn = '', rightColumn = '', header = '', summary = '', firstPage = '', secondPage = '', template, isTwoColumn = false, isTwoPage = false }, ref) => {
+  ({ markdown, leftColumn = '', rightColumn = '', header = '', summary = '', firstPage = '', secondPage = '', template: propTemplate, isTwoColumn = false, isTwoPage = false }, ref) => {
+    // Ensure we always have a valid template
+    const template: TemplateType = validTemplates.includes(propTemplate as TemplateType) 
+      ? propTemplate as TemplateType 
+      : 'professional';
+      
+    // Log template changes for debugging
+    useEffect(() => {
+      console.log('🔍 ResumePreview: Template set to', template);
+    }, [template]);
     const parseMarkdown = (md: string) => {
       try {
         // Configure marked with basic options
