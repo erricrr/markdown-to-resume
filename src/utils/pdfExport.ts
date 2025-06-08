@@ -239,8 +239,8 @@ export const exportToPDF = async (resumeData: ResumeData) => {
           color: #000 !important;
           font-weight: bold;
           display: inline-block !important;
-          width: 0.3rem;
-          margin-right: 0.3rem;
+          width: 0.5rem;
+          margin-right: 0.5rem;
           -webkit-print-color-adjust: exact !important;
           print-color-adjust: exact !important;
         }
@@ -333,8 +333,8 @@ export const exportToPDF = async (resumeData: ResumeData) => {
           font-size: 1rem;
           margin-bottom: 0.625rem;
           color: #374151;
-          padding-left: 0.8rem;
-          text-indent: -0.8rem;
+          padding-left: 1rem;
+          text-indent: -1rem;
           line-height: 1.5;
         }
 

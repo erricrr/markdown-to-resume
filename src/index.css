@@ -285,8 +285,8 @@
     font-size: 1rem;
     margin-bottom: 0.625rem;
     color: #374151;
-    padding-left: 0.8rem;
-    text-indent: -0.8rem;
+    padding-left: 1rem;
+    text-indent: -1rem;
     line-height: 1.5;
     display: list-item;
     list-style-type: none;
@@ -298,8 +298,8 @@
     color: #000000;
     font-weight: bold;
     display: inline-block;
-    width: 0.3rem;
-    margin-right: 0.3rem;
+    width: 0.5rem;
+    margin-right: 0.5rem;
 }
 
 .template-professional .resume-strong {
