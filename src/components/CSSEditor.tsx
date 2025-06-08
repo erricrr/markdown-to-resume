@@ -18,27 +18,27 @@ const templates = [
   {
     id: 'professional',
     name: 'Professional',
-    color: 'bg-blue-500',
+    // color: 'bg-blue-500',
   },
   {
     id: 'modern',
     name: 'Modern',
-    color: 'bg-purple-500',
+    // color: 'bg-purple-500',
   },
   {
     id: 'minimalist',
     name: 'Minimalist',
-    color: 'bg-gray-500',
+    // color: 'bg-gray-500',
   },
   {
     id: 'creative',
     name: 'Creative',
-    color: 'bg-green-500',
+    // color: 'bg-green-500',
   },
   {
     id: 'executive',
     name: 'Executive',
-    color: 'bg-red-500',
+    // color: 'bg-red-500',
   },
 ];
 
@@ -272,7 +272,7 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
                   value={template.id}
                   className="flex items-center gap-2 text-xs"
                 >
-                  <div className={`w-2 h-2 rounded-full ${template.color}`} />
+                  {/* <div className={`w-2 h-2 rounded-full ${template.color}`} /> */}
                   {template.name}
                 </TabsTrigger>
               ))}
@@ -288,7 +288,7 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
               <div className="h-full flex flex-col gap-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className={`w-3 h-3 rounded-full ${template.color}`} />
+                    {/* <div className={`w-3 h-3 rounded-full ${template.color}`} /> */}
                     <h3 className="font-medium">{template.name} Template</h3>
                   </div>
                   <div className="flex gap-2">

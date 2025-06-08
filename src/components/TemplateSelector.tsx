@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { 
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -54,7 +54,7 @@ export const TemplateSelector = ({ selectedTemplate, onTemplateChange }: Templat
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="flex items-center gap-2">
-          <div className={`w-3 h-3 rounded-full ${currentTemplate.color}`} />
+          {/* <div className={`w-3 h-3 rounded-full ${currentTemplate.color}`} /> */}
           <span>{currentTemplate.name}</span>
           <ChevronDown className="h-4 w-4" />
         </Button>
@@ -72,7 +72,7 @@ export const TemplateSelector = ({ selectedTemplate, onTemplateChange }: Templat
                 selectedTemplate === template.id && 'ring-2 ring-primary'
               )}>
                 <div className="flex items-center gap-3">
-                  <div className={`w-4 h-4 rounded-full ${template.color}`} />
+                  {/* <div className={`w-4 h-4 rounded-full ${template.color}`} /> */}
                   <div className="flex-1">
                     <h4 className="font-medium text-sm">{template.name}</h4>
                     <p className="text-xs text-muted-foreground">{template.description}</p>
