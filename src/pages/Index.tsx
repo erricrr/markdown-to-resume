@@ -404,20 +404,22 @@ const Index = () => {
                 </h2>
               </div>
             </div>
-            <div className="flex-1 overflow-auto p-6 pt-0">
-              <ResumePreview
-                ref={previewRef}
-                markdown={isTwoColumn || isTwoPage ? "" : markdown}
-                leftColumn={isTwoColumn ? leftColumn : ""}
-                rightColumn={isTwoColumn ? rightColumn : ""}
-                header={isTwoColumn ? header : ""}
-                summary={isTwoColumn ? summary : ""}
-                firstPage={firstPage}
-                secondPage={secondPage}
-                template={selectedTemplate}
-                isTwoColumn={isTwoColumn}
-                isTwoPage={isTwoPage}
-              />
+            <div className="flex-1 overflow-auto p-4 bg-gray-50">
+              <div className="w-full h-full flex items-start justify-center">
+                <ResumePreview
+                  ref={previewRef}
+                  markdown={isTwoColumn || isTwoPage ? "" : markdown}
+                  leftColumn={isTwoColumn ? leftColumn : ""}
+                  rightColumn={isTwoColumn ? rightColumn : ""}
+                  header={isTwoColumn ? header : ""}
+                  summary={isTwoColumn ? summary : ""}
+                  firstPage={firstPage}
+                  secondPage={secondPage}
+                  template={selectedTemplate}
+                  isTwoColumn={isTwoColumn}
+                  isTwoPage={isTwoPage}
+                />
+              </div>
             </div>
           </Card>
         </div>

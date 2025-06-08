@@ -1,4 +1,3 @@
-
 import { cn } from '@/lib/utils';
 
 interface ResumeTemplatesProps {
@@ -6,9 +5,10 @@ interface ResumeTemplatesProps {
   template: string;
   isTwoColumn?: boolean;
   isTwoPage?: boolean;
+  isPreview?: boolean;
 }
 
-export const ResumeTemplates = ({ htmlContent, template, isTwoColumn = false, isTwoPage = false }: ResumeTemplatesProps) => {
+export const ResumeTemplates = ({ htmlContent, template, isTwoColumn = false, isTwoPage = false, isPreview = true }: ResumeTemplatesProps) => {
   const getTemplateClasses = () => {
     let baseClass = '';
     if (isTwoPage && isTwoColumn) {
@@ -18,7 +18,7 @@ export const ResumeTemplates = ({ htmlContent, template, isTwoColumn = false, is
     } else if (isTwoColumn) {
       baseClass = 'resume-two-column-layout';
     }
-    
+
     switch (template) {
       case 'professional':
         return cn(baseClass, 'template-professional');
@@ -35,13 +35,36 @@ export const ResumeTemplates = ({ htmlContent, template, isTwoColumn = false, is
     }
   };
 
-  return (
-    <div
-      className={cn(
+  const getContainerClasses = () => {
+    if (isPreview) {
+      // For preview: scale to fit container width
+      return cn(
+        'resume-template resume-preview-container w-full bg-white shadow-lg',
+        'transform-gpu origin-top',
+        getTemplateClasses()
+      );
+    } else {
+      // For PDF/print: maintain original size
+      return cn(
         'resume-template w-full max-w-4xl mx-auto bg-white shadow-lg',
         getTemplateClasses()
-      )}
-      dangerouslySetInnerHTML={{ __html: htmlContent }}
-    />
+      );
+    }
+  };
+
+  return (
+    <div className="w-full overflow-hidden">
+      <div
+        className={getContainerClasses()}
+        dangerouslySetInnerHTML={{ __html: htmlContent }}
+        style={isPreview ? {
+          width: '8.5in',
+          minHeight: '11in',
+          transformOrigin: 'top left',
+          transform: 'scale(var(--preview-scale, 0.75))',
+          margin: '0 auto'
+        } : undefined}
+      />
+    </div>
   );
 };

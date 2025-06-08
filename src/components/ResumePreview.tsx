@@ -1,4 +1,3 @@
-
 import { forwardRef } from 'react';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
@@ -29,7 +28,7 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
 
         // Parse markdown to HTML synchronously
         const html = marked.parse(md) as string;
-        
+
         // Add resume classes to the HTML elements
         const processedHtml = html
           .replace(/<h1([^>]*)>/g, '<h1$1 class="resume-heading-1">')
@@ -72,7 +71,7 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
         const rightHtml = parseMarkdown(rightColumn);
         const secondPageLeftHtml = parseMarkdown(firstPage);
         const secondPageRightHtml = parseMarkdown(secondPage);
-        
+
         return `
           <div class="resume-two-page">
             <div class="resume-page-first">
@@ -149,6 +148,7 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
           template={template}
           isTwoColumn={isTwoColumn}
           isTwoPage={isTwoPage}
+          isPreview={true}
         />
       </div>
     );
