@@ -1,9 +1,6 @@
-
-import { forwardRef, useRef, useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Eye, Download } from 'lucide-react';
-import { ResumePreview } from '@/components/ResumePreview';
+import { Download } from 'lucide-react';
 import { exportToPDF } from '@/utils/pdfExport';
 import { useToast } from '@/hooks/use-toast';
 
@@ -20,81 +17,53 @@ interface PrintPreviewProps {
   isTwoPage?: boolean;
 }
 
-export const PrintPreview = ({ 
-  markdown, 
-  leftColumn = '', 
-  rightColumn = '', 
+export const PrintPreview = ({
+  markdown,
+  leftColumn = '',
+  rightColumn = '',
   header = '',
   summary = '',
-  firstPage = '', 
-  secondPage = '', 
-  template, 
-  isTwoColumn = false, 
-  isTwoPage = false 
+  firstPage = '',
+  secondPage = '',
+  template,
+  isTwoColumn = false,
+  isTwoPage = false
 }: PrintPreviewProps) => {
   const [isExporting, setIsExporting] = useState(false);
-  const previewRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   const handleExportPDF = async () => {
-    if (!previewRef.current) return;
-    
     setIsExporting(true);
     try {
-      await exportToPDF(previewRef.current, 'resume.pdf');
-      toast({
-        title: "PDF Downloaded!",
-        description: "Your resume has been saved as a PDF file.",
+      await exportToPDF({
+        markdown,
+        leftColumn,
+        rightColumn,
+        header,
+        summary,
+        firstPage,
+        secondPage,
+        template,
+        isTwoColumn,
+        isTwoPage
       });
+      toast({ title: 'PDF Generated', description: 'Your resume PDF has opened in a new tab.' });
     } catch (error) {
-      toast({
-        title: "Export Failed",
-        description: "There was an error generating your PDF. Please try again.",
-        variant: "destructive",
-      });
+      console.error('PDF export error:', error);
+      toast({ title: 'Export Failed', description: 'Could not generate PDF. Please try again.', variant: 'destructive' });
     } finally {
       setIsExporting(false);
     }
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="flex items-center gap-2">
-          <Eye className="h-4 w-4" />
-          Print Preview
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-5xl h-[90vh] overflow-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
-            <span>Print Preview</span>
-            <Button 
-              onClick={handleExportPDF}
-              disabled={isExporting}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-            >
-              <Download className="h-4 w-4 mr-2" />
-              {isExporting ? 'Generating...' : 'Download PDF'}
-            </Button>
-          </DialogTitle>
-        </DialogHeader>
-        <div className="print-preview-container">
-          <ResumePreview
-            ref={previewRef}
-            markdown={markdown}
-            leftColumn={leftColumn}
-            rightColumn={rightColumn}
-            header={header}
-            summary={summary}
-            firstPage={firstPage}
-            secondPage={secondPage}
-            template={template}
-            isTwoColumn={isTwoColumn}
-            isTwoPage={isTwoPage}
-          />
-        </div>
-      </DialogContent>
-    </Dialog>
+    <Button
+      onClick={handleExportPDF}
+      disabled={isExporting}
+      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 flex items-center gap-2"
+    >
+      <Download className="h-4 w-4" />
+      {isExporting ? 'Generating...' : 'Generate PDF'}
+    </Button>
   );
 };

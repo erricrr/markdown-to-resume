@@ -779,7 +779,7 @@
 @media print {
     @page {
         size: A4;
-        margin: 0.5in;
+        margin: 0.25in;
     }
 
     * {
@@ -800,7 +800,7 @@
     .resume-template {
         @apply shadow-none bg-white;
         margin: 0 !important;
-        padding: 0 !important;
+        padding: 0.25in !important;
         max-width: none !important;
         width: 100% !important;
         min-height: auto !important;

@@ -1,324 +1,264 @@
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 
-export const exportToPDF = async (
-  element: HTMLElement,
-  filename: string = "resume.pdf",
-) => {
-  try {
-    // Find the resume template element
-    const resumeElement = element.querySelector(".resume-template");
-    if (!resumeElement) {
-      throw new Error("Resume template not found");
+interface ResumeData {
+  markdown: string;
+  leftColumn?: string;
+  rightColumn?: string;
+  header?: string;
+  summary?: string;
+  firstPage?: string;
+  secondPage?: string;
+  template: string;
+  isTwoColumn?: boolean;
+  isTwoPage?: boolean;
+}
+
+export const exportToPDF = async (resumeData: ResumeData) => {
+  const parseMarkdown = (md: string) => {
+    try {
+      marked.setOptions({
+        breaks: true,
+        gfm: true,
+      });
+
+      const html = marked.parse(md) as string;
+
+      // Add resume classes to the HTML elements
+      const processedHtml = html
+        .replace(/<h1([^>]*)>/g, '<h1$1 class="resume-heading-1">')
+        .replace(/<h2([^>]*)>/g, '<h2$1 class="resume-heading-2">')
+        .replace(/<h3([^>]*)>/g, '<h3$1 class="resume-heading-3">')
+        .replace(/<h4([^>]*)>/g, '<h4$1 class="resume-heading-4">')
+        .replace(/<h5([^>]*)>/g, '<h5$1 class="resume-heading-5">')
+        .replace(/<h6([^>]*)>/g, '<h6$1 class="resume-heading-6">')
+        .replace(/<p([^>]*)>/g, '<p$1 class="resume-paragraph">')
+        .replace(/<ul([^>]*)>/g, '<ul$1 class="resume-list">')
+        .replace(/<ol([^>]*)>/g, '<ol$1 class="resume-list">')
+        .replace(/<li([^>]*)>/g, '<li$1 class="resume-list-item">')
+        .replace(/<table([^>]*)>/g, '<table$1 class="resume-table">')
+        .replace(/<thead([^>]*)>/g, '<thead$1 class="resume-table-head">')
+        .replace(/<tbody([^>]*)>/g, '<tbody$1 class="resume-table-body">')
+        .replace(/<tr([^>]*)>/g, '<tr$1 class="resume-table-row">')
+        .replace(/<th([^>]*)>/g, '<th$1 class="resume-table-header">')
+        .replace(/<td([^>]*)>/g, '<td$1 class="resume-table-cell">')
+        .replace(/<hr([^>]*)>/g, '<hr$1 class="resume-hr">')
+        .replace(/<strong([^>]*)>/g, '<strong$1 class="resume-strong">')
+        .replace(/<em([^>]*)>/g, '<em$1 class="resume-emphasis">')
+        .replace(/<a([^>]*)>/g, '<a$1 class="resume-link">')
+        .replace(/<code([^>]*)>/g, '<code$1 class="resume-code">')
+        .replace(/<pre([^>]*)>/g, '<pre$1 class="resume-code-block">')
+        .replace(/<br([^>]*)>/g, '<br$1 class="resume-br">');
+
+      return DOMPurify.sanitize(processedHtml);
+    } catch (error) {
+      console.error('Error parsing markdown:', error);
+      return '<p>Error parsing markdown content</p>';
+    }
+  };
+
+  const getHtmlContent = () => {
+    const { markdown, leftColumn = '', rightColumn = '', header = '', summary = '', firstPage = '', secondPage = '', isTwoColumn = false, isTwoPage = false } = resumeData;
+
+    if (isTwoPage && isTwoColumn) {
+      // Combined mode: Two pages with two columns each
+      const headerHtml = header ? parseMarkdown(header) : '';
+      const summaryHtml = summary ? `<p class="resume-paragraph resume-summary">${summary}</p>` : '';
+      const leftHtml = parseMarkdown(leftColumn);
+      const rightHtml = parseMarkdown(rightColumn);
+      const secondPageLeftHtml = parseMarkdown(firstPage);
+      const secondPageRightHtml = parseMarkdown(secondPage);
+
+      return `
+        <div class="resume-two-page">
+          <div class="resume-page-first">
+            <div class="resume-two-column">
+              ${headerHtml ? `<div class="resume-header">${headerHtml}</div>` : ''}
+              ${summaryHtml ? `<div class="resume-summary-section">${summaryHtml}</div>` : ''}
+              <div class="resume-columns">
+                <div class="resume-column-left">
+                  ${leftHtml}
+                </div>
+                <div class="resume-column-right">
+                  ${rightHtml}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="resume-page-second">
+            <div class="resume-two-column">
+              <div class="resume-columns">
+                <div class="resume-column-left">
+                  ${secondPageLeftHtml}
+                </div>
+                <div class="resume-column-right">
+                  ${secondPageRightHtml}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    } else if (isTwoPage) {
+      const firstPageHtml = parseMarkdown(firstPage);
+      const secondPageHtml = parseMarkdown(secondPage);
+      return `
+        <div class="resume-two-page">
+          <div class="resume-page-first">
+            ${firstPageHtml}
+          </div>
+          <div class="resume-page-second">
+            ${secondPageHtml}
+          </div>
+        </div>
+      `;
+    } else if (isTwoColumn) {
+      const headerHtml = header ? parseMarkdown(header) : '';
+      const summaryHtml = summary ? `<p class="resume-paragraph resume-summary">${summary}</p>` : '';
+      const leftHtml = parseMarkdown(leftColumn);
+      const rightHtml = parseMarkdown(rightColumn);
+      return `
+        <div class="resume-two-column">
+          ${headerHtml ? `<div class="resume-header">${headerHtml}</div>` : ''}
+          ${summaryHtml ? `<div class="resume-summary-section">${summaryHtml}</div>` : ''}
+          <div class="resume-columns">
+            <div class="resume-column-left">
+              ${leftHtml}
+            </div>
+            <div class="resume-column-right">
+              ${rightHtml}
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      return parseMarkdown(markdown);
+    }
+  };
+
+  const getTemplateClasses = () => {
+    const { template, isTwoColumn = false, isTwoPage = false } = resumeData;
+    let baseClass = '';
+    if (isTwoPage && isTwoColumn) {
+      baseClass = 'resume-two-page-layout resume-two-column-layout';
+    } else if (isTwoPage) {
+      baseClass = 'resume-two-page-layout';
+    } else if (isTwoColumn) {
+      baseClass = 'resume-two-column-layout';
     }
 
-    // Clone the resume content
-    const clonedElement = resumeElement.cloneNode(true) as HTMLElement;
+    switch (template) {
+      case 'professional':
+        return `${baseClass} template-professional`;
+      case 'modern':
+        return `${baseClass} template-modern`;
+      case 'minimalist':
+        return `${baseClass} template-minimalist`;
+      case 'creative':
+        return `${baseClass} template-creative`;
+      case 'executive':
+        return `${baseClass} template-executive`;
+      default:
+        return `${baseClass} template-professional`;
+    }
+  };
 
-    // Apply PDF-specific styling while preserving formatting
-    const applyPDFStyling = (element: HTMLElement) => {
-      // Add PDF export class for special styling
-      element.classList.add("pdf-export");
+  // Get the current page's CSS
+  const stylesheets = Array.from(document.styleSheets);
+  let cssText = '';
 
-      // Only apply essential PDF-specific styles
-      element.style.boxShadow = "none";
-      element.style.border = "none";
-      element.style.transform = "none";
-      element.style.margin = "0";
-      element.style.padding = "0.5in";
-      element.style.width = "8.5in";
-      element.style.minHeight = "11in";
-      element.style.backgroundColor = "white";
-
-      // Get ALL elements but avoid overriding list styles
-      const allElements = element.querySelectorAll("*");
-      allElements.forEach((el) => {
-        const htmlEl = el as HTMLElement;
-
-        // For UL and OL elements - use custom bullets only
-        if (htmlEl.tagName === "UL" || htmlEl.tagName === "OL") {
-          htmlEl.style.display = "block";
-          htmlEl.style.boxShadow = "none";
-          htmlEl.style.border = "none";
-          htmlEl.style.listStyleType = "none";
-          htmlEl.style.paddingLeft = "1.5rem";
-          htmlEl.style.marginLeft = "0.5rem";
-        }
-
-        // For LI elements - use block display with custom bullets
-        if (htmlEl.tagName === "LI") {
-          htmlEl.style.display = "block";
-          htmlEl.style.boxShadow = "none";
-          htmlEl.style.border = "none";
-          htmlEl.style.transform = "none";
-          htmlEl.style.listStyleType = "none";
-          htmlEl.style.listStyle = "none";
-          htmlEl.style.paddingLeft = "1.5rem";
-          htmlEl.style.marginLeft = "0.5rem";
-          htmlEl.style.position = "relative";
-          htmlEl.style.textIndent = "-1rem";
-
-          // Add bullet point using pseudo-element
-          const bullet = document.createElement("span");
-          bullet.textContent = "• ";
-          bullet.style.position = "absolute";
-          bullet.style.left = "0.5rem";
-          bullet.style.display = "inline-block";
-          bullet.style.width = "0.5rem";
-          bullet.style.marginRight = "0.5rem";
-          bullet.style.color = "#000000";
-          bullet.style.fontWeight = "bold";
-          htmlEl.insertBefore(bullet, htmlEl.firstChild);
-        }
-
-        // Preserve heading styles with minimal changes
-        if (htmlEl.tagName.match(/^H[1-6]$/)) {
-          htmlEl.style.pageBreakAfter = "avoid";
-          htmlEl.style.boxShadow = "none";
-          htmlEl.style.border = "none";
-          htmlEl.style.transform = "none";
-          htmlEl.style.color = "#000000";
-        }
-
-        // Preserve paragraph styles with minimal changes
-        if (htmlEl.tagName === "P") {
-          htmlEl.style.pageBreakInside = "avoid";
-          htmlEl.style.boxShadow = "none";
-          htmlEl.style.border = "none";
-          htmlEl.style.transform = "none";
-          htmlEl.style.color = "#374151";
-        }
-
-        // Remove shadows and borders from all elements for clean PDF
-        htmlEl.style.boxShadow = "none";
-        htmlEl.style.textShadow = "none";
-        if (htmlEl.style.border && htmlEl.style.border !== "none") {
-          // Only remove decorative borders, keep structural ones
-          if (!htmlEl.tagName.match(/^(TABLE|TD|TH|TR)$/)) {
-            htmlEl.style.border = "none";
+  try {
+    for (const stylesheet of stylesheets) {
+      try {
+        if (stylesheet.cssRules) {
+          for (const rule of stylesheet.cssRules) {
+            cssText += rule.cssText + '\n';
           }
         }
-      });
-    };
-
-    // Check if this is a two-page layout
-    const isTwoPageLayout = clonedElement.querySelector(".resume-two-page");
-
-    if (isTwoPageLayout) {
-      // Handle two-page layout
-      const firstPageElement = clonedElement.querySelector(
-        ".resume-page-first",
-      ) as HTMLElement;
-      const secondPageElement = clonedElement.querySelector(
-        ".resume-page-second",
-      ) as HTMLElement;
-
-      if (firstPageElement && secondPageElement) {
-        const pdf = new jsPDF("p", "mm", "a4");
-        const marginInMM = 12.7; // 0.5 inch in mm
-        const pageWidth = 210; // A4 width in mm
-        const pageHeight = 297; // A4 height in mm
-        const contentWidth = pageWidth - 2 * marginInMM;
-        const contentHeight = pageHeight - 2 * marginInMM;
-
-        // Create container for first page
-        const firstPageContainer = document.createElement("div");
-        firstPageContainer.style.position = "absolute";
-        firstPageContainer.style.left = "-9999px";
-        firstPageContainer.style.top = "0";
-        firstPageContainer.style.width = `${contentWidth}mm`;
-        firstPageContainer.style.height = `${contentHeight}mm`;
-        firstPageContainer.style.backgroundColor = "white";
-        firstPageContainer.style.padding = "0";
-        firstPageContainer.style.margin = "0";
-        firstPageContainer.style.overflow = "hidden";
-
-        const firstPageClone = firstPageElement.cloneNode(true) as HTMLElement;
-        firstPageClone.style.width = "100%";
-        firstPageClone.style.height = "100%";
-        firstPageClone.style.padding = "0";
-        firstPageClone.style.margin = "0";
-        applyPDFStyling(firstPageClone);
-
-        firstPageContainer.appendChild(firstPageClone);
-        document.body.appendChild(firstPageContainer);
-
-        await new Promise((resolve) => setTimeout(resolve, 500));
-
-        const firstPageCanvas = await html2canvas(firstPageContainer, {
-          scale: 3,
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: "#ffffff",
-          width: Math.round(contentWidth * 3.78),
-          height: Math.round(contentHeight * 3.78),
-          logging: false,
-          removeContainer: true,
-          imageTimeout: 15000,
-        });
-
-        document.body.removeChild(firstPageContainer);
-
-        const firstPageImgData = firstPageCanvas.toDataURL("image/png");
-        pdf.addImage(
-          firstPageImgData,
-          "PNG",
-          marginInMM,
-          marginInMM,
-          contentWidth,
-          contentHeight,
-        );
-
-        // Add second page if it has content
-        if (secondPageElement.textContent?.trim()) {
-          pdf.addPage();
-
-          const secondPageContainer = document.createElement("div");
-          secondPageContainer.style.position = "absolute";
-          secondPageContainer.style.left = "-9999px";
-          secondPageContainer.style.top = "0";
-          secondPageContainer.style.width = `${contentWidth}mm`;
-          secondPageContainer.style.height = `${contentHeight}mm`;
-          secondPageContainer.style.backgroundColor = "white";
-          secondPageContainer.style.padding = "0";
-          secondPageContainer.style.margin = "0";
-          secondPageContainer.style.overflow = "hidden";
-
-          const secondPageClone = secondPageElement.cloneNode(
-            true,
-          ) as HTMLElement;
-          secondPageClone.style.width = "100%";
-          secondPageClone.style.height = "100%";
-          secondPageClone.style.padding = "0";
-          secondPageClone.style.margin = "0";
-          applyPDFStyling(secondPageClone);
-
-          secondPageContainer.appendChild(secondPageClone);
-          document.body.appendChild(secondPageContainer);
-
-          await new Promise((resolve) => setTimeout(resolve, 500));
-
-          const secondPageCanvas = await html2canvas(secondPageContainer, {
-            scale: 3,
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: "#ffffff",
-            width: Math.round(contentWidth * 3.78),
-            height: Math.round(contentHeight * 3.78),
-            logging: false,
-            removeContainer: true,
-            imageTimeout: 15000,
-          });
-
-          document.body.removeChild(secondPageContainer);
-
-          const secondPageImgData = secondPageCanvas.toDataURL("image/png");
-          pdf.addImage(
-            secondPageImgData,
-            "PNG",
-            marginInMM,
-            marginInMM,
-            contentWidth,
-            contentHeight,
-          );
-        }
-
-        pdf.save(filename);
-        return;
+      } catch (e) {
+        // Handle CORS issues with external stylesheets
+        console.warn('Could not access stylesheet:', e);
       }
     }
+  } catch (e) {
+    console.warn('Error reading stylesheets:', e);
+  }
 
-    // Standard single page or multi-page handling
-    const tempContainer = document.createElement("div");
-    tempContainer.style.position = "absolute";
-    tempContainer.style.left = "-9999px";
-    tempContainer.style.top = "0";
-    tempContainer.style.width = "8.5in";
-    tempContainer.style.backgroundColor = "white";
-    tempContainer.style.padding = "0";
-    tempContainer.style.margin = "0";
+  const htmlContent = getHtmlContent();
+  const templateClasses = getTemplateClasses();
 
-    // Apply PDF styling while preserving list formatting
-    applyPDFStyling(clonedElement);
+  // Create the complete HTML document
+  const fullHtml = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Resume</title>
+      <style>
+        ${cssText}
 
-    tempContainer.appendChild(clonedElement);
-    document.body.appendChild(tempContainer);
+        /* Additional print-specific styles */
+        body {
+          margin: 0;
+          padding: 0;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          background: white;
+        }
 
-    // Wait for layout to complete
-    await new Promise((resolve) => setTimeout(resolve, 800));
+        .resume-template {
+          width: 8.5in;
+          min-height: 11in;
+          margin: 0 auto;
+          padding: 0.75in;
+          background: white;
+          box-shadow: none;
+        }
 
-    // Create canvas with higher scale for better quality
-    const canvas = await html2canvas(tempContainer, {
-      scale: 3,
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: "#ffffff",
-      width: Math.round(8.5 * 96), // 8.5 inches at 96 DPI
-      height: tempContainer.scrollHeight,
-      logging: false,
-      removeContainer: true,
-      imageTimeout: 15000,
-    });
+        @media print {
+          @page {
+            size: A4;
+            margin: 0.25in;
+          }
 
-    // Clean up temporary element
-    document.body.removeChild(tempContainer);
+          body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: white !important;
+          }
 
-    const imgData = canvas.toDataURL("image/png");
+          .resume-template {
+            margin: 0 !important;
+            padding: 0.25in !important;
+            box-shadow: none !important;
+            width: 100% !important;
+            min-height: auto !important;
+          }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="resume-template ${templateClasses}">
+        ${htmlContent}
+      </div>
+      <script>
+        // Auto-open print dialog after page loads
+        window.onload = function() {
+          setTimeout(function() {
+            window.print();
+          }, 500);
+        };
+      </script>
+    </body>
+    </html>
+  `;
 
-    // Use 0.5 inch margins
-    const marginInMM = 12.7; // 0.5 inch in mm
-    const pageWidth = 210; // A4 width in mm
-    const pageHeight = 297; // A4 height in mm
-    const contentWidth = pageWidth - 2 * marginInMM;
-    const contentHeight = pageHeight - 2 * marginInMM;
-
-    // Calculate image dimensions maintaining aspect ratio
-    const imgAspectRatio = canvas.width / canvas.height;
-
-    // Scale to fit page width
-    const imgWidth = contentWidth;
-    const imgHeight = contentWidth / imgAspectRatio;
-
-    // Position image with proper margins
-    const xOffset = marginInMM;
-    const yOffset = marginInMM;
-
-    // Create PDF
-    const pdf = new jsPDF("p", "mm", "a4");
-
-    let heightLeft = imgHeight;
-    let position = 0;
-
-    // Add first page
-    pdf.addImage(
-      imgData,
-      "PNG",
-      xOffset,
-      yOffset + position,
-      imgWidth,
-      imgHeight,
-    );
-    heightLeft -= contentHeight;
-
-    // Add additional pages if needed
-    while (heightLeft > 0) {
-      position = -contentHeight;
-      pdf.addPage();
-      pdf.addImage(
-        imgData,
-        "PNG",
-        xOffset,
-        yOffset + position,
-        imgWidth,
-        imgHeight,
-      );
-      heightLeft -= contentHeight;
-    }
-
-    // Save the PDF
-    pdf.save(filename);
-  } catch (error) {
-    console.error("Error generating PDF:", error);
-    throw new Error("Failed to generate PDF");
+  // Open in new window
+  const printWindow = window.open('', '_blank');
+  if (printWindow) {
+    printWindow.document.write(fullHtml);
+    printWindow.document.close();
+  } else {
+    throw new Error('Could not open print window. Please check your popup blocker settings.');
   }
 };
