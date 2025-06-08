@@ -163,8 +163,15 @@ export const exportToPDF = async (resumeData: ResumeData) => {
     }
   };
 
+  // Get any custom CSS that has been applied via the CSS editor
+  const getDynamicCSS = () => {
+    const dynamicStyleElement = document.getElementById('dynamic-template-css') as HTMLStyleElement;
+    return dynamicStyleElement ? dynamicStyleElement.textContent || '' : '';
+  };
+
   const htmlContent = getHtmlContent();
   const templateClasses = getTemplateClasses();
+  const dynamicCSS = getDynamicCSS();
 
   // Create the complete HTML document with embedded CSS
   const fullHtml = `
@@ -675,6 +682,9 @@ export const exportToPDF = async (resumeData: ResumeData) => {
           overflow: hidden;
           border: 1px solid #e5e7eb;
         }
+
+        /* Custom CSS from CSS Editor */
+        ${dynamicCSS}
 
         /* Print styles */
         @media print {

@@ -1,12 +1,15 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { FileText, Printer, Columns2, FileStack } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { FileText, Printer, Columns2, FileStack, Code, Eye } from "lucide-react";
 import { ResumePreview } from "@/components/ResumePreview";
 import { PrintPreview } from "@/components/PrintPreview";
 import { TemplateSelector } from "@/components/TemplateSelector";
+import { CSSEditor } from "@/components/CSSEditor";
+import { useDynamicCSS } from "@/hooks/useDynamicCSS";
 
 const defaultMarkdown = `# John Doe
 **Software Engineer** | john.doe@email.com | (555) 123-4567 | linkedin.com/in/johndoe
@@ -51,14 +54,18 @@ const defaultMarkdown = `# John Doe
 const defaultHeader = `# John Doe
 **Software Engineer** | john.doe@email.com | (555) 123-4567 | linkedin.com/in/johndoe`;
 
+const defaultSummary = `Experienced software engineer with 5+ years developing scalable web applications. Passionate about clean code, user experience, and mentoring junior developers.`;
+
 const defaultLeftColumn = `## Contact
-- Email: john.doe@email.com
-- Phone: (555) 123-4567
-- LinkedIn: linkedin.com/in/johndoe
+- **Email:** john.doe@email.com
+- **Phone:** (555) 123-4567
+- **LinkedIn:** linkedin.com/in/johndoe
+- **Location:** San Francisco, CA
 
 ## Skills
 - **Languages:** JavaScript, TypeScript, Python
-- **Frameworks:** React, Node.js, Express
+- **Frontend:** React, Vue.js, HTML/CSS
+- **Backend:** Node.js, Express, Django
 - **Databases:** PostgreSQL, MongoDB
 - **Tools:** Git, Docker, AWS
 
@@ -66,8 +73,6 @@ const defaultLeftColumn = `## Contact
 ### Bachelor of Science in Computer Science
 *University of Technology | 2015 - 2019*
 - GPA: 3.8/4.0`;
-
-const defaultSummary = `Experienced software engineer with 5+ years developing scalable web applications. Passionate about clean code, user experience, and emerging technologies.`;
 
 const defaultRightColumn = `## Experience
 
@@ -80,7 +85,18 @@ const defaultRightColumn = `## Experience
 ### Software Engineer | StartupXYZ
 *June 2019 - December 2021*
 - Built responsive web applications using React and Node.js
-- Collaborated with design team to improve user experience`;
+- Collaborated with design team to improve user experience
+- Optimized database queries improving performance by 40%
+
+## Projects
+
+### E-commerce Platform
+- Built full-stack e-commerce solution with payment integration
+- Technologies: React, Node.js, Stripe API, PostgreSQL
+
+### Task Management App
+- Developed collaborative task management application
+- Technologies: Vue.js, Firebase, PWA`;
 
 const Index = () => {
   const [markdown, setMarkdown] = useState(defaultMarkdown);
@@ -116,11 +132,23 @@ const Index = () => {
   const [selectedTemplate, setSelectedTemplate] = useState("professional");
   const [isTwoColumn, setIsTwoColumn] = useState(false);
   const [isTwoPage, setIsTwoPage] = useState(false);
+  const [activeTab, setActiveTab] = useState("editor");
   const previewRef = useRef<HTMLDivElement>(null);
+  const { addTemplateCSS, debugCSS } = useDynamicCSS();
 
   const handlePrintPDF = () => {
     window.print();
   };
+
+  const handleCSSChange = (template: string, css: string) => {
+    console.log(`🎨 Main component: CSS change for ${template}`);
+    addTemplateCSS(template, css);
+  };
+
+  // Force re-render when template changes to ensure CSS is applied
+  useEffect(() => {
+    console.log(`📋 Template changed to: ${selectedTemplate}`);
+  }, [selectedTemplate]);
 
   const getInputMode = () => {
     if (isTwoPage) return "twoPage";
@@ -128,21 +156,170 @@ const Index = () => {
     return "single";
   };
 
+  const renderInputSection = () => {
+    const inputMode = getInputMode();
+
+    if (inputMode === "twoPage") {
+      return (
+        <div className="grid grid-cols-1 gap-6">
+          <Card className="shadow-xl border-0 bg-white overflow-hidden">
+            <div className="p-6 border-b">
+              <div className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-primary" />
+                <h2 className="text-lg font-semibold text-foreground">
+                  First Page Content
+                </h2>
+              </div>
+            </div>
+            <div className="p-6 pt-0">
+              <Textarea
+                value={firstPage}
+                onChange={(e) => setFirstPage(e.target.value)}
+                className="min-h-[300px] resize-none"
+                placeholder="Enter content for the first page..."
+              />
+            </div>
+          </Card>
+          <Card className="shadow-xl border-0 bg-white overflow-hidden">
+            <div className="p-6 border-b">
+              <div className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-primary" />
+                <h2 className="text-lg font-semibold text-foreground">
+                  Second Page Content
+                </h2>
+              </div>
+            </div>
+            <div className="p-6 pt-0">
+              <Textarea
+                value={secondPage}
+                onChange={(e) => setSecondPage(e.target.value)}
+                className="min-h-[300px] resize-none"
+                placeholder="Enter content for the second page..."
+              />
+            </div>
+          </Card>
+        </div>
+      );
+    }
+
+    if (inputMode === "twoColumn") {
+      return (
+        <div className="grid grid-cols-1 gap-6">
+          <Card className="shadow-xl border-0 bg-white overflow-hidden">
+            <div className="p-6 border-b">
+              <div className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-primary" />
+                <h2 className="text-lg font-semibold text-foreground">
+                  Header Section
+                </h2>
+              </div>
+            </div>
+            <div className="p-6 pt-0">
+              <Textarea
+                value={header}
+                onChange={(e) => setHeader(e.target.value)}
+                className="min-h-[120px] resize-none"
+                placeholder="Enter header content (name, contact info)..."
+              />
+            </div>
+          </Card>
+          <Card className="shadow-xl border-0 bg-white overflow-hidden">
+            <div className="p-6 border-b">
+              <div className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-primary" />
+                <h2 className="text-lg font-semibold text-foreground">
+                  Summary Section
+                </h2>
+              </div>
+            </div>
+            <div className="p-6 pt-0">
+              <Textarea
+                value={summary}
+                onChange={(e) => setSummary(e.target.value)}
+                className="min-h-[100px] resize-none"
+                placeholder="Enter a brief professional summary..."
+              />
+            </div>
+          </Card>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="shadow-xl border-0 bg-white overflow-hidden">
+              <div className="p-6 border-b">
+                <div className="flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-primary" />
+                  <h2 className="text-lg font-semibold text-foreground">
+                    Left Column
+                  </h2>
+                </div>
+              </div>
+              <div className="p-6 pt-0">
+                <Textarea
+                  value={leftColumn}
+                  onChange={(e) => setLeftColumn(e.target.value)}
+                  className="min-h-[400px] resize-none"
+                  placeholder="Enter left column content (skills, contact, etc.)..."
+                />
+              </div>
+            </Card>
+            <Card className="shadow-xl border-0 bg-white overflow-hidden">
+              <div className="p-6 border-b">
+                <div className="flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-primary" />
+                  <h2 className="text-lg font-semibold text-foreground">
+                    Right Column
+                  </h2>
+                </div>
+              </div>
+              <div className="p-6 pt-0">
+                <Textarea
+                  value={rightColumn}
+                  onChange={(e) => setRightColumn(e.target.value)}
+                  className="min-h-[400px] resize-none"
+                  placeholder="Enter right column content (experience, projects, etc.)..."
+                />
+              </div>
+            </Card>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col">
+        <div className="p-6 border-b">
+          <div className="flex items-center gap-2">
+            <FileText className="h-5 w-5 text-primary" />
+            <h2 className="text-lg font-semibold text-foreground">
+              Markdown Input
+            </h2>
+          </div>
+        </div>
+        <div className="flex-1 p-6 pt-0">
+          <Textarea
+            value={markdown}
+            onChange={(e) => setMarkdown(e.target.value)}
+            className="min-h-[600px] resize-none"
+            placeholder="Enter your resume in Markdown format..."
+          />
+        </div>
+      </Card>
+    );
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+      <header className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary rounded-lg">
-                <FileText className="h-6 w-6 text-primary-foreground" />
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                <FileText className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-foreground">
+                <h1 className="text-2xl font-bold text-gray-900">
                   Markdown to Resume
                 </h1>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-gray-600">
                   Transform markdown into professional resumes
                 </p>
               </div>
@@ -186,184 +363,44 @@ const Index = () => {
       </header>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-2 gap-8 h-[calc(100vh-200px)]">
-          {/* Markdown Input */}
-          <Card className="shadow-lg border-0 bg-white/70 backdrop-blur-sm flex flex-col">
-            <div className="p-6 border-b">
-              <div className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-primary" />
-                <h2 className="text-lg font-semibold text-foreground">
-                  {isTwoPage && isTwoColumn
-                    ? "Markdown Input (Two Pages + Two Columns)"
-                    : isTwoPage
-                      ? "Markdown Input (Two Pages)"
-                      : isTwoColumn
-                        ? "Markdown Input (Two Columns)"
-                        : "Markdown Input"}
-                </h2>
-              </div>
-            </div>
-            <div className="flex-1 p-6 pt-0 flex flex-col gap-4">
-              {isTwoPage && isTwoColumn ? (
-                <>
-                  <div className="flex-none">
-                    <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                      Header (Page 1 only)
-                    </label>
-                    <Textarea
-                      value={header}
-                      onChange={(e) => setHeader(e.target.value)}
-                      placeholder="Enter header content (name, contact info) in Markdown format..."
-                      className="h-20 resize-none font-mono text-sm border-0 bg-white/50 focus:bg-white transition-colors"
-                    />
-                  </div>
-                  <div className="flex-none">
-                    <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                      Summary (Page 1 only, Optional)
-                    </label>
-                    <Textarea
-                      value={summary}
-                      onChange={(e) => setSummary(e.target.value)}
-                      placeholder="Enter optional summary paragraph..."
-                      className="h-16 resize-none font-mono text-sm border-0 bg-white/50 focus:bg-white transition-colors"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                      Page 1 - Left Column
-                    </label>
-                    <Textarea
-                      value={leftColumn}
-                      onChange={(e) => setLeftColumn(e.target.value)}
-                      placeholder="Enter page 1 left column content in Markdown format..."
-                      className="h-full resize-none font-mono text-sm border-0 bg-white/50 focus:bg-white transition-colors"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                      Page 1 - Right Column
-                    </label>
-                    <Textarea
-                      value={rightColumn}
-                      onChange={(e) => setRightColumn(e.target.value)}
-                      placeholder="Enter page 1 right column content in Markdown format..."
-                      className="h-full resize-none font-mono text-sm border-0 bg-white/50 focus:bg-white transition-colors"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                      Page 2 - Left Column
-                    </label>
-                    <Textarea
-                      value={firstPage}
-                      onChange={(e) => setFirstPage(e.target.value)}
-                      placeholder="Enter page 2 left column content in Markdown format..."
-                      className="h-full resize-none font-mono text-sm border-0 bg-white/50 focus:bg-white transition-colors"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                      Page 2 - Right Column
-                    </label>
-                    <Textarea
-                      value={secondPage}
-                      onChange={(e) => setSecondPage(e.target.value)}
-                      placeholder="Enter page 2 right column content in Markdown format..."
-                      className="h-full resize-none font-mono text-sm border-0 bg-white/50 focus:bg-white transition-colors"
-                    />
-                  </div>
-                </>
-              ) : isTwoPage ? (
-                <>
-                  <div className="flex-1">
-                    <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                      Page 1
-                    </label>
-                    <Textarea
-                      value={firstPage}
-                      onChange={(e) => setFirstPage(e.target.value)}
-                      placeholder="Enter first page content in Markdown format..."
-                      className="h-full resize-none font-mono text-sm border-0 bg-white/50 focus:bg-white transition-colors"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                      Page 2
-                    </label>
-                    <Textarea
-                      value={secondPage}
-                      onChange={(e) => setSecondPage(e.target.value)}
-                      placeholder="Enter second page content in Markdown format..."
-                      className="h-full resize-none font-mono text-sm border-0 bg-white/50 focus:bg-white transition-colors"
-                    />
-                  </div>
-                </>
-              ) : isTwoColumn ? (
-                <>
-                  <div className="flex-none">
-                    <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                      Header
-                    </label>
-                    <Textarea
-                      value={header}
-                      onChange={(e) => setHeader(e.target.value)}
-                      placeholder="Enter header content (name, contact info) in Markdown format..."
-                      className="h-20 resize-none font-mono text-sm border-0 bg-white/50 focus:bg-white transition-colors"
-                    />
-                  </div>
-                  <div className="flex-none">
-                    <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                      Summary (Optional)
-                    </label>
-                    <Textarea
-                      value={summary}
-                      onChange={(e) => setSummary(e.target.value)}
-                      placeholder="Enter optional summary paragraph..."
-                      className="h-16 resize-none font-mono text-sm border-0 bg-white/50 focus:bg-white transition-colors"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                      Left Column
-                    </label>
-                    <Textarea
-                      value={leftColumn}
-                      onChange={(e) => setLeftColumn(e.target.value)}
-                      placeholder="Enter left column content in Markdown format..."
-                      className="h-full resize-none font-mono text-sm border-0 bg-white/50 focus:bg-white transition-colors"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                      Right Column
-                    </label>
-                    <Textarea
-                      value={rightColumn}
-                      onChange={(e) => setRightColumn(e.target.value)}
-                      placeholder="Enter right column content in Markdown format..."
-                      className="h-full resize-none font-mono text-sm border-0 bg-white/50 focus:bg-white transition-colors"
-                    />
-                  </div>
-                </>
-              ) : (
-                <Textarea
-                  value={markdown}
-                  onChange={(e) => setMarkdown(e.target.value)}
-                  placeholder="Enter your resume in Markdown format..."
-                  className="h-full resize-none font-mono text-sm border-0 bg-white/50 focus:bg-white transition-colors"
-                />
-              )}
-            </div>
-          </Card>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[calc(100vh-200px)]">
+          {/* Left Panel - Tabs for Editor and CSS */}
+          <div className="flex flex-col h-full">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
+              <TabsList className="grid w-full grid-cols-2 mb-4">
+                <TabsTrigger value="editor" className="flex items-center gap-2">
+                  <FileText className="h-4 w-4" />
+                  Content Editor
+                </TabsTrigger>
+                <TabsTrigger value="css" className="flex items-center gap-2">
+                  <Code className="h-4 w-4" />
+                  CSS Editor
+                </TabsTrigger>
+              </TabsList>
 
-          {/* Resume Preview */}
+              <TabsContent value="editor" className="flex-1 overflow-auto">
+                {renderInputSection()}
+              </TabsContent>
+
+              <TabsContent value="css" className="flex-1 overflow-hidden">
+                <CSSEditor
+                  selectedTemplate={selectedTemplate}
+                  onTemplateChange={setSelectedTemplate}
+                  onCSSChange={handleCSSChange}
+                  debugCSS={debugCSS}
+                />
+              </TabsContent>
+            </Tabs>
+          </div>
+
+          {/* Right Panel - Preview */}
           <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col">
             <div className="p-6 border-b">
               <div className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-primary" />
+                <Eye className="h-5 w-5 text-primary" />
                 <h2 className="text-lg font-semibold text-foreground">
-                  Preview
+                  Live Preview
                 </h2>
               </div>
             </div>
