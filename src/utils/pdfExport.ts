@@ -235,12 +235,14 @@ export const exportToPDF = async (resumeData: ResumeData) => {
         }
 
         .resume-list-item::before {
-          content: "• ";
-          color: #000;
+          content: "• " !important;
+          color: #000 !important;
           font-weight: bold;
-          display: inline-block;
+          display: inline-block !important;
           width: 0.3rem;
           margin-right: 0.3rem;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
         }
 
         /* Tables */
@@ -261,55 +263,79 @@ export const exportToPDF = async (resumeData: ResumeData) => {
           vertical-align: top;
         }
 
-        /* PROFESSIONAL TEMPLATE */
+        /* PROFESSIONAL TEMPLATE - Modern Corporate */
         .template-professional {
           background: white;
+          font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
 
         .template-professional .resume-heading-1 {
-          font-size: 1.875rem;
-          font-weight: bold;
+          font-size: 2.75rem;
+          font-weight: 800;
           color: #000;
-          margin-bottom: 0.5rem;
-          padding-bottom: 0.5rem;
-          border-bottom: 2px solid #e5e7eb;
+          margin-bottom: 0.75rem;
+          padding-bottom: 0.75rem;
+          border-bottom: 4px solid #6b7280 !important;
+          letter-spacing: 0.1em;
+          line-height: 1.1;
+          text-transform: uppercase;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
         }
 
         .template-professional .resume-heading-2 {
-          font-size: 1.25rem;
-          font-weight: 600;
+          font-size: 1.125rem;
+          font-weight: 700;
           color: #000;
-          margin-top: 1.5rem;
-          margin-bottom: 0.75rem;
+          margin-top: 2rem;
+          margin-bottom: 1rem;
           text-transform: uppercase;
-          letter-spacing: 0.05em;
+          letter-spacing: 0.1em;
+          position: relative;
+        }
+
+        .template-professional .resume-heading-2::after {
+          content: "";
+          position: absolute;
+          bottom: -0.25rem;
+          left: 0;
+          width: 2rem;
+          height: 2px;
+          background-color: #6b7280 !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          display: block !important;
         }
 
         .template-professional .resume-heading-3 {
           font-size: 1.125rem;
-          font-weight: 500;
-          color: #1f2937;
-          margin-top: 1rem;
+          font-weight: 600;
+          color: #000;
+          margin-top: 1.25rem;
           margin-bottom: 0.5rem;
+          line-height: 1.3;
         }
 
         .template-professional .resume-paragraph {
-          margin-bottom: 0.75rem;
+          font-size: 1rem;
+          margin-bottom: 0.875rem;
           color: #374151;
-          line-height: 1.625;
+          line-height: 1.6;
         }
 
         .template-professional .resume-list {
-          margin-bottom: 1rem;
+          margin-bottom: 1.25rem;
           margin-left: 1rem;
           padding-left: 0.8rem;
         }
 
         .template-professional .resume-list-item {
-          margin-bottom: 0.5rem;
+          font-size: 1rem;
+          margin-bottom: 0.625rem;
           color: #374151;
           padding-left: 0.8rem;
           text-indent: -0.8rem;
+          line-height: 1.5;
         }
 
         .template-professional .resume-strong {
@@ -319,112 +345,156 @@ export const exportToPDF = async (resumeData: ResumeData) => {
 
         .template-professional .resume-emphasis {
           font-style: italic;
-          color: #374151;
+          color: #6b7280;
         }
 
         .template-professional .resume-hr {
           border-color: #e5e7eb;
+          margin: 1.5rem 0;
         }
 
-        /* MODERN TEMPLATE */
+        /* MODERN TEMPLATE - Tech Professional */
         .template-modern {
-          background: #fefff3;
+          background: white;
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         .template-modern .resume-heading-1 {
           font-size: 2.25rem;
-          font-weight: 300;
+          font-weight: 600;
           color: #000;
           margin-bottom: 1rem;
+          letter-spacing: -0.02em;
+          line-height: 1.1;
+          position: relative;
+        }
+
+        .template-modern .resume-heading-1::after {
+          content: "";
+          position: absolute;
+          bottom: -0.5rem;
+          left: 0;
+          width: 4rem;
+          height: 3px;
+          background-color: #000 !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
         }
 
         .template-modern .resume-heading-2 {
           font-size: 1.125rem;
-          font-weight: 500;
+          font-weight: 700;
           color: #000;
-          margin-top: 2rem;
-          margin-bottom: 1rem;
-          padding-left: 1rem;
-          border-left: 4px solid #9ca3af;
+          margin-top: 1.5rem;
+          margin-bottom: 0.75rem;
+          padding: 0.5rem 0;
+          border-bottom: 1px solid #e5e7eb !important;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
         }
 
         .template-modern .resume-heading-3 {
           font-size: 1rem;
-          font-weight: 500;
-          color: #1f2937;
+          font-weight: 600;
+          color: #000;
           margin-top: 1rem;
           margin-bottom: 0.5rem;
         }
 
         .template-modern .resume-paragraph {
+          font-size: 1rem;
           margin-bottom: 0.75rem;
-          color: #4b5563;
-          line-height: 1.625;
+          color: #374151;
+          line-height: 1.5;
+          font-weight: 400;
         }
 
         .template-modern .resume-list {
           margin-bottom: 1rem;
-          margin-left: 1.5rem;
+          margin-left: 1rem;
           padding-left: 0.8rem;
         }
 
         .template-modern .resume-list-item {
+          font-size: 1rem;
           margin-bottom: 0.5rem;
-          color: #4b5563;
+          color: #374151;
           padding-left: 0.8rem;
           text-indent: -0.8rem;
+          line-height: 1.4;
+          font-weight: 400;
+        }
+
+        .template-modern .resume-list-item::before {
+          content: "▪" !important;
+          color: #000 !important;
+          font-weight: 700;
+          margin-right: 0.5rem;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          display: inline-block !important;
         }
 
         .template-modern .resume-strong {
-          font-weight: 500;
+          font-weight: 600;
           color: #000;
         }
 
         .template-modern .resume-emphasis {
-          font-style: italic;
-          color: #4b5563;
+          font-weight: 500;
+          color: #6b7280;
         }
 
         .template-modern .resume-hr {
-          border-color: #d1d5db;
+          border: none;
+          height: 2px;
+          background: #000 !important;
+          margin: 1.25rem 0;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
         }
 
-        /* MINIMALIST TEMPLATE */
+        /* MINIMALIST TEMPLATE - Clean Professional */
         .template-minimalist {
           background: white;
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         .template-minimalist .resume-heading-1 {
-          font-size: 1.5rem;
-          font-weight: 400;
+          font-size: 2rem;
+          font-weight: 500;
           color: #000;
-          margin-bottom: 1.5rem;
-          letter-spacing: 0.05em;
+          margin-bottom: 1.25rem;
+          letter-spacing: -0.01em;
+          line-height: 1.2;
         }
 
         .template-minimalist .resume-heading-2 {
-          font-size: 0.875rem;
-          font-weight: 400;
+          font-size: 1rem;
+          font-weight: 600;
           color: #000;
-          margin-top: 2rem;
-          margin-bottom: 1rem;
+          margin-top: 1.75rem;
+          margin-bottom: 0.75rem;
           text-transform: uppercase;
           letter-spacing: 0.1em;
         }
 
         .template-minimalist .resume-heading-3 {
           font-size: 1rem;
-          font-weight: 400;
+          font-weight: 600;
           color: #000;
           margin-top: 1rem;
-          margin-bottom: 0.25rem;
+          margin-bottom: 0.5rem;
         }
 
         .template-minimalist .resume-paragraph {
-          margin-bottom: 1rem;
-          color: #1f2937;
-          line-height: 1.625;
-          font-weight: 300;
+          font-size: 1rem;
+          margin-bottom: 0.75rem;
+          color: #374151;
+          line-height: 1.5;
+          font-weight: 400;
         }
 
         .template-minimalist .resume-list {
@@ -434,78 +504,114 @@ export const exportToPDF = async (resumeData: ResumeData) => {
         }
 
         .template-minimalist .resume-list-item {
+          font-size: 1rem;
           margin-bottom: 0.5rem;
-          color: #1f2937;
-          font-weight: 300;
+          color: #374151;
+          font-weight: 400;
           padding-left: 0.8rem;
           text-indent: -0.8rem;
+          line-height: 1.4;
         }
 
         .template-minimalist .resume-list-item::before {
+          content: "–" !important;
+          color: #6b7280 !important;
           font-weight: 400;
+          margin-right: 0.5rem;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          display: inline-block !important;
         }
 
         .template-minimalist .resume-strong {
-          font-weight: 400;
+          font-weight: 600;
           color: #000;
         }
 
         .template-minimalist .resume-emphasis {
-          font-style: italic;
-          font-weight: 300;
-          color: #1f2937;
+          font-weight: 500;
+          color: #6b7280;
         }
 
         .template-minimalist .resume-hr {
-          border-color: #d1d5db;
+          border: none;
+          height: 1px;
+          background-color: #e5e7eb !important;
+          margin: 1.5rem 0;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
         }
 
-        /* CREATIVE TEMPLATE */
+        /* CREATIVE TEMPLATE - Modern Edge */
         .template-creative {
           background: white;
-          border-left: 8px solid #9ca3af;
+          border-left: 8px solid #000 !important;
+          font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
         }
 
         .template-creative .resume-heading-1 {
-          font-size: 1.875rem;
-          font-weight: bold;
+          font-size: 2.25rem;
+          font-weight: 700;
           color: #000;
           margin-bottom: 1rem;
+          letter-spacing: -0.02em;
+          line-height: 1.1;
+          position: relative;
+        }
+
+        .template-creative .resume-heading-1::after {
+          content: "";
+          position: absolute;
+          bottom: -0.25rem;
+          left: 0;
+          width: 100%;
+          height: 2px;
+          background: linear-gradient(to right, #000, #6b7280, transparent) !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
         }
 
         .template-creative .resume-heading-2 {
-          font-size: 1.25rem;
-          font-weight: 600;
+          font-size: 1.125rem;
+          font-weight: 700;
           color: #000;
           margin-top: 1.5rem;
           margin-bottom: 0.75rem;
           position: relative;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          padding-left: 1.5rem;
         }
 
         .template-creative .resume-heading-2::before {
-          content: "";
+          content: "■" !important;
           position: absolute;
-          left: -1rem;
+          left: 0;
           top: 50%;
           transform: translateY(-50%);
-          width: 0.5rem;
-          height: 0.5rem;
-          background-color: #6b7280;
-          border-radius: 50%;
+          color: #000 !important;
+          font-size: 0.7rem !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          display: inline-block !important;
         }
 
         .template-creative .resume-heading-3 {
-          font-size: 1.125rem;
-          font-weight: 500;
-          color: #1f2937;
+          font-size: 1rem;
+          font-weight: 600;
+          color: #000;
           margin-top: 1rem;
           margin-bottom: 0.5rem;
         }
 
         .template-creative .resume-paragraph {
+          font-size: 1rem;
           margin-bottom: 0.75rem;
           color: #374151;
-          line-height: 1.625;
+          line-height: 1.5;
+          font-weight: 400;
         }
 
         .template-creative .resume-list {
@@ -515,62 +621,95 @@ export const exportToPDF = async (resumeData: ResumeData) => {
         }
 
         .template-creative .resume-list-item {
+          font-size: 1rem;
           margin-bottom: 0.5rem;
           color: #374151;
           padding-left: 0.8rem;
           text-indent: -0.8rem;
+          line-height: 1.4;
+          font-weight: 400;
+        }
+
+        .template-creative .resume-list-item::before {
+          content: "●" !important;
+          color: #000 !important;
+          font-weight: 700;
+          margin-right: 0.5rem;
+          font-size: 0.6rem;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          display: inline-block !important;
         }
 
         .template-creative .resume-strong {
-          font-weight: 600;
+          font-weight: 700;
           color: #000;
         }
 
         .template-creative .resume-emphasis {
-          font-style: italic;
-          color: #4b5563;
+          font-weight: 600;
+          color: #6b7280;
         }
 
         .template-creative .resume-hr {
-          border-color: #d1d5db;
+          border: none;
+          height: 2px;
+          background: #000 !important;
+          margin: 1.25rem 0;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
         }
 
-        /* EXECUTIVE TEMPLATE */
+        /* EXECUTIVE TEMPLATE - Corporate Leadership */
         .template-executive {
           background: white;
+          font-family: 'Source Sans Pro', 'Helvetica Neue', sans-serif;
         }
 
         .template-executive .resume-heading-1 {
-          font-size: 1.875rem;
-          font-weight: bold;
+          font-size: 2.25rem;
+          font-weight: 600;
           color: #000;
-          margin-bottom: 0.5rem;
+          margin-bottom: 1rem;
           text-align: center;
+          letter-spacing: -0.01em;
+          line-height: 1.2;
+          border-bottom: 2px solid #000 !important;
+          padding-bottom: 0.75rem;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
         }
 
         .template-executive .resume-heading-2 {
           font-size: 1.125rem;
-          font-weight: 600;
+          font-weight: 700;
           color: #000;
-          margin-top: 2rem;
-          margin-bottom: 1rem;
-          text-align: center;
-          background-color: #f3f4f6;
-          padding: 0.5rem;
+          margin-top: 1.75rem;
+          margin-bottom: 0.75rem;
+          text-align: left;
+          background-color: #f8f9fa !important;
+          padding: 0.5rem 1rem;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          border-left: 4px solid #000 !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
         }
 
         .template-executive .resume-heading-3 {
-          font-size: 1.125rem;
+          font-size: 1rem;
           font-weight: 600;
-          color: #1f2937;
+          color: #000;
           margin-top: 1rem;
           margin-bottom: 0.5rem;
         }
 
         .template-executive .resume-paragraph {
+          font-size: 1rem;
           margin-bottom: 0.75rem;
           color: #374151;
-          line-height: 1.625;
+          line-height: 1.5;
+          font-weight: 400;
         }
 
         .template-executive .resume-list {
@@ -580,24 +719,42 @@ export const exportToPDF = async (resumeData: ResumeData) => {
         }
 
         .template-executive .resume-list-item {
+          font-size: 1rem;
           margin-bottom: 0.5rem;
           color: #374151;
           padding-left: 0.8rem;
           text-indent: -0.8rem;
+          line-height: 1.4;
+          font-weight: 400;
+        }
+
+        .template-executive .resume-list-item::before {
+          content: "▪" !important;
+          color: #000 !important;
+          font-weight: 700;
+          margin-right: 0.5rem;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          display: inline-block !important;
         }
 
         .template-executive .resume-strong {
-          font-weight: bold;
+          font-weight: 700;
           color: #000;
         }
 
         .template-executive .resume-emphasis {
-          font-style: italic;
-          color: #374151;
+          font-weight: 600;
+          color: #6b7280;
         }
 
         .template-executive .resume-hr {
-          border-color: #d1d5db;
+          border: none;
+          height: 1px;
+          background-color: #000 !important;
+          margin: 1.25rem 0;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
         }
 
         /* Two Column Layout */
@@ -608,9 +765,8 @@ export const exportToPDF = async (resumeData: ResumeData) => {
 
         .resume-two-column-layout .resume-header {
           width: 100%;
-          margin-bottom: 1.5rem;
-          padding-bottom: 1rem;
-          border-bottom: 1px solid #d1d5db;
+          margin-bottom: 0.75rem;
+          padding-bottom: 0.5rem;
         }
 
         .resume-two-column-layout .resume-header .resume-heading-1 {
@@ -763,35 +919,58 @@ export const exportToPDF = async (resumeData: ResumeData) => {
             padding-right: 1rem !important;
           }
 
-          /* Preserve template backgrounds and borders */
-          .template-modern {
-            background-color: #fefff3 !important;
+          /* Force all styling to print - Enhanced */
+          * {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
+            color-adjust: exact !important;
           }
 
-          .template-creative {
-            border-left: 8px solid #9ca3af !important;
+          /* Ensure all pseudo-elements print */
+          *::before, *::after {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            display: block !important;
           }
 
-          .template-executive .resume-heading-2 {
-            background-color: #f3f4f6 !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
-
+          /* Force all borders and backgrounds to print */
           .template-professional .resume-heading-1 {
-            border-bottom: 2px solid #e5e7eb !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
+            border-bottom: 4px solid #6b7280 !important;
+          }
+
+          .template-professional .resume-heading-2::after {
+            background-color: #6b7280 !important;
           }
 
           .template-modern .resume-heading-2 {
-            border-left: 4px solid #9ca3af !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
+            border-left: 6px solid #000 !important;
+          }
+
+          .template-modern .resume-hr {
+            background: #000 !important;
+          }
+
+          .template-creative {
+            border-left: 12px solid #000 !important;
+          }
+
+          .template-creative .resume-hr {
+            background: #000 !important;
+          }
+
+          .template-executive .resume-heading-2 {
+            background-color: #f8f9fa !important;
+            border-top: 2px solid #000 !important;
+            border-bottom: 2px solid #000 !important;
+          }
+
+          .template-executive .resume-hr {
+            background-color: #000 !important;
+          }
+
+          .template-minimalist .resume-hr {
+            background-color: #f3f4f6 !important;
           }
         }
       </style>
