@@ -156,14 +156,14 @@ const Index = () => {
                   onCheckedChange={setIsTwoColumn}
                 />
               </div>
-              <div className="flex items-center gap-2">
+              {/* <div className="flex items-center gap-2">
                 <FileStack className="h-4 w-4" />
                 <span className="text-sm">Two Page</span>
                 <Switch
                   checked={isTwoPage}
                   onCheckedChange={setIsTwoPage}
                 />
-              </div>
+              </div> */}
               <TemplateSelector
                 selectedTemplate={selectedTemplate}
                 onTemplateChange={setSelectedTemplate}
