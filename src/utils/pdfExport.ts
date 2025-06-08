@@ -688,9 +688,40 @@ export const exportToPDF = async (resumeData: ResumeData) => {
 
         /* Print styles */
         @media print {
+          /* MAIN PAGE MARGINS - All pages except first */
           @page {
             size: A4;
-            margin: 0.25in;
+            margin: 0.75in 0.5in 0.75in 0.5in; /* top right bottom left - second page and beyond */
+            /* Hide headers and footers */
+            @top-left { content: ""; }
+            @top-center { content: ""; }
+            @top-right { content: ""; }
+            @bottom-left { content: ""; }
+            @bottom-center { content: ""; }
+            @bottom-right { content: ""; }
+          }
+
+          /* FIRST PAGE MARGINS - More top margin, double left/right margins */
+          @page :first {
+            margin: 0.5in 0.5in 0.75in 0.5in; /* top right bottom left - first page with more top margin */
+            /* Hide headers and footers on first page */
+            @top-left { content: ""; }
+            @top-center { content: ""; }
+            @top-right { content: ""; }
+            @bottom-left { content: ""; }
+            @bottom-center { content: ""; }
+            @bottom-right { content: ""; }
+          }
+
+          /* Remove default print headers and footers */
+          body::before,
+          body::after {
+            display: none !important;
+          }
+
+          /* Hide any potential header/footer elements */
+          header, footer, .header, .footer {
+            display: none !important;
           }
 
           body {
@@ -701,10 +732,25 @@ export const exportToPDF = async (resumeData: ResumeData) => {
 
           .resume-template {
             margin: 0 !important;
-            padding: 0.25in !important;
+            padding: 0 !important; /* No padding - margins handled by @page rules */
             box-shadow: none !important;
             width: 100% !important;
             min-height: auto !important;
+          }
+
+          /* Force page breaks for two-page layouts - no padding, margins handled by @page */
+          .resume-two-page-layout .resume-page-first {
+            padding: 0 !important;
+            margin: 0 !important;
+            page-break-after: always !important;
+            min-height: calc(11in - 1.75in) !important; /* account for first page margins */
+          }
+
+          .resume-two-page-layout .resume-page-second {
+            padding: 0 !important;
+            margin: 0 !important;
+            page-break-before: always !important;
+            min-height: calc(11in - 1.5in) !important; /* account for second page margins */
           }
 
           .resume-two-column-layout .resume-columns {
@@ -757,16 +803,34 @@ export const exportToPDF = async (resumeData: ResumeData) => {
       <script>
         // Auto-open print dialog after page loads
         window.onload = function() {
+          // Try to disable headers and footers if possible
+          if (window.chrome && window.chrome.webstore) {
+            // Chrome-specific: attempt to set print options
+            const printOptions = {
+              headerFooterEnabled: false,
+              marginsType: 1, // No margins
+              isLandscape: false,
+              shouldPrintBackgrounds: true,
+              shouldPrintSelectionOnly: false
+            };
+          }
+
           setTimeout(function() {
             window.print();
           }, 500);
         };
+
+        // Additional attempt to hide headers/footers
+        document.addEventListener('DOMContentLoaded', function() {
+          // Set page title to empty to minimize header content
+          document.title = '';
+        });
       </script>
     </body>
     </html>
   `;
 
-  // Open in new window
+    // Open in new window
   const printWindow = window.open('', '_blank');
   if (printWindow) {
     printWindow.document.write(fullHtml);
