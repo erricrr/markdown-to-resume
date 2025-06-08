@@ -70,7 +70,7 @@ const defaultTemplateCSS = {
 
   modern: `/* Modern Template */
 .template-modern {
-  background: #fefff3;
+  background: white;
 }
 
 .template-modern .resume-heading-1 {
