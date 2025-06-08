@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -37,33 +38,78 @@ const templates = [
   },
 ];
 
-// Redesigned template CSS with decorative elements that work in PDFs
+// Professionally redesigned template CSS with perfectly aligned decorative elements
 const defaultTemplateCSS = {
-  professional: `/* Professional Template */
+  professional: `/* Professional Template - Corporate Excellence */
 .template-professional {
   background: white;
+  font-family: 'Georgia', 'Times New Roman', serif;
 }
 
 .template-professional .resume-heading-1 {
-  font-size: 1.875rem;
-  font-weight: bold;
-  color: #000;
-  margin-bottom: 0.5rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid #e5e7eb;
+  font-size: 2.5rem;
+  font-weight: 400;
+  color: #1a202c;
+  margin-bottom: 0.75rem;
+  text-align: center;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.template-professional .resume-heading-1::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 3px;
+  background: #2d3748;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 
 .template-professional .resume-heading-2 {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   font-weight: 600;
-  color: #000;
-  margin-top: 1.5rem;
-  margin-bottom: 0.75rem;
+  color: #2d3748;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
+  position: relative;
+  padding-left: 20px;
+  border-left: 4px solid #2d3748;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.template-professional .resume-heading-3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.template-professional .resume-paragraph {
+  color: #4a5568;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.template-professional .resume-list-item::before {
+  content: "▪";
+  color: #2d3748;
+  font-weight: bold;
+  margin-right: 0.5rem;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }`,
 
-  modern: `/* Modern Template - Tech Professional */
+  modern: `/* Modern Template - Tech Innovation */
 .template-modern {
   background: white;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -75,160 +121,180 @@ const defaultTemplateCSS = {
   position: absolute;
   top: 0;
   left: 0;
-  width: 4px;
+  width: 6px;
   height: 100%;
-  background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 50%, #1e40af 100%);
+  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
 
 .template-modern .resume-heading-1 {
-  font-size: 2.5rem;
-  font-weight: 300;
-  color: #1e293b;
+  font-size: 2.75rem;
+  font-weight: 200;
+  color: #1a202c;
   margin-bottom: 1rem;
-  letter-spacing: -0.025em;
+  margin-left: 2rem;
+  letter-spacing: -0.02em;
   line-height: 1.1;
   position: relative;
-  padding-left: 1rem;
 }
 
 .template-modern .resume-heading-1::after {
   content: "";
   position: absolute;
-  bottom: -0.5rem;
-  left: 1rem;
-  width: 60px;
-  height: 3px;
-  background: #3b82f6;
+  bottom: -8px;
+  left: 0;
+  width: 80px;
+  height: 2px;
+  background: #667eea;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
 
 .template-modern .resume-heading-2 {
   font-size: 1.25rem;
-  font-weight: 600;
-  color: #3b82f6;
+  font-weight: 500;
+  color: #667eea;
   margin-top: 2rem;
   margin-bottom: 1rem;
-  padding-left: 1rem;
-  position: relative;
+  margin-left: 2rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  position: relative;
 }
 
 .template-modern .resume-heading-2::before {
   content: "";
   position: absolute;
-  left: 0;
+  left: -1.5rem;
   top: 50%;
   transform: translateY(-50%);
-  width: 8px;
-  height: 8px;
-  background: #3b82f6;
+  width: 10px;
+  height: 10px;
+  background: #667eea;
   border-radius: 50%;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
 
-.template-modern .resume-paragraph,
+.template-modern .resume-heading-3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  margin-left: 2rem;
+}
+
+.template-modern .resume-paragraph {
+  color: #4a5568;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  margin-left: 2rem;
+}
+
 .template-modern .resume-list {
-  padding-left: 1rem;
+  margin-left: 2rem;
 }
 
 .template-modern .resume-list-item::before {
-  content: "▸";
-  color: #3b82f6;
+  content: "→";
+  color: #667eea;
   font-weight: bold;
   margin-right: 0.5rem;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }`,
 
-  minimalist: `/* Minimalist Template - Ultra Clean */
+  minimalist: `/* Minimalist Template - Pure Elegance */
 .template-minimalist {
   background: white;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .template-minimalist .resume-heading-1 {
-  font-size: 2rem;
-  font-weight: 200;
-  color: #0f172a;
+  font-size: 2.25rem;
+  font-weight: 100;
+  color: #1a202c;
   margin-bottom: 2rem;
-  letter-spacing: 0.1em;
-  line-height: 1.2;
   text-align: center;
+  letter-spacing: 0.15em;
+  line-height: 1.3;
   position: relative;
+  padding-bottom: 1.5rem;
 }
 
 .template-minimalist .resume-heading-1::after {
   content: "";
   position: absolute;
-  bottom: -1rem;
+  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 40px;
+  width: 60px;
   height: 1px;
-  background: #64748b;
+  background: #718096;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
 
 .template-minimalist .resume-heading-2 {
   font-size: 0.875rem;
-  font-weight: 500;
-  color: #64748b;
+  font-weight: 400;
+  color: #718096;
   margin-top: 2.5rem;
   margin-bottom: 1rem;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.2em;
+  text-align: center;
   position: relative;
-  padding-bottom: 0.5rem;
+  padding: 0 2rem;
 }
 
+.template-minimalist .resume-heading-2::before,
 .template-minimalist .resume-heading-2::after {
   content: "";
   position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
+  top: 50%;
+  width: 1.5rem;
   height: 1px;
   background: #e2e8f0;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
 
+.template-minimalist .resume-heading-2::before {
+  left: 0;
+}
+
+.template-minimalist .resume-heading-2::after {
+  right: 0;
+}
+
 .template-minimalist .resume-heading-3 {
   font-size: 1rem;
   font-weight: 400;
-  color: #0f172a;
+  color: #2d3748;
   margin-top: 1.5rem;
   margin-bottom: 0.5rem;
+  letter-spacing: 0.02em;
 }
 
 .template-minimalist .resume-paragraph {
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: #475569;
+  color: #4a5568;
+  line-height: 1.7;
   margin-bottom: 1rem;
-}
-
-.template-minimalist .resume-list-item {
-  font-size: 0.9rem;
-  color: #475569;
-  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
 }
 
 .template-minimalist .resume-list-item::before {
-  content: "•";
+  content: "◦";
   color: #cbd5e1;
   margin-right: 0.75rem;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }`,
 
-  creative: `/* Creative Template - Modern Edge */
+  creative: `/* Creative Template - Bold Innovation */
 .template-creative {
   background: white;
   font-family: 'Montserrat', sans-serif;
@@ -241,19 +307,19 @@ const defaultTemplateCSS = {
   top: 0;
   left: 0;
   width: 100%;
-  height: 8px;
-  background: linear-gradient(90deg, #ec4899 0%, #8b5cf6 50%, #06b6d4 100%);
+  height: 12px;
+  background: linear-gradient(90deg, #ff6b6b 0%, #4ecdc4 25%, #45b7d1 50%, #96ceb4 75%, #ffeaa7 100%);
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
 
 .template-creative .resume-heading-1 {
-  font-size: 2.25rem;
+  font-size: 2.5rem;
   font-weight: 700;
-  color: #1e293b;
-  margin-top: 1.5rem;
+  color: #2d3436;
+  margin-top: 2rem;
   margin-bottom: 1rem;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
   line-height: 1.1;
   position: relative;
 }
@@ -261,26 +327,26 @@ const defaultTemplateCSS = {
 .template-creative .resume-heading-1::after {
   content: "";
   position: absolute;
-  bottom: -0.5rem;
+  bottom: -12px;
   left: 0;
-  width: 80px;
+  width: 120px;
   height: 4px;
-  background: #ec4899;
+  background: #ff6b6b;
   border-radius: 2px;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
 
 .template-creative .resume-heading-2 {
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   font-weight: 600;
-  color: #8b5cf6;
+  color: #4ecdc4;
   margin-top: 2rem;
   margin-bottom: 1rem;
-  position: relative;
-  padding-left: 2rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  position: relative;
+  padding-left: 2.5rem;
 }
 
 .template-creative .resume-heading-2::before {
@@ -289,17 +355,17 @@ const defaultTemplateCSS = {
   left: 0;
   top: 0;
   bottom: 0;
-  width: 4px;
-  background: linear-gradient(180deg, #ec4899 0%, #8b5cf6 100%);
-  border-radius: 2px;
+  width: 6px;
+  background: linear-gradient(180deg, #ff6b6b 0%, #4ecdc4 100%);
+  border-radius: 3px;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
 
 .template-creative .resume-heading-3 {
-  font-size: 1rem;
+  font-size: 1.125rem;
   font-weight: 600;
-  color: #1e293b;
+  color: #2d3436;
   margin-top: 1.25rem;
   margin-bottom: 0.5rem;
   position: relative;
@@ -314,22 +380,29 @@ const defaultTemplateCSS = {
   transform: translateY(-50%);
   width: 8px;
   height: 8px;
-  background: #06b6d4;
+  background: #45b7d1;
   border-radius: 50%;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
 
+.template-creative .resume-paragraph {
+  color: #636e72;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
 .template-creative .resume-list-item::before {
-  content: "▲";
-  color: #ec4899;
-  font-size: 0.7rem;
-  margin-right: 0.75rem;
+  content: "▸";
+  color: #ff6b6b;
+  font-weight: bold;
+  margin-right: 0.5rem;
+  font-size: 0.8rem;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }`,
 
-  executive: `/* Executive Template - Corporate Leadership */
+  executive: `/* Executive Template - Leadership Excellence */
 .template-executive {
   background: white;
   font-family: 'Source Sans Pro', sans-serif;
@@ -342,23 +415,23 @@ const defaultTemplateCSS = {
   top: 0;
   left: 0;
   right: 0;
-  height: 6px;
-  background: #1f2937;
+  height: 8px;
+  background: #2c3e50;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
 
 .template-executive .resume-heading-1 {
-  font-size: 2.5rem;
+  font-size: 2.75rem;
   font-weight: 300;
-  color: #1f2937;
-  margin-top: 1.5rem;
-  margin-bottom: 1rem;
+  color: #2c3e50;
+  margin-top: 2rem;
+  margin-bottom: 1.5rem;
   text-align: center;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.05em;
   line-height: 1.2;
   position: relative;
-  padding-bottom: 1rem;
+  padding-bottom: 1.5rem;
 }
 
 .template-executive .resume-heading-1::after {
@@ -367,9 +440,9 @@ const defaultTemplateCSS = {
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 120px;
-  height: 2px;
-  background: #d97706;
+  width: 150px;
+  height: 3px;
+  background: #e67e22;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
@@ -378,10 +451,10 @@ const defaultTemplateCSS = {
   font-size: 1rem;
   font-weight: 700;
   color: white;
-  margin-top: 2rem;
-  margin-bottom: 1rem;
-  background: #1f2937;
-  padding: 0.75rem 1.5rem;
+  margin-top: 2.5rem;
+  margin-bottom: 1.5rem;
+  background: #2c3e50;
+  padding: 1rem 2rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   position: relative;
@@ -389,17 +462,16 @@ const defaultTemplateCSS = {
   print-color-adjust: exact;
 }
 
-.template-executive .resume-heading-2::before {
+.template-executive .resume-heading-2::after {
   content: "";
   position: absolute;
-  right: -12px;
+  right: -15px;
   top: 0;
-  bottom: 0;
   width: 0;
   height: 0;
-  border-left: 12px solid #1f2937;
-  border-top: 22px solid transparent;
-  border-bottom: 22px solid transparent;
+  border-left: 15px solid #2c3e50;
+  border-top: 25px solid transparent;
+  border-bottom: 25px solid transparent;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
@@ -407,11 +479,11 @@ const defaultTemplateCSS = {
 .template-executive .resume-heading-3 {
   font-size: 1.125rem;
   font-weight: 600;
-  color: #1f2937;
+  color: #2c3e50;
   margin-top: 1.5rem;
   margin-bottom: 0.5rem;
   position: relative;
-  padding-left: 1rem;
+  padding-left: 1.25rem;
 }
 
 .template-executive .resume-heading-3::before {
@@ -420,25 +492,25 @@ const defaultTemplateCSS = {
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  width: 4px;
-  height: 4px;
-  background: #d97706;
+  width: 6px;
+  height: 6px;
+  background: #e67e22;
   border-radius: 50%;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
 
 .template-executive .resume-paragraph {
-  color: #374151;
+  color: #34495e;
   line-height: 1.6;
   margin-bottom: 1rem;
 }
 
 .template-executive .resume-list-item::before {
-  content: "■";
-  color: #d97706;
-  font-size: 0.6rem;
-  margin-right: 0.75rem;
+  content: "▪";
+  color: #e67e22;
+  font-weight: bold;
+  margin-right: 0.5rem;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }`
