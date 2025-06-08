@@ -60,8 +60,7 @@ export const PrintPreview = ({
     <Button
       onClick={handleExportPDF}
       disabled={isExporting}
-      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 flex items-center gap-2"
-    >
+      className="bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 flex items-center gap-2"    >
       <Download className="h-4 w-4" />
       {isExporting ? 'Generating...' : 'Generate PDF'}
     </Button>
