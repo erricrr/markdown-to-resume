@@ -18,31 +18,26 @@ const templates = [
   {
     id: 'professional',
     name: 'Professional',
-    // color: 'bg-blue-500',
   },
   {
     id: 'modern',
     name: 'Modern',
-    // color: 'bg-purple-500',
   },
   {
     id: 'minimalist',
     name: 'Minimalist',
-    // color: 'bg-gray-500',
   },
   {
     id: 'creative',
     name: 'Creative',
-    // color: 'bg-green-500',
   },
   {
     id: 'executive',
     name: 'Executive',
-    // color: 'bg-red-500',
   },
 ];
 
-// Simplified default CSS for testing
+// Redesigned template CSS with decorative elements that work in PDFs
 const defaultTemplateCSS = {
   professional: `/* Professional Template */
 .template-professional {
@@ -68,65 +63,384 @@ const defaultTemplateCSS = {
   letter-spacing: 0.05em;
 }`,
 
-  modern: `/* Modern Template */
+  modern: `/* Modern Template - Tech Professional */
 .template-modern {
-  background: #fefff3;
+  background: white;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  position: relative;
+}
+
+.template-modern::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 50%, #1e40af 100%);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 
 .template-modern .resume-heading-1 {
-  font-size: 2.25rem;
+  font-size: 2.5rem;
   font-weight: 300;
-  color: #000;
+  color: #1e293b;
   margin-bottom: 1rem;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  position: relative;
+  padding-left: 1rem;
+}
+
+.template-modern .resume-heading-1::after {
+  content: "";
+  position: absolute;
+  bottom: -0.5rem;
+  left: 1rem;
+  width: 60px;
+  height: 3px;
+  background: #3b82f6;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 
 .template-modern .resume-heading-2 {
-  font-size: 1.125rem;
-  font-weight: 500;
-  color: #000;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #3b82f6;
   margin-top: 2rem;
   margin-bottom: 1rem;
   padding-left: 1rem;
-  border-left: 4px solid #9ca3af;
+  position: relative;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.template-modern .resume-heading-2::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  background: #3b82f6;
+  border-radius: 50%;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.template-modern .resume-paragraph,
+.template-modern .resume-list {
+  padding-left: 1rem;
+}
+
+.template-modern .resume-list-item::before {
+  content: "▸";
+  color: #3b82f6;
+  font-weight: bold;
+  margin-right: 0.5rem;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }`,
 
-  minimalist: `/* Minimalist Template */
+  minimalist: `/* Minimalist Template - Ultra Clean */
 .template-minimalist {
   background: white;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .template-minimalist .resume-heading-1 {
-  font-size: 1.5rem;
+  font-size: 2rem;
+  font-weight: 200;
+  color: #0f172a;
+  margin-bottom: 2rem;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+  text-align: center;
+  position: relative;
+}
+
+.template-minimalist .resume-heading-1::after {
+  content: "";
+  position: absolute;
+  bottom: -1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 1px;
+  background: #64748b;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.template-minimalist .resume-heading-2 {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #64748b;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.template-minimalist .resume-heading-2::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: #e2e8f0;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.template-minimalist .resume-heading-3 {
+  font-size: 1rem;
   font-weight: 400;
-  color: #000;
-  margin-bottom: 1.5rem;
-  letter-spacing: 0.05em;
+  color: #0f172a;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.template-minimalist .resume-paragraph {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #475569;
+  margin-bottom: 1rem;
+}
+
+.template-minimalist .resume-list-item {
+  font-size: 0.9rem;
+  color: #475569;
+  margin-bottom: 0.5rem;
+}
+
+.template-minimalist .resume-list-item::before {
+  content: "•";
+  color: #cbd5e1;
+  margin-right: 0.75rem;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }`,
 
-  creative: `/* Creative Template */
+  creative: `/* Creative Template - Modern Edge */
 .template-creative {
   background: white;
-  border-left: 8px solid #9ca3af;
+  font-family: 'Montserrat', sans-serif;
+  position: relative;
+}
+
+.template-creative::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(90deg, #ec4899 0%, #8b5cf6 50%, #06b6d4 100%);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 
 .template-creative .resume-heading-1 {
-  font-size: 1.875rem;
-  font-weight: bold;
-  color: #000;
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-top: 1.5rem;
   margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  position: relative;
+}
+
+.template-creative .resume-heading-1::after {
+  content: "";
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  width: 80px;
+  height: 4px;
+  background: #ec4899;
+  border-radius: 2px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.template-creative .resume-heading-2 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #8b5cf6;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  position: relative;
+  padding-left: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.template-creative .resume-heading-2::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, #ec4899 0%, #8b5cf6 100%);
+  border-radius: 2px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.template-creative .resume-heading-3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.template-creative .resume-heading-3::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  background: #06b6d4;
+  border-radius: 50%;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.template-creative .resume-list-item::before {
+  content: "▲";
+  color: #ec4899;
+  font-size: 0.7rem;
+  margin-right: 0.75rem;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }`,
 
-  executive: `/* Executive Template */
+  executive: `/* Executive Template - Corporate Leadership */
 .template-executive {
   background: white;
+  font-family: 'Source Sans Pro', sans-serif;
+  position: relative;
+}
+
+.template-executive::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: #1f2937;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 
 .template-executive .resume-heading-1 {
-  font-size: 1.875rem;
-  font-weight: bold;
-  color: #000;
-  margin-bottom: 0.5rem;
+  font-size: 2.5rem;
+  font-weight: 300;
+  color: #1f2937;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
   text-align: center;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.template-executive .resume-heading-1::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 2px;
+  background: #d97706;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.template-executive .resume-heading-2 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: white;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  background: #1f2937;
+  padding: 0.75rem 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  position: relative;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.template-executive .resume-heading-2::before {
+  content: "";
+  position: absolute;
+  right: -12px;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-left: 12px solid #1f2937;
+  border-top: 22px solid transparent;
+  border-bottom: 22px solid transparent;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.template-executive .resume-heading-3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  position: relative;
+  padding-left: 1rem;
+}
+
+.template-executive .resume-heading-3::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 4px;
+  background: #d97706;
+  border-radius: 50%;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.template-executive .resume-paragraph {
+  color: #374151;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.template-executive .resume-list-item::before {
+  content: "■";
+  color: #d97706;
+  font-size: 0.6rem;
+  margin-right: 0.75rem;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }`
 };
 
@@ -153,7 +467,6 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
       ...prev,
       [template]: css
     }));
-    // Apply immediately without debouncing
     onCSSChange(template, css);
   };
 
@@ -272,7 +585,6 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
                   value={template.id}
                   className="flex items-center gap-2 text-xs"
                 >
-                  {/* <div className={`w-2 h-2 rounded-full ${template.color}`} /> */}
                   {template.name}
                 </TabsTrigger>
               ))}
@@ -288,7 +600,6 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
               <div className="h-full flex flex-col gap-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    {/* <div className={`w-3 h-3 rounded-full ${template.color}`} /> */}
                     <h3 className="font-medium">{template.name} Template</h3>
                   </div>
                   <div className="flex gap-2">
