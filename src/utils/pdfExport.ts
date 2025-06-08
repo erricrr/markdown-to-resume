@@ -859,7 +859,7 @@ export const exportToPDF = async (resumeData: ResumeData) => {
 
           /* FIRST PAGE MARGINS - More top margin, double left/right margins */
           @page :first {
-            margin: 0.5in 0.5in 0.75in 0.5in; /* top right bottom left - first page with more top margin */
+            margin: 0.75in 0.5in 0.75in 0.5in; /* Changed from 0.5in to 1in for more top space */
             /* Hide headers and footers on first page */
             @top-left { content: ""; }
             @top-center { content: ""; }
