@@ -34,7 +34,6 @@ export const exportToPDF = async (
       const allElements = element.querySelectorAll("*");
       allElements.forEach((el) => {
         const htmlEl = el as HTMLElement;
-        const computedStyle = window.getComputedStyle(htmlEl);
 
         // For UL and OL elements - use custom bullets only
         if (htmlEl.tagName === "UL" || htmlEl.tagName === "OL") {
@@ -42,8 +41,8 @@ export const exportToPDF = async (
           htmlEl.style.boxShadow = "none";
           htmlEl.style.border = "none";
           htmlEl.style.listStyleType = "none";
-          htmlEl.style.paddingLeft = "0";
-          htmlEl.style.marginLeft = "0";
+          htmlEl.style.paddingLeft = "1.5rem";
+          htmlEl.style.marginLeft = "0.5rem";
         }
 
         // For LI elements - use block display with custom bullets
@@ -54,9 +53,22 @@ export const exportToPDF = async (
           htmlEl.style.transform = "none";
           htmlEl.style.listStyleType = "none";
           htmlEl.style.listStyle = "none";
-          htmlEl.style.paddingLeft = "1.2rem";
-          htmlEl.style.marginLeft = "0";
+          htmlEl.style.paddingLeft = "1.5rem";
+          htmlEl.style.marginLeft = "0.5rem";
           htmlEl.style.position = "relative";
+          htmlEl.style.textIndent = "-1rem";
+
+          // Add bullet point using pseudo-element
+          const bullet = document.createElement("span");
+          bullet.textContent = "• ";
+          bullet.style.position = "absolute";
+          bullet.style.left = "0.5rem";
+          bullet.style.display = "inline-block";
+          bullet.style.width = "0.5rem";
+          bullet.style.marginRight = "0.5rem";
+          bullet.style.color = "#000000";
+          bullet.style.fontWeight = "bold";
+          htmlEl.insertBefore(bullet, htmlEl.firstChild);
         }
 
         // Preserve heading styles with minimal changes
@@ -65,6 +77,7 @@ export const exportToPDF = async (
           htmlEl.style.boxShadow = "none";
           htmlEl.style.border = "none";
           htmlEl.style.transform = "none";
+          htmlEl.style.color = "#000000";
         }
 
         // Preserve paragraph styles with minimal changes
@@ -73,6 +86,7 @@ export const exportToPDF = async (
           htmlEl.style.boxShadow = "none";
           htmlEl.style.border = "none";
           htmlEl.style.transform = "none";
+          htmlEl.style.color = "#374151";
         }
 
         // Remove shadows and borders from all elements for clean PDF
@@ -101,7 +115,7 @@ export const exportToPDF = async (
 
       if (firstPageElement && secondPageElement) {
         const pdf = new jsPDF("p", "mm", "a4");
-        const marginInMM = 2.5; // 0.5 inch in mm
+        const marginInMM = 12.7; // 0.5 inch in mm
         const pageWidth = 210; // A4 width in mm
         const pageHeight = 297; // A4 height in mm
         const contentWidth = pageWidth - 2 * marginInMM;
@@ -141,24 +155,6 @@ export const exportToPDF = async (
           logging: false,
           removeContainer: true,
           imageTimeout: 15000,
-          onclone: (clonedDoc) => {
-            const listItems = clonedDoc.querySelectorAll("li");
-            listItems.forEach((li) => {
-              const htmlLi = li as HTMLElement;
-              htmlLi.style.listStyleType = "none";
-              htmlLi.style.listStyle = "none";
-              htmlLi.style.display = "block";
-              htmlLi.style.position = "relative";
-              htmlLi.style.paddingLeft = "1.2rem";
-            });
-
-            const lists = clonedDoc.querySelectorAll("ul, ol");
-            lists.forEach((list) => {
-              const htmlList = list as HTMLElement;
-              htmlList.style.listStyleType = "none";
-              htmlList.style.paddingLeft = "0";
-            });
-          },
         });
 
         document.body.removeChild(firstPageContainer);
@@ -212,24 +208,6 @@ export const exportToPDF = async (
             logging: false,
             removeContainer: true,
             imageTimeout: 15000,
-            onclone: (clonedDoc) => {
-              const listItems = clonedDoc.querySelectorAll("li");
-              listItems.forEach((li) => {
-                const htmlLi = li as HTMLElement;
-                htmlLi.style.listStyleType = "none";
-                htmlLi.style.listStyle = "none";
-                htmlLi.style.display = "block";
-                htmlLi.style.position = "relative";
-                htmlLi.style.paddingLeft = "1.2rem";
-              });
-
-              const lists = clonedDoc.querySelectorAll("ul, ol");
-              lists.forEach((list) => {
-                const htmlList = list as HTMLElement;
-                htmlList.style.listStyleType = "none";
-                htmlList.style.paddingLeft = "0";
-              });
-            },
           });
 
           document.body.removeChild(secondPageContainer);
@@ -280,25 +258,6 @@ export const exportToPDF = async (
       logging: false,
       removeContainer: true,
       imageTimeout: 15000,
-      onclone: (clonedDoc) => {
-        // Ensure list styles use custom bullets only
-        const listItems = clonedDoc.querySelectorAll("li");
-        listItems.forEach((li) => {
-          const htmlLi = li as HTMLElement;
-          htmlLi.style.listStyleType = "none";
-          htmlLi.style.listStyle = "none";
-          htmlLi.style.display = "block";
-          htmlLi.style.position = "relative";
-          htmlLi.style.paddingLeft = "1.2rem";
-        });
-
-        const lists = clonedDoc.querySelectorAll("ul, ol");
-        lists.forEach((list) => {
-          const htmlList = list as HTMLElement;
-          htmlList.style.listStyleType = "none";
-          htmlList.style.paddingLeft = "0";
-        });
-      },
     });
 
     // Clean up temporary element
@@ -307,7 +266,7 @@ export const exportToPDF = async (
     const imgData = canvas.toDataURL("image/png");
 
     // Use 0.5 inch margins
-    const marginInMM = 2.5; // 0.5 inch in mm
+    const marginInMM = 12.7; // 0.5 inch in mm
     const pageWidth = 210; // A4 width in mm
     const pageHeight = 297; // A4 height in mm
     const contentWidth = pageWidth - 2 * marginInMM;
