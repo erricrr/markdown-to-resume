@@ -905,7 +905,7 @@ export const printStyles = `
 
   /* ULTRA-COMPACT HEADER FOR TWO-COLUMN LAYOUTS */
   .resume-two-column-layout .resume-header {
-    margin: 0 !important;
+    margin: 0 0 0.5rem 0 !important;
     padding: 0 !important;
     line-height: 1.1 !important;
     page-break-after: avoid !important;
@@ -930,22 +930,28 @@ export const printStyles = `
   .resume-two-column-layout.template-professional .resume-header .resume-heading-1 {
     font-size: 20pt !important;
     line-height: 1.0 !important;
-    margin: 0 !important;
+    margin: 0 0 0.5rem 0 !important;
     padding: 0 0 0.125rem 0 !important;
     border-bottom: 1px solid #e0e0e0 !important;
   }
 
-  /* Force summary to be ultra-compact */
+  /* Override conflicting header spacing rules for balanced summary spacing */
+  .resume-two-column-layout .resume-header .resume-heading-1 {
+    margin-bottom: 0.5rem !important;
+    padding-bottom: 0 !important;
+  }
+
+  /* Balanced summary spacing for two-column layout */
   .resume-two-column-layout .resume-summary-section {
-    margin: 0.25rem 0 0.75rem 0 !important;
-    padding: 0 0 0.25rem 0 !important;
+    margin: 0.5rem 0 0.5rem 0 !important;
+    padding: 0 !important;
     line-height: 1.2 !important;
     font-size: 11pt !important;
   }
 
   /* Ensure proper spacing between summary and columns */
   .resume-two-column-layout .resume-summary-section + .resume-columns {
-    margin-top: 0.75rem !important;
+    margin-top: 0.5rem !important;
     padding-top: 0.5rem !important;
   }
 
@@ -967,55 +973,6 @@ export const printStyles = `
   .resume-two-column-layout .resume-column-right {
     padding-top: 0.5rem !important;
     margin-top: 0 !important;
-  }
-
-  /* CRITICAL: Treat entire two-column layout as unbreakable unit */
-  .resume-two-column-layout .resume-two-column {
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
-    page-break-before: avoid !important;
-    break-before: avoid !important;
-    page-break-after: auto !important;
-    break-after: auto !important;
-  }
-
-  /* Force the entire content to fit on one page by reducing all spacing */
-  .resume-two-column-layout .resume-column-left > *,
-  .resume-two-column-layout .resume-column-right > * {
-    margin-top: 0.5rem !important;
-    margin-bottom: 0.25rem !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-  }
-
-  /* Make first elements have proper top margin to prevent cutoff */
-  .resume-two-column-layout .resume-column-left > *:first-child,
-  .resume-two-column-layout .resume-column-right > *:first-child {
-    margin-top: 1rem !important;
-    padding-top: 0.25rem !important;
-  }
-
-  /* Ensure H2 headings have sufficient top margin to prevent cutoff */
-  .resume-two-column-layout .resume-column-left .resume-heading-2,
-  .resume-two-column-layout .resume-column-right .resume-heading-2,
-  .resume-two-column-layout .resume-column-left h2,
-  .resume-two-column-layout .resume-column-right h2 {
-    margin-top: 0.75rem !important;
-    margin-bottom: 0.5rem !important;
-    padding-top: 0.25rem !important;
-    page-break-after: avoid !important;
-    break-after: avoid !important;
-  }
-
-  /* Reduce line heights throughout to save vertical space */
-  .resume-two-column-layout .resume-column-left,
-  .resume-two-column-layout .resume-column-right {
-    line-height: 1.3 !important;
-  }
-
-  .resume-two-column-layout .resume-column-left *,
-  .resume-two-column-layout .resume-column-right * {
-    line-height: 1.3 !important;
   }
 
   /* COMPREHENSIVE TWO-COLUMN LAYOUT FIXES FOR ALL TEMPLATES */
