@@ -95,7 +95,7 @@ export const defaultTemplateCSS: Record<string, string> = {
   border-left: 4px solid #333333;
 }
 
-.template-modern p, 
+.template-modern p,
 .template-modern li {
   color: #4a4a4a;
   margin: 0.5rem 0;
@@ -118,7 +118,7 @@ export const defaultTemplateCSS: Record<string, string> = {
   border-bottom-color: #999999;
 }
 
-.template-modern ul, 
+.template-modern ul,
 .template-modern ol {
   padding-left: 1.5rem;
 }
@@ -168,7 +168,7 @@ export const defaultTemplateCSS: Record<string, string> = {
   margin: 2rem 0;
 }
 
-.template-minimalist p, 
+.template-minimalist p,
 .template-minimalist li {
   color: #555555;
   margin: 0.25rem 0;
@@ -228,7 +228,7 @@ export const defaultTemplateCSS: Record<string, string> = {
   text-transform: uppercase;
   letter-spacing: -0.5px;
   position: relative;
-  padding-left: 1.5rem;
+  padding-left: 0;
   line-height: 1.2;
 }
 
@@ -241,7 +241,7 @@ export const defaultTemplateCSS: Record<string, string> = {
   text-transform: uppercase;
   letter-spacing: 1px;
   position: relative;
-  padding-left: 2rem;
+  padding-left: 1.5rem;
   display: flex;
   align-items: center;
 }
@@ -263,7 +263,7 @@ export const defaultTemplateCSS: Record<string, string> = {
     display: flex !important;
     align-items: center !important;
   }
-  
+
   .template-creative .resume-heading-2::before {
     display: inline-block !important;
     width: 12px !important;
@@ -273,10 +273,10 @@ export const defaultTemplateCSS: Record<string, string> = {
 }
 
 /* Creative Template - Base Text Styles */
-.template-creative p, 
+.template-creative p,
 .template-creative li {
   color: #4a4a4a;
-  margin: 0.5rem 0 0.5rem 2rem !important;
+  margin: 0.5rem 0 !important;
   font-weight: 400;
   padding: 0 !important;
   font-size: 1rem;
@@ -287,28 +287,13 @@ export const defaultTemplateCSS: Record<string, string> = {
 /* Ensure consistent bullet alignment */
 .template-creative ul,
 .template-creative ol {
-  margin: 0.5rem 0 0.5rem 2rem !important;
-  padding: 0 !important;
+  margin: 0.5rem 0 !important;
+  padding-left: 1.5rem !important;
 }
 
-.template-creative .resume-heading-2 {
-  padding-left: 2rem !important;
-  margin-left: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-}
-
-.template-creative .resume-heading-2::before {
-  content: '' !important;
-  display: inline-block !important;
-  width: 12px !important;
-  height: 12px !important;
-  background-color: #333333 !important;
-  margin-right: 0.75rem !important;
-  margin-left: 0 !important;
-  flex-shrink: 0;
-  -webkit-print-color-adjust: exact !important;
-  print-color-adjust: exact !important;
+.template-creative li {
+  position: relative;
+  padding-left: 0 !important;
 }
 
 .template-creative a {
@@ -324,58 +309,39 @@ export const defaultTemplateCSS: Record<string, string> = {
   border-bottom-color: #999999;
 }
 
-.template-creative ul, 
-.template-creative ol {
-  padding-left: 3rem;
-  margin: 0.75rem 0;
-}
-
-.template-creative li {
-  margin-bottom: 0.5rem;
-  position: relative;
-}
-
 /* Fix for PDF generation */
 @media print {
-  /* Reset all margins and padding first */
-  .template-creative * {
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
-  /* Then apply specific styles */
   .template-creative {
     padding: 2rem !important;
     font-size: 11pt !important;
   }
-  
+
   .template-creative .resume-heading-1 {
     font-size: 1.8rem !important;
     margin-bottom: 1rem !important;
     padding-left: 0 !important;
-    margin-left: 0 !important;
   }
-  
+
   .template-creative .resume-heading-2 {
     font-size: 1.1rem !important;
     margin: 1.5rem 0 0.75rem 0 !important;
     padding-left: 0 !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
     display: flex !important;
     align-items: center !important;
   }
-  
+
   .template-creative p,
-  .template-creative ul,
-  .template-creative ol,
   .template-creative li {
-    padding-left: 2rem !important;
-    margin-left: 0 !important;
-    margin-top: 0.5rem !important;
-    margin-bottom: 0.5rem !important;
+    padding: 0 !important;
+    margin: 0.5rem 0 !important;
   }
-  
+
+  .template-creative ul,
+  .template-creative ol {
+    padding-left: 1.5rem !important;
+    margin: 0.5rem 0 !important;
+  }
+
   .template-creative .resume-heading-2::before {
     content: '' !important;
     display: inline-block !important;
@@ -383,18 +349,17 @@ export const defaultTemplateCSS: Record<string, string> = {
     height: 12px !important;
     background-color: #333333 !important;
     margin-right: 0.75rem !important;
-    margin-left: 0 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     flex-shrink: 0;
   }
-  
-  .template-creative p, 
+
+  .template-creative p,
   .template-creative li {
     font-size: 11pt !important;
     line-height: 1.5 !important;
   }
-  
+
   .template-creative .resume-content::before {
     display: block !important;
   }
@@ -465,19 +430,19 @@ export const defaultTemplateCSS: Record<string, string> = {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
-  
+
   .template-executive .resume-heading-2::before {
     background-color: #666666 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
-  
+
   .template-executive .resume-heading-2::after {
     background-color: #e0e0e0 !important;
   }
 }
 
-.template-executive p, 
+.template-executive p,
 .template-executive li {
   color: #555555;
   margin: 0.5rem 0;
@@ -499,7 +464,7 @@ export const defaultTemplateCSS: Record<string, string> = {
   border-bottom-color: #999999;
 }
 
-.template-executive ul, 
+.template-executive ul,
 .template-executive ol {
   padding-left: 1.5rem;
 }
@@ -564,7 +529,7 @@ export const defaultTemplateCSS: Record<string, string> = {
   margin: 1.5rem 0;
 }
 
-.template-professional p, 
+.template-professional p,
 .template-professional li {
   color: #4a4a4a;
   margin: 0.5rem 0;

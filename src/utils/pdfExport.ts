@@ -678,264 +678,226 @@ text-align: center;
 text-align: center;
 margin-bottom: 0.5rem;
 }
-          color: #000;
-          margin-bottom: 1rem;
-          text-align: center;
-          letter-spacing: -0.01em;
-          line-height: 1.2;
-          border-bottom: 2px solid #000 !important;
-          padding-bottom: 0.75rem;
-          -webkit-print-color-adjust: exact !important;
-          print-color-adjust: exact !important;
-        }
 
-        .template-executive .resume-heading-2 {
-          font-size: 1.125rem;
-          font-weight: 700;
-          color: #000;
-          margin-top: 1.75rem;
-          margin-bottom: 0.75rem;
-          text-align: left;
-          background-color: #f8f9fa !important;
-          padding: 0.5rem 1rem;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-          border-left: 4px solid #000 !important;
-          -webkit-print-color-adjust: exact !important;
-          print-color-adjust: exact !important;
-        }
+/* CREATIVE TEMPLATE - Modern Edge */
+.template-creative {
+  background: white;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  padding: 0.75rem 2.5rem 2.5rem 4.5rem;
+  position: relative;
+  border-left: none !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
 
-        .template-executive .resume-heading-3 {
-          font-size: 1rem;
-          font-weight: 600;
-          color: #000;
-          margin-top: 1rem;
-          margin-bottom: 0.5rem;
-        }
+.template-creative::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 8px !important;
+  height: 100% !important;
+  background-color: #000 !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
 
-        .template-executive .resume-paragraph {
-          font-size: 1rem;
-          margin-bottom: 0.75rem;
-          color: #374151;
-          line-height: 1.5;
-          font-weight: 400;
-        }
+.template-creative .resume-heading-1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 1rem;
+  padding-left: 0;
+  position: relative;
+}
 
-        .template-executive .resume-list {
-          margin-bottom: 1rem;
-          margin-left: 1rem;
-          padding-left: 0.8rem;
-        }
+.template-creative .resume-heading-1::after {
+  content: "";
+  position: absolute;
+  bottom: -0.25rem;
+  left: 0;
+  width: 80%;
+  height: 2px;
+  background: linear-gradient(to right, #000, #6b7280, transparent) !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
 
-        .template-executive .resume-list-item {
-          font-size: 1rem;
-          margin-bottom: 0.5rem;
-          color: #374151;
-          padding-left: 0.8rem;
-          text-indent: -0.8rem;
-          line-height: 1.4;
-          font-weight: 400;
-        }
+.template-creative .resume-heading-2 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #000;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-left: 1.5rem;
+  position: relative;
+  display: flex !important;
+  align-items: center !important;
+}
 
-        .template-executive .resume-list-item::before {
-          content: "▪" !important;
-          color: #000 !important;
-          font-weight: 700;
-          margin-right: 0.5rem;
-          -webkit-print-color-adjust: exact !important;
-          print-color-adjust: exact !important;
-          display: inline-block !important;
-        }
+.template-creative .resume-heading-2::before {
+  content: "■" !important;
+  position: absolute;
+  left: 0;
+  color: #000 !important;
+  font-size: 0.7rem;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
 
-        .template-executive .resume-strong {
-          font-weight: 700;
-          color: #000;
-        }
+.template-creative .resume-heading-3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #000;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
 
-        .template-executive .resume-emphasis {
-          font-weight: 600;
-          color: #6b7280;
-        }
+.template-creative .resume-paragraph {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  color: #374151;
+  line-height: 1.5;
+  font-weight: 400;
+  padding: 0;
+}
 
-        .template-executive .resume-hr {
-          border: none;
-          height: 1px;
-          background-color: #000 !important;
-          margin: 1.25rem 0;
-          -webkit-print-color-adjust: exact !important;
-          print-color-adjust: exact !important;
-        }
+.template-creative .resume-list {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+  list-style-type: none !important;
+  margin-left: 0.5rem;
+}
 
-        /* Two Column Layout */
-        .resume-two-column-layout .resume-two-column {
-          display: flex;
-          flex-direction: column;
-        }
+.template-creative .resume-list-item {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: #374151;
+  line-height: 1.4;
+  font-weight: 400;
+  display: list-item !important;
+  list-style-type: none !important;
+  position: relative;
+  padding-left: 0;
+  margin-left: 0;
+}
 
-        .resume-two-column-layout .resume-header {
-          width: 100%;
-          margin-bottom: 0.75rem;
-          padding-bottom: 0.5rem;
-        }
+.template-creative .resume-list-item::before {
+  content: "●" !important;
+  color: #000 !important;
+  font-weight: 700;
+  margin-right: 0.5rem;
+  font-size: 0.6rem;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
 
-        .resume-two-column-layout .resume-header .resume-heading-1 {
-          font-size: 1.5rem;
-          text-align: center;
-        }
+.template-creative .resume-strong {
+  font-weight: 700;
+  color: #000;
+}
 
-        .resume-two-column-layout .resume-header .resume-paragraph {
-          text-align: center;
-          margin-bottom: 0.5rem;
-        }
+.template-creative .resume-emphasis {
+  font-weight: 600;
+  color: #6b7280;
+}
 
-        .resume-two-column-layout .resume-columns {
-          display: grid;
-          grid-template-columns: 1fr 2fr;
-          gap: 1.5rem;
-        }
+.template-creative .resume-hr {
+  border: none;
+  height: 2px;
+  background: #000 !important;
+  margin: 1.25rem 0;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
 
-        .resume-two-column-layout .resume-column-left {
-          padding-right: 1rem;
-        }
+/* Print styles */
+@media print {
+  /* MAIN PAGE MARGINS - All pages except first */
+  @page {
+    size: A4;
+    margin: 0.75in 0.5in 0.75in 0.5in; /* top right bottom left - second page and beyond */
+    /* Hide headers and footers */
+    @top-left { content: ""; }
+    @top-center { content: ""; }
+    @top-right { content: ""; }
+    @bottom-left { content: ""; }
+    @bottom-center { content: ""; }
+    @bottom-right { content: ""; }
+  }
 
-        .resume-two-column-layout .resume-column-left .resume-heading-1 {
-          font-size: 1.25rem !important;
-          line-height: 1.75rem !important;
-        }
+  /* FIRST PAGE MARGINS - More top margin, double left/right margins */
+  @page :first {
+    margin: 0.75in 0.5in 0.75in 0.5in; /* Changed from 0.5in to 1in for more top space */
+    /* Hide headers and footers on first page */
+    @top-left { content: ""; }
+    @top-center { content: ""; }
+    @top-right { content: ""; }
+    @bottom-left { content: ""; }
+    @bottom-center { content: ""; }
+    @bottom-right { content: ""; }
+  }
 
-        .resume-two-column-layout .resume-column-left .resume-heading-2 {
-          font-size: 1rem !important;
-          line-height: 1.5rem !important;
-          margin-top: 1rem !important;
-          margin-bottom: 0.5rem !important;
-        }
+  /* Remove default print headers and footers */
+  body::before,
+  body::after {
+    display: none !important;
+  }
 
-        .resume-two-column-layout .resume-column-left .resume-heading-3 {
-          font-size: 0.875rem !important;
-          line-height: 1.25rem !important;
-          margin-top: 0.75rem !important;
-          margin-bottom: 0.25rem !important;
-        }
+  /* Hide any potential header/footer elements */
+  header, footer, .header, .footer {
+    display: none !important;
+  }
 
-        .resume-two-column-layout .resume-column-right .resume-heading-2 {
-          margin-top: 0 !important;
-          margin-bottom: 0.75rem !important;
-        }
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+  }
 
-        /* Two Page Layout */
-        .resume-two-page-layout .resume-two-page {
-          display: flex;
-          flex-direction: column;
-        }
+  .resume-template {
+    margin: 0 !important;
+    padding: 0 !important; /* No padding - margins handled by @page rules */
+    box-shadow: none !important;
+    width: 100% !important;
+    min-height: auto !important;
+  }
 
-        .resume-two-page-layout .resume-page-first {
-          width: 6.5in;
-          height: 9in;
-          background: white;
-          padding: 0;
-          margin-bottom: 2rem;
-          overflow: hidden;
-          page-break-after: always;
-          border: 1px solid #e5e7eb;
-        }
+  /* Force page breaks for two-page layouts - no padding, margins handled by @page */
+  .resume-two-page-layout .resume-page-first {
+    padding: 0 !important;
+    margin: 0 !important;
+    page-break-after: always !important;
+    min-height: calc(11in - 1.75in) !important; /* account for first page margins */
+  }
 
-        .resume-two-page-layout .resume-page-second {
-          width: 6.5in;
-          height: 9in;
-          background: white;
-          padding: 0;
-          overflow: hidden;
-          border: 1px solid #e5e7eb;
-        }
+  .resume-two-page-layout .resume-page-second {
+    padding: 0 !important;
+    margin: 0 !important;
+    page-break-before: always !important;
+    min-height: calc(11in - 1.5in) !important; /* account for second page margins */
+  }
 
-        /* Custom CSS from CSS Editor */
-        ${dynamicCSS}
+  .resume-two-column-layout .resume-columns {
+    display: grid !important;
+    grid-template-columns: 1fr 2fr !important;
+    gap: 1.5rem !important;
+  }
 
-        /* Print styles */
-        @media print {
-          /* MAIN PAGE MARGINS - All pages except first */
-          @page {
-            size: A4;
-            margin: 0.75in 0.5in 0.75in 0.5in; /* top right bottom left - second page and beyond */
-            /* Hide headers and footers */
-            @top-left { content: ""; }
-            @top-center { content: ""; }
-            @top-right { content: ""; }
-            @bottom-left { content: ""; }
-            @bottom-center { content: ""; }
-            @bottom-right { content: ""; }
-          }
+  .resume-two-column-layout .resume-column-left {
+    padding-right: 1rem !important;
+  }
 
-          /* FIRST PAGE MARGINS - More top margin, double left/right margins */
-          @page :first {
-            margin: 0.75in 0.5in 0.75in 0.5in; /* Changed from 0.5in to 1in for more top space */
-            /* Hide headers and footers on first page */
-            @top-left { content: ""; }
-            @top-center { content: ""; }
-            @top-right { content: ""; }
-            @bottom-left { content: ""; }
-            @bottom-center { content: ""; }
-            @bottom-right { content: ""; }
-          }
+  /* Force all styling to print - Enhanced */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
 
-          /* Remove default print headers and footers */
-          body::before,
-          body::after {
-            display: none !important;
-          }
-
-          /* Hide any potential header/footer elements */
-          header, footer, .header, .footer {
-            display: none !important;
-          }
-
-          body {
-            margin: 0 !important;
-            padding: 0 !important;
-            background: white !important;
-          }
-
-          .resume-template {
-            margin: 0 !important;
-            padding: 0 !important; /* No padding - margins handled by @page rules */
-            box-shadow: none !important;
-            width: 100% !important;
-            min-height: auto !important;
-          }
-
-          /* Force page breaks for two-page layouts - no padding, margins handled by @page */
-          .resume-two-page-layout .resume-page-first {
-            padding: 0 !important;
-            margin: 0 !important;
-            page-break-after: always !important;
-            min-height: calc(11in - 1.75in) !important; /* account for first page margins */
-          }
-
-          .resume-two-page-layout .resume-page-second {
-            padding: 0 !important;
-            margin: 0 !important;
-            page-break-before: always !important;
-            min-height: calc(11in - 1.5in) !important; /* account for second page margins */
-          }
-
-          .resume-two-column-layout .resume-columns {
-            display: grid !important;
-            grid-template-columns: 1fr 2fr !important;
-            gap: 1.5rem !important;
-          }
-
-          .resume-two-column-layout .resume-column-left {
-            padding-right: 1rem !important;
-          }
-
-          /* Force all styling to print - Enhanced */
-          * {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            color-adjust: exact !important;
-          }
-
-          /* Ensure all pseudo-elements print */
+            /* Ensure all pseudo-elements print */
           *::before, *::after {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
@@ -943,45 +905,76 @@ margin-bottom: 0.5rem;
             display: block !important;
           }
 
-          /* Force all borders and backgrounds to print */
-          .template-professional .resume-heading-1 {
-            border-bottom: 4px solid #6b7280 !important;
-          }
-
-          .template-professional .resume-heading-2::after {
-            background-color: #6b7280 !important;
-          }
-
-          .template-modern .resume-heading-2 {
-            border-left: 6px solid #000 !important;
-          }
-
-          .template-modern .resume-hr {
-            background: #000 !important;
-          }
-
+          /* Specific Creative template print fixes */
           .template-creative {
-            border-left: 12px solid #000 !important;
+            padding: 0.75rem 2.5rem 2.5rem 4.5rem !important;
           }
 
-          .template-creative .resume-hr {
-            background: #000 !important;
+          .template-creative .resume-heading-1 {
+            padding-left: 0 !important;
           }
 
-          .template-executive .resume-heading-2 {
-            background-color: #f8f9fa !important;
-            border-top: 2px solid #000 !important;
-            border-bottom: 2px solid #000 !important;
+          .template-creative .resume-heading-2 {
+            padding-left: 1.5rem !important;
+            display: flex !important;
+            align-items: center !important;
+            margin-top: 1.5rem !important;
+            margin-bottom: 0.75rem !important;
           }
 
-          .template-executive .resume-hr {
-            background-color: #000 !important;
+          .template-creative p,
+          .template-creative .resume-paragraph {
+            padding: 0 !important;
+            margin: 0.5rem 0 !important;
           }
 
-          .template-minimalist .resume-hr {
-            background-color: #f3f4f6 !important;
+          .template-creative ul,
+          .template-creative ol,
+          .template-creative .resume-list {
+            padding-left: 1.5rem !important;
+            margin: 0.5rem 0 0.5rem 0.5rem !important;
+            list-style-type: none !important;
           }
-        }
+
+          .template-creative li,
+          .template-creative .resume-list-item {
+            padding-left: 0 !important;
+            margin: 0.5rem 0 !important;
+            text-indent: 0 !important;
+            margin-left: 0 !important;
+          }
+
+  /* Force all borders and backgrounds to print */
+  .template-professional .resume-heading-1 {
+    border-bottom: 4px solid #6b7280 !important;
+  }
+
+  .template-professional .resume-heading-2::after {
+    background-color: #6b7280 !important;
+  }
+
+  .template-modern .resume-heading-2 {
+    border-left: 6px solid #000 !important;
+  }
+
+  .template-modern .resume-hr {
+    background: #000 !important;
+  }
+
+  .template-executive .resume-heading-2 {
+    background-color: #f8f9fa !important;
+    border-top: 2px solid #000 !important;
+    border-bottom: 2px solid #000 !important;
+  }
+
+  .template-executive .resume-hr {
+    background-color: #000 !important;
+  }
+
+  .template-minimalist .resume-hr {
+    background-color: #f3f4f6 !important;
+  }
+}
       </style>
     </head>
     <body>
