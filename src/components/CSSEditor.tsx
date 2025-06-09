@@ -214,7 +214,7 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
             <TabsContent
               key={template.id}
               value={template.id}
-              className="flex-1 px-6 pb-6 mt-4 overflow-hidden"
+              className="flex-1 px-6 pb-6 mt-4 overflow-auto"
             >
               <div className="h-full flex flex-col gap-4">
                 <div className="flex items-center justify-between">
@@ -253,11 +253,11 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
                   </div>
                 </div>
 
-                <div className="flex-1 overflow-hidden">
+                <div className="flex-1 overflow-auto">
                   <Textarea
                     value={templateCSS[template.id]}
                     onChange={(e) => handleCSSChange(template.id, e.target.value)}
-                    className="h-full resize-none font-mono text-sm"
+                    className="h-full resize-y font-mono text-sm"
                     placeholder={`Enter CSS for ${template.name} template...`}
                   />
                 </div>
