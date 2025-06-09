@@ -5,8 +5,8 @@ export const baseResumeStyles = `
 /* Import Google Fonts for customization */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lato:wght@300;400;700&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;600&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&family=Source+Sans+Pro:wght@300;400;600&family=Roboto:wght@300;400;500;700&family=Georgia:wght@400;700&family=Times+New+Roman:wght@400;700&display=swap');
 
-/* CSS Custom Properties for User Customization */
-:root {
+/* CSS Custom Properties for User Customization - Scoped to Resume Template Only */
+.resume-template {
   --resume-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --resume-font-size: 12pt;
   --resume-line-height: 1.5;
@@ -17,6 +17,8 @@ export const baseResumeStyles = `
   --resume-h1-font-size: 24pt;
   --resume-h2-font-size: 16pt;
   --resume-h3-font-size: 14pt;
+  --resume-summary-spacing-top: 0.5rem;
+  --resume-summary-spacing-bottom: 0.5rem;
 }
 
 /* Reset and base styles */
@@ -905,7 +907,7 @@ export const printStyles = `
 
   /* ULTRA-COMPACT HEADER FOR TWO-COLUMN LAYOUTS */
   .resume-two-column-layout .resume-header {
-    margin: 0 0 0.5rem 0 !important;
+    margin: 0 0 var(--resume-summary-spacing-top) 0 !important;
     padding: 0 !important;
     line-height: 1.1 !important;
     page-break-after: avoid !important;
@@ -923,27 +925,27 @@ export const printStyles = `
 
   /* Specific Professional template header fixes */
   .resume-two-column-layout.template-professional .resume-header {
-    margin-bottom: 0.5rem !important;
+    margin-bottom: var(--resume-summary-spacing-top) !important;
     padding-bottom: 0 !important;
   }
 
   .resume-two-column-layout.template-professional .resume-header .resume-heading-1 {
     font-size: 20pt !important;
     line-height: 1.0 !important;
-    margin: 0 0 0.5rem 0 !important;
+    margin: 0 0 var(--resume-summary-spacing-top) 0 !important;
     padding: 0 0 0.125rem 0 !important;
     border-bottom: 1px solid #e0e0e0 !important;
   }
 
   /* Override conflicting header spacing rules for balanced summary spacing */
   .resume-two-column-layout .resume-header .resume-heading-1 {
-    margin-bottom: 0.5rem !important;
+    margin-bottom: var(--resume-summary-spacing-top) !important;
     padding-bottom: 0 !important;
   }
 
   /* Balanced summary spacing for two-column layout */
   .resume-two-column-layout .resume-summary-section {
-    margin: 0.5rem 0 0.5rem 0 !important;
+    margin: var(--resume-summary-spacing-top) 0 var(--resume-summary-spacing-bottom) 0 !important;
     padding: 0 !important;
     line-height: 1.2 !important;
     font-size: 11pt !important;
@@ -951,8 +953,8 @@ export const printStyles = `
 
   /* Ensure proper spacing between summary and columns */
   .resume-two-column-layout .resume-summary-section + .resume-columns {
-    margin-top: 0.5rem !important;
-    padding-top: 0.5rem !important;
+    margin-top: var(--resume-summary-spacing-bottom) !important;
+    padding-top: var(--resume-summary-spacing-bottom) !important;
   }
 
   /* CRITICAL: Fix for first H2 elements getting cut off at top of columns */

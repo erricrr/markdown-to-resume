@@ -53,14 +53,28 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
 
   useEffect(() => {
     setActiveTab(selectedTemplate);
-  }, [selectedTemplate]);
+    // When the selected template changes, apply its CSS to the live preview
+    const selectedCSS = templateCSS[selectedTemplate];
+    if (selectedCSS) {
+      console.log(`🔄 Selected template changed to ${selectedTemplate}, applying its CSS`);
+      onCSSChange(selectedTemplate, selectedCSS);
+    }
+  }, [selectedTemplate, templateCSS, onCSSChange]);
 
   // Initialize CSS for all templates on mount - ONLY ONCE
   useEffect(() => {
     console.log('🚀 Initializing CSS for all templates...');
+
+    // Apply default CSS for all templates
     Object.entries(defaultTemplateCSS).forEach(([template, css]) => {
-      onCSSChange(template, css);
+      setTemplateCSS(prev => ({
+        ...prev,
+        [template]: css
+      }));
     });
+
+    // Apply the selected template's CSS to the live preview
+    onCSSChange(selectedTemplate, defaultTemplateCSS[selectedTemplate]);
   }, []); // Empty dependency array - only run once on mount
 
   const handleCSSChange = (template: string, css: string) => {
@@ -69,8 +83,10 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
       ...prev,
       [template]: css
     }));
-    // Apply immediately without debouncing
-    onCSSChange(template, css);
+    // Only apply CSS changes for the currently selected template to the live preview
+    if (template === selectedTemplate) {
+      onCSSChange(template, css);
+    }
   };
 
   const handleTestCSS = (template: string) => {
@@ -123,45 +139,85 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
     }
   };
 
-  const handleCustomizationExample = (template: string) => {
-    const customizationCSS = `/* Customization Example for ${template} */
-:root {
-  /* Change font family */
+    const handleCustomizationExample = (template: string) => {
+    // Get the original CSS for this template
+    const originalCSS = defaultTemplateCSS[template];
+
+    // Add customization examples as comments that users can uncomment
+    const customizationCSS = `/*
+ * ${template.toUpperCase()} TEMPLATE - CUSTOMIZATION GUIDE
+ *
+ * Here are examples of customizations you can make:
+ * 1. Uncomment any section below to activate it
+ * 2. Edit the values to customize your resume
+ * 3. All changes apply immediately to the preview
+ */
+
+/*
+ * FONT & SPACING CUSTOMIZATION
+ * Uncomment this section to change fonts and spacing
+ */
+
+/*
+.resume-template {
+  /* Font customization */
   --resume-font-family: 'Georgia', serif !important;
 
-  /* Adjust font sizes */
+  /* Size customization */
   --resume-font-size: 11pt !important;
   --resume-h1-font-size: 22pt !important;
   --resume-h2-font-size: 15pt !important;
 
-  /* Customize margins (top, right, bottom, left) */
+  /* Margins customization */
   --resume-margin-top: 0.75rem !important;
   --resume-margin-bottom: 0.75rem !important;
   --resume-margin-left: 0.5rem !important;
   --resume-margin-right: 0.5rem !important;
 
-  /* Adjust line height */
+  /* Spacing customization */
   --resume-line-height: 1.4 !important;
+  --resume-summary-spacing-top: 0.75rem !important;
+  --resume-summary-spacing-bottom: 0.75rem !important;
 }
+*/
 
-/* Template-specific customizations */
+/*
+ * TEMPLATE-SPECIFIC CUSTOMIZATIONS
+ * Uncomment any of these to customize specific elements
+ */
+
+/*
 .template-${template} {
-  /* Add your custom styles here */
+  /* Change the main text color */
   color: #2d3748 !important;
 }
+*/
 
+/*
 .template-${template} .resume-heading-1 {
+  /* Customize the main heading */
   color: #1a202c !important;
   text-align: center !important;
 }
+*/
 
+/*
 .template-${template} .resume-heading-2 {
+  /* Customize section headings */
   color: #2d3748 !important;
   border-bottom: 1px solid #e2e8f0 !important;
   padding-bottom: 0.25rem !important;
-}`;
+}
+*/
 
-    console.log(`🎨 Applying customization example to ${template}`);
+/*
+ * ORIGINAL TEMPLATE CSS BELOW
+ * You can edit this directly if you prefer
+ */
+
+${originalCSS}`;
+
+    console.log(`🎨 Adding customization guide to ${template}`);
     setTemplateCSS(prev => ({
       ...prev,
       [template]: customizationCSS
@@ -169,8 +225,8 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
     onCSSChange(template, customizationCSS);
 
     toast({
-      title: "Customization Example Applied",
-      description: `Applied font, margin, and styling customizations to ${template} template. Edit the CSS to make it your own!`
+      title: "Customization Guide Added",
+      description: `Added customization examples to ${template} template. Uncomment any section to customize your resume.`
     });
   };
 
@@ -193,6 +249,7 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
 
   const handleTabChange = (template: string) => {
     setActiveTab(template);
+    // Update the live preview when switching CSS editor tabs
     onTemplateChange(template);
   };
 
@@ -313,7 +370,7 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
                       className="flex items-center gap-1"
                     >
                       <Palette className="h-3 w-3" />
-                      Customize
+                      Add Examples
                     </Button>
                     <Button
                       variant="outline"
@@ -346,12 +403,12 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
                 </div>
 
                 <div className="text-xs text-muted-foreground bg-gray-50 p-3 rounded">
-                  <p>💡 <strong>Tip:</strong> Changes apply immediately to Live Preview and PDF export.</p>
-                  <p>🎯 <strong>Target classes:</strong> .template-{template.id}, .resume-heading-1, .resume-heading-2, etc.</p>
-                  <p>⚠️ <strong>Note:</strong> Some advanced CSS like pseudo-elements (::before/::after) may not print correctly in the PDF.</p>
-                  <p>🎨 <strong>Customize fonts & margins:</strong> Use CSS variables like --resume-font-family, --resume-margin-left, --resume-font-size</p>
-                  <p>📏 <strong>Available variables:</strong> --resume-font-family, --resume-font-size, --resume-line-height, --resume-margin-top/bottom/left/right, --resume-h1/h2/h3-font-size</p>
-                  <p>📝 <strong>Best practice:</strong> Use !important for critical styles to ensure they work in the PDF.</p>
+                  <p>💡 <strong>How it works:</strong> Each tab shows CSS for that template. Changes apply immediately to the preview.</p>
+                  <p>🔄 <strong>Switching tabs:</strong> Changes the template in the live preview to match the CSS you're editing.</p>
+                  <p>🎨 <strong>Add Examples:</strong> Adds customization examples you can uncomment and edit.</p>
+                  <p>⚙️ <strong>CSS Variables:</strong> Use --resume-font-family, --resume-font-size, --resume-line-height, --resume-margin-top/bottom/left/right.</p>
+                  <p>📐 <strong>Two-column layout:</strong> Use --resume-summary-spacing-top/bottom to control spacing above/below summary.</p>
+                  <p>⚠️ <strong>Important:</strong> Use .resume-template selector and add !important to ensure styles work in PDF.</p>
                 </div>
               </div>
             </TabsContent>

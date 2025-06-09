@@ -213,7 +213,14 @@ export const useDynamicCSS = () => {
 
   const addTemplateCSS = useCallback((template: string, css: string) => {
     console.log(`📝 Adding CSS for template: ${template}`);
+    // Update the CSS for this template only
     templateCSSRef.current[template] = css;
+    // Clear all other templates to ensure only the current template's CSS is applied
+    Object.keys(templateCSSRef.current).forEach(key => {
+      if (key !== template) {
+        delete templateCSSRef.current[key];
+      }
+    });
     updateAllCSS();
   }, [updateAllCSS]);
 
