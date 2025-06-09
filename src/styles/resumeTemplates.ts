@@ -637,7 +637,22 @@ export const printStyles = `
   }
 
   .template-creative .resume-heading-2::before {
-    background-color: #333333 !important;
+    content: "■" !important;
+    position: absolute !important;
+    left: 0 !important;
+    color: #000 !important;
+    font-size: 0.7rem !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* High specificity version for PDF export */
+  .resume-template.template-creative .resume-heading-2::before {
+    content: "■" !important;
+    position: absolute !important;
+    left: 0 !important;
+    color: #000 !important;
+    font-size: 0.7rem !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
