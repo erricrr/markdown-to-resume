@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
-import { templateStyles } from '../styles/resumeTemplates';
+import { templateStyles, baseResumeStyles } from '../styles/resumeTemplates';
 
 export const useDynamicCSS = () => {
   const styleElementRef = useRef<HTMLStyleElement | null>(null);
@@ -46,8 +46,11 @@ export const useDynamicCSS = () => {
       return;
     }
 
-    // Combine all template CSS into one string with high specificity
-    const allCSS = Object.entries(templateCSSRef.current)
+    // Start with base resume styles (includes bullets, layout, etc.)
+    let allCSS = `/* BASE RESUME STYLES */\n${baseResumeStyles}\n\n`;
+
+    // Add all template CSS with high specificity
+    const templateCSS = Object.entries(templateCSSRef.current)
       .map(([template, css]) => {
         // Add high specificity to ensure our CSS overrides the default styles
         // Apply the same specificity boost as in PDF export
@@ -58,6 +61,8 @@ export const useDynamicCSS = () => {
         return `/* DYNAMIC ${template.toUpperCase()} TEMPLATE */\n${css}\n\n/* HIGH SPECIFICITY VERSION */\n${processedCSS}\n`;
       })
       .join('\n');
+
+    allCSS += templateCSS;
 
     styleElementRef.current.textContent = allCSS;
     console.log(`🎨 Updated dynamic CSS (${allCSS.length} chars):`, allCSS.substring(0, 200) + '...');
