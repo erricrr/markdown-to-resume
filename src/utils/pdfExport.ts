@@ -229,10 +229,13 @@ export const exportToPDF = async (resumeData: ResumeData) => {
   console.log('- Total captured CSS length:', allLivePreviewCSS.length);
 
   const cssContent = `
-/* Page settings for PDF */
+/* FONT IMPORTS FOR PDF CONSISTENCY */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lato:wght@300;400;700&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;600&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&family=Source+Sans+Pro:wght@300;400;600&display=swap');
+
+/* Page settings for PDF - MATCH LIVE PREVIEW MARGINS */
 @page {
   size: A4;
-  margin: 0.25in 0.75in;
+  margin: 0.25in 0.5rem;
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
   color-adjust: exact !important;
@@ -261,7 +264,7 @@ body::before, body::after {
 
 /* Final override with maximum specificity to ensure PDF matches preview exactly */
 html body .resume-template {
-  padding: 0.25in 0.75in !important;
+  padding: 0.25in 0.5rem !important;
   margin: 0 !important;
   box-shadow: none !important;
   background: white !important;
@@ -272,9 +275,67 @@ html body .resume-template {
 
 /* Force exact font rendering to match preview */
 html body .resume-template * {
-  -webkit-font-smoothing: auto !important;
-  -moz-osx-font-smoothing: auto !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
   text-rendering: optimizeLegibility !important;
+}
+
+/* CRITICAL: Ensure bullets match Modern template size */
+html body .resume-template .resume-list-item::before,
+html body .resume-template li::before {
+  content: "•" !important;
+  position: absolute !important;
+  left: -1.0rem !important;
+  font-size: 1.0em !important;
+  font-weight: normal !important;
+  color: inherit !important;
+  line-height: 1.0 !important;
+  top: 0.1em !important;
+}
+
+/* Disable any marker bullets to prevent conflicts */
+html body .resume-template .resume-list-item::marker,
+html body .resume-template li::marker {
+  content: none !important;
+}
+
+/* Force consistent font sizes that match live preview exactly */
+html body .resume-template {
+  font-size: 12pt !important;
+  line-height: 1.5 !important;
+}
+
+html body .resume-template .resume-heading-1,
+html body .resume-template h1 {
+  font-size: 24pt !important;
+  font-weight: bold !important;
+  line-height: 1.2 !important;
+}
+
+html body .resume-template .resume-heading-2,
+html body .resume-template h2 {
+  font-size: 16pt !important;
+  font-weight: bold !important;
+  line-height: 1.3 !important;
+}
+
+html body .resume-template .resume-heading-3,
+html body .resume-template h3 {
+  font-size: 14pt !important;
+  font-weight: bold !important;
+  line-height: 1.3 !important;
+}
+
+html body .resume-template .resume-paragraph,
+html body .resume-template p {
+  font-size: 12pt !important;
+  line-height: 1.5 !important;
+}
+
+html body .resume-template .resume-list-item,
+html body .resume-template li {
+  font-size: 12pt !important;
+  line-height: 1.5 !important;
 }
 `;
 

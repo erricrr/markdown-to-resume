@@ -289,7 +289,7 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
                   <p>💡 <strong>Tip:</strong> Changes apply immediately to Live Preview and PDF export.</p>
                   <p>🎯 <strong>Target classes:</strong> .template-{template.id}, .resume-heading-1, .resume-heading-2, etc.</p>
                   <p>⚠️ <strong>Note:</strong> Some advanced CSS like pseudo-elements (::before/::after) may not print correctly in the PDF.</p>
-                  <p>📏 <strong>Margins:</strong> Padding is fixed at 0.25in (top/bottom) and 0.75in (left/right) for consistent PDF output.</p>
+                  <p>📏 <strong>Margins:</strong> Padding is fixed at 0.25in (top/bottom) and 0.5rem (left/right) for consistent PDF output.</p>
                   <p>📝 <strong>Best practice:</strong> Use !important for critical styles to ensure they work in the PDF.</p>
                 </div>
               </div>

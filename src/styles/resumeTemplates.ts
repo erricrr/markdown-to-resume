@@ -45,30 +45,30 @@ body {
 .resume-hr { border: 0; border-top: 1px solid #d1d5db; margin: 1rem 0; }
 .resume-code { background-color: #f3f4f6; padding: 0.125rem 0.25rem; border-radius: 0.25rem; font-size: 0.875rem; font-family: monospace; }
 
-/* Base Lists */
+/* CLEAN BULLET SYSTEM - Medium sized, single bullet per item */
 .resume-list {
   list-style: none;
-  margin-bottom: 1rem;
-  padding-left: 1.5rem;
-  margin-left: 1rem;
+  padding-left: 1.0rem;
+  margin: 0.5rem 0;
 }
 
 .resume-list-item {
-  margin-bottom: 0.5rem;
   position: relative;
-  padding-left: 0.8rem;
-  text-indent: -0.8rem;
+  padding-left: 0;
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+  display: block;
 }
 
 .resume-list-item::before {
-  content: "• " !important;
-  color: #000 !important;
-  font-weight: bold;
-  display: inline-block !important;
-  width: 0.5rem;
-  margin-right: 0.5rem;
-  -webkit-print-color-adjust: exact !important;
-  print-color-adjust: exact !important;
+  content: "•";
+  position: absolute;
+  left: -1.0rem;
+  font-size: 1.0em;
+  font-weight: normal;
+  color: inherit;
+  line-height: 1.0;
+  top: 0.1em;
 }
 
 /* Tables */
@@ -97,8 +97,8 @@ body {
 
 .resume-two-column-layout .resume-header {
   width: 100%;
-  margin-bottom: 0.75rem;
-  padding-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
+  padding-bottom: 0;
 }
 
 .resume-two-column-layout .resume-columns {
@@ -132,10 +132,10 @@ body {
   padding: 0 !important;
 }
 
-/* Force summary to be compact */
+/* Force summary to be compact with bottom padding */
 .resume-two-column-layout .resume-summary-section {
   margin-bottom: 0.125rem !important;
-  padding-bottom: 0 !important;
+  padding-bottom: 0.25rem !important;
   line-height: 1.2 !important;
   page-break-after: avoid !important;
   break-after: avoid !important;
@@ -480,15 +480,7 @@ export const templateStyles = {
   margin-bottom: 0.5rem;
 }
 
-/* Custom bullet points */
-.template-creative .resume-list-item::before {
-  content: "▶" !important;
-  color: #6b7280 !important;
-  font-weight: bold;
-  margin-right: 0.5rem;
-  -webkit-print-color-adjust: exact !important;
-  print-color-adjust: exact !important;
-}
+/* Creative template uses standard bullets for consistency */
 
 /* Links with accent styling */
 .template-creative a {
@@ -617,7 +609,7 @@ export const printStyles = `
 @media print {
   @page {
     size: A4;
-    margin: 0.25in 0.75in;
+    margin: 0.25in 0.5rem;
     @top-left { content: ""; }
     @top-center { content: ""; }
     @top-right { content: ""; }
@@ -627,7 +619,7 @@ export const printStyles = `
   }
 
   @page :first {
-    margin: 0.25in 0.75in;
+    margin: 0.25in 0.5rem;
     @top-left { content: ""; }
     @top-center { content: ""; }
     @top-right { content: ""; }
@@ -654,7 +646,7 @@ export const printStyles = `
   }
 
   .resume-template {
-    padding: 0.25in 0.75in !important;
+    padding: 0.25in 0.5rem !important;
     width: 8.5in !important;
     min-height: 11in !important;
     box-sizing: border-box !important;
@@ -676,10 +668,10 @@ export const printStyles = `
     break-before: avoid !important;
   }
 
-  /* Force summary to be compact */
+  /* Force summary to be compact with bottom padding */
   .resume-two-column-layout .resume-summary-section {
     margin-bottom: 0.125in !important;
-    padding-bottom: 0 !important;
+    padding-bottom: 0.25rem !important;
     line-height: 1.2 !important;
   }
 
@@ -765,12 +757,122 @@ export const printStyles = `
     padding-bottom: 0 !important;
   }
 
-  /* Ensure all custom styles are applied with high specificity */
-  * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-    color-adjust: exact !important;
+  /* CRITICAL: Reduce header bottom spacing in two-column layout (print styles) */
+  .resume-two-column-layout .resume-header {
+    margin-bottom: 0.125in !important;
+    padding-bottom: 0 !important;
   }
+
+  .resume-two-column-layout .resume-header .resume-heading-1 {
+    margin-bottom: 0.125in !important;
+    padding-bottom: 0 !important;
+  }
+
+  .resume-two-column-layout .resume-header .resume-paragraph {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  /* CRITICAL: Reduce spacing ABOVE summary section */
+  .resume-two-column-layout .resume-summary-section {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  /* Target any element immediately before summary */
+  .resume-two-column-layout * + .resume-summary-section {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  /* Target header elements that come before summary */
+  .resume-two-column-layout .resume-heading-1 + .resume-summary-section,
+  .resume-two-column-layout h1 + .resume-summary-section,
+  .resume-two-column-layout .resume-heading-1 + * + .resume-summary-section,
+  .resume-two-column-layout .resume-header + .resume-summary-section {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  /* CRITICAL: Reduce header bottom spacing in two-column layout */
+  .resume-two-column-layout .resume-header .resume-heading-1 {
+    margin-bottom: 0.25rem !important;
+    padding-bottom: 0 !important;
+  }
+
+  /* Override template-specific H1 margins in two-column mode */
+  .resume-two-column-layout.template-professional .resume-heading-1,
+  .resume-two-column-layout.template-modern .resume-heading-1,
+  .resume-two-column-layout.template-minimalist .resume-heading-1,
+  .resume-two-column-layout.template-creative .resume-heading-1,
+  .resume-two-column-layout.template-executive .resume-heading-1 {
+    margin-bottom: 0.25rem !important;
+    padding: 0 !important;
+  }
+
+  .resume-two-column-layout .resume-header .resume-paragraph {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+      /* COMPREHENSIVE FONT AND STYLING CONSISTENCY FOR PDF */
+
+    /* Force identical font rendering in PDF */
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
+      -webkit-font-smoothing: antialiased !important;
+      -moz-osx-font-smoothing: grayscale !important;
+      text-rendering: optimizeLegibility !important;
+    }
+
+    /* Ensure bullet points match Modern template size */
+    .resume-list-item::before {
+      font-size: 1.0em !important;
+      font-weight: normal !important;
+      color: inherit !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    /* Force consistent font sizes across all templates */
+    .resume-template {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+      font-size: 12pt !important;
+      line-height: 1.5 !important;
+    }
+
+    /* Ensure heading fonts are consistent */
+    .resume-heading-1, h1 {
+      font-size: 24pt !important;
+      font-weight: bold !important;
+      line-height: 1.2 !important;
+    }
+
+    .resume-heading-2, h2 {
+      font-size: 16pt !important;
+      font-weight: bold !important;
+      line-height: 1.3 !important;
+    }
+
+    .resume-heading-3, h3 {
+      font-size: 14pt !important;
+      font-weight: bold !important;
+      line-height: 1.3 !important;
+    }
+
+    /* Force paragraph and list consistency */
+    .resume-paragraph, p {
+      font-size: 12pt !important;
+      line-height: 1.5 !important;
+      margin: 0.5rem 0 !important;
+    }
+
+    .resume-list-item, li {
+      font-size: 12pt !important;
+      line-height: 1.5 !important;
+    }
 }
 `;
 

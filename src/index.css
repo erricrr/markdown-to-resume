@@ -102,14 +102,14 @@
     width: 8.5in;
     min-height: 11in;
     margin: 0 auto;
-    padding: 0.75in;
+    padding: 0.25in 0.5rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Preview Container Styles */
 .resume-preview-container {
     --preview-scale: 0.75;
-    padding: 0.75in;
+    padding: 0.25in 0.5rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     margin: 0 auto;
@@ -486,25 +486,6 @@
     @apply mt-0 mb-2;
 }
 
-/* PDF Export specific styles for bullet points */
-.resume-list {
-    list-style-type: none !important;
-    padding-left: 0.8rem;
-}
-
-.resume-list-item {
-    display: list-item !important;
-    list-style-type: none !important;
-    position: relative;
-    padding-left: 0.8rem;
-    text-indent: -0.8rem;
-}
-
-/* Disable marker bullets to prevent double bullets */
-.resume-list-item::marker {
-    content: none;
-}
-
 /* Base spacing and typography that applies to all layouts */
 .resume-paragraph {
     margin-bottom: 0.75rem;
@@ -521,20 +502,7 @@
     color: inherit;
 }
 
-/* Ensure consistent list spacing across all layouts */
-.resume-list {
-    margin-bottom: 1rem;
-    list-style-type: none !important;
-    padding-left: 0.8rem;
-}
-
-.resume-list-item {
-    margin-bottom: 0.5rem;
-    position: relative;
-    padding-left: 0.8rem;
-    text-indent: -0.8rem;
-    list-style-type: none !important;
-}
+/* Bullets are now handled entirely by resumeTemplates.ts - no conflicts */
 
 /* Print styles - Basic layout only, template styles come from resumeTemplates.ts */
 @media print {

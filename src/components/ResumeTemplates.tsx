@@ -68,13 +68,13 @@ export const ResumeTemplates = ({ htmlContent, template: propTemplate, isTwoColu
           transformOrigin: 'top left',
           transform: 'scale(var(--preview-scale, 0.75))',
           margin: '0 auto',
-          padding: '0.25in 0.75in', // Match PDF margins
+          padding: '0.25in 0.5rem', // Match PDF margins
           boxSizing: 'border-box',
         } : undefined}
       />
       {isPreview && (
         <div className="text-xs text-center text-muted-foreground mt-3 px-4">
-          <p className="mb-1">This preview uses the same margins (0.25in top/bottom, 0.75in left/right) as the PDF export.</p>
+          <p className="mb-1">This preview uses the same margins (0.25in top/bottom, 0.5rem left/right) as the PDF export.</p>
           <p>All CSS in the editor is applied to both preview and PDF. For best results, use !important for critical styles.</p>
         </div>
       )}

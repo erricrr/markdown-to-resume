@@ -80,7 +80,7 @@ export const useDynamicCSS = () => {
     allCSS += `
 /* ADDITIONAL CONSISTENCY CSS FOR PREVIEW AND PDF */
 .resume-template {
-  padding: 0.25in 0.75in !important;
+  padding: 0.25in 0.5rem !important;
   width: 8.5in !important;
   min-height: 11in !important;
   box-sizing: border-box !important;
@@ -90,9 +90,67 @@ export const useDynamicCSS = () => {
 
 /* Force exact font rendering to match PDF */
 .resume-template * {
-  -webkit-font-smoothing: auto !important;
-  -moz-osx-font-smoothing: auto !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
   text-rendering: optimizeLegibility !important;
+}
+
+/* CRITICAL: Ensure bullets match Modern template size and appearance */
+.resume-template .resume-list-item::before,
+.resume-template li::before {
+  content: "•" !important;
+  position: absolute !important;
+  left: -1.0rem !important;
+  font-size: 1.0em !important;
+  font-weight: normal !important;
+  color: inherit !important;
+  line-height: 1.0 !important;
+  top: 0.1em !important;
+}
+
+/* Disable any marker bullets to prevent conflicts */
+.resume-template .resume-list-item::marker,
+.resume-template li::marker {
+  content: none !important;
+}
+
+/* Force consistent font sizes that match PDF exactly */
+.resume-template {
+  font-size: 12pt !important;
+  line-height: 1.5 !important;
+}
+
+.resume-template .resume-heading-1,
+.resume-template h1 {
+  font-size: 24pt !important;
+  font-weight: bold !important;
+  line-height: 1.2 !important;
+}
+
+.resume-template .resume-heading-2,
+.resume-template h2 {
+  font-size: 16pt !important;
+  font-weight: bold !important;
+  line-height: 1.3 !important;
+}
+
+.resume-template .resume-heading-3,
+.resume-template h3 {
+  font-size: 14pt !important;
+  font-weight: bold !important;
+  line-height: 1.3 !important;
+}
+
+.resume-template .resume-paragraph,
+.resume-template p {
+  font-size: 12pt !important;
+  line-height: 1.5 !important;
+}
+
+.resume-template .resume-list-item,
+.resume-template li {
+  font-size: 12pt !important;
+  line-height: 1.5 !important;
 }
 
 /* Reset any template-specific padding to ensure consistent margins */
@@ -101,7 +159,7 @@ export const useDynamicCSS = () => {
 .resume-template.template-minimalist,
 .resume-template.template-executive,
 .resume-template.template-creative {
-  padding: 0.25in 0.75in !important;
+  padding: 0.25in 0.5rem !important;
 }
 
 /* Force all background colors and images to display/print */
