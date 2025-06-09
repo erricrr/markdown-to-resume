@@ -370,13 +370,11 @@ export const templateStyles = {
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
 .template-creative {
-  background: #ffffff;
-  color: #2d2d2d;
+  background: white;
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   padding: 0.75rem 2.5rem 2.5rem 6rem;
-  line-height: 1.7;
   position: relative;
-  overflow: visible;
+  border-left: none !important;
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
 }
@@ -394,40 +392,46 @@ export const templateStyles = {
 }
 
 .template-creative .resume-heading-1 {
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-size: 2.5rem;
+  font-size: 2.25rem;
   font-weight: 700;
-  color: #111111;
-  margin: 0 0 1.5rem 0;
-  text-transform: uppercase;
-  letter-spacing: -0.5px;
-  position: relative;
+  color: #000;
+  margin-bottom: 1rem;
   padding-left: 0;
-  line-height: 1.2;
+  position: relative;
+}
+
+.template-creative .resume-heading-1::after {
+  content: "";
+  position: absolute;
+  bottom: -0.25rem;
+  left: 0;
+  width: 80%;
+  height: 2px;
+  background: linear-gradient(to right, #000, #6b7280, transparent) !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 
 .template-creative .resume-heading-2 {
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-size: 1.15rem;
-  font-weight: 600;
-  color: #333333;
-  margin: 2.5rem 0 1rem 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #000;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  position: relative;
+  letter-spacing: 0.05em;
   padding-left: 1.5rem;
-  display: flex;
-  align-items: center;
+  position: relative;
+  display: flex !important;
+  align-items: center !important;
 }
 
 .template-creative .resume-heading-2::before {
-  content: '';
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  background-color: #333333;
-  margin-right: 0.75rem;
-  flex-shrink: 0;
+  content: "■" !important;
+  position: absolute;
+  left: 0;
+  color: #000 !important;
+  font-size: 0.7rem;
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
 }
