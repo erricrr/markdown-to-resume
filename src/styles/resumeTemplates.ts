@@ -45,6 +45,21 @@ body {
 .resume-hr { border: 0; border-top: 1px solid #d1d5db; margin: 1rem 0; }
 .resume-code { background-color: #f3f4f6; padding: 0.125rem 0.25rem; border-radius: 0.25rem; font-size: 0.875rem; font-family: monospace; }
 
+/* Control spacing for BR and NBSP elements */
+.resume-br, br {
+  line-height: 0.5 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+  height: 0.25rem !important;
+}
+
+/* Reduce excessive spacing from non-breaking spaces */
+.resume-template {
+  word-spacing: normal !important;
+  letter-spacing: normal !important;
+}
+
 /* CLEAN BULLET SYSTEM - Medium sized, single bullet per item */
 .resume-list {
   list-style: none;
@@ -609,7 +624,7 @@ export const printStyles = `
 @media print {
   @page {
     size: A4;
-    margin: 0.25in 0.5rem;
+    margin: 0.5rem 0.25rem;
     @top-left { content: ""; }
     @top-center { content: ""; }
     @top-right { content: ""; }
@@ -619,7 +634,7 @@ export const printStyles = `
   }
 
   @page :first {
-    margin: 0.25in 0.5rem;
+    margin: 0.5rem 0.25rem;
     @top-left { content: ""; }
     @top-center { content: ""; }
     @top-right { content: ""; }
@@ -646,7 +661,7 @@ export const printStyles = `
   }
 
   .resume-template {
-    padding: 0.25in 0.5rem !important;
+    padding: 0.5rem 0.25rem !important;
     width: 8.5in !important;
     min-height: 11in !important;
     box-sizing: border-box !important;
@@ -697,7 +712,7 @@ export const printStyles = `
   /* Two-page specific styling for margins */
   .resume-two-page-layout .resume-page-first,
   .resume-two-page-layout .resume-page-second {
-    padding: 0.25in 0.75in !important;
+    padding: 0.5rem 0.25rem !important;
     box-sizing: border-box !important;
   }
 
@@ -708,14 +723,14 @@ export const printStyles = `
 
   .resume-two-page-layout .resume-page-second {
     margin-top: 0 !important;
-    padding-top: 0.25in !important;
+    padding-top: 0.5rem !important;
   }
 
   /* Fix for two-column layout */
   .resume-two-column-layout .resume-columns {
     display: grid !important;
     grid-template-columns: 1fr 2fr !important;
-    gap: 1in !important;
+    gap: 0.5in !important;
     align-items: start !important;
   }
 
@@ -808,11 +823,288 @@ export const printStyles = `
   .resume-two-column-layout.template-executive .resume-heading-1 {
     margin-bottom: 0.25rem !important;
     padding: 0 !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* ULTRA-AGGRESSIVE PROFESSIONAL TEMPLATE PAGE BREAK FIXES */
+  .resume-two-column-layout.template-professional .resume-heading-1::after {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  /* Force Professional template H1 border to not cause page breaks */
+  .resume-two-column-layout.template-professional .resume-heading-1 {
+    border-bottom: 2px solid #e0e0e0 !important;
+    padding-bottom: 0.25rem !important;
+    margin-bottom: 0.125rem !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+    orphans: 3 !important;
+    widows: 3 !important;
+  }
+
+  /* Prevent page breaks immediately after Professional H1 */
+  .resume-two-column-layout.template-professional .resume-heading-1 + *,
+  .resume-two-column-layout.template-professional .resume-header + *,
+  .resume-two-column-layout.template-professional .resume-header .resume-heading-1 + * {
+    page-break-before: avoid !important;
+    break-before: avoid !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
   }
 
   .resume-two-column-layout .resume-header .resume-paragraph {
     margin-bottom: 0 !important;
     padding-bottom: 0 !important;
+  }
+
+  /* NUCLEAR OPTION: FORCE ALL TWO-COLUMN CONTENT TO STAY ON PAGE 1 */
+  .resume-two-column-layout * {
+    page-break-before: avoid !important;
+    break-before: avoid !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Allow page breaks only at the very end of content */
+  .resume-two-column-layout .resume-column-right > *:last-child {
+    page-break-after: auto !important;
+    break-after: auto !important;
+  }
+
+  /* ULTRA-COMPACT HEADER FOR TWO-COLUMN LAYOUTS */
+  .resume-two-column-layout .resume-header {
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1.1 !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Make header content as compact as possible */
+  .resume-two-column-layout .resume-header * {
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1.1 !important;
+  }
+
+  /* Specific Professional template header fixes */
+  .resume-two-column-layout.template-professional .resume-header {
+    margin-bottom: 0.5rem !important;
+    padding-bottom: 0 !important;
+  }
+
+  .resume-two-column-layout.template-professional .resume-header .resume-heading-1 {
+    font-size: 20pt !important;
+    line-height: 1.0 !important;
+    margin: 0 !important;
+    padding: 0 0 0.125rem 0 !important;
+    border-bottom: 1px solid #e0e0e0 !important;
+  }
+
+  /* Force summary to be ultra-compact */
+  .resume-two-column-layout .resume-summary-section {
+    margin: 0.25rem 0 0.5rem 0 !important;
+    padding: 0 !important;
+    line-height: 1.2 !important;
+    font-size: 11pt !important;
+  }
+
+  /* CRITICAL: Treat entire two-column layout as unbreakable unit */
+  .resume-two-column-layout .resume-two-column {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-before: avoid !important;
+    break-before: avoid !important;
+    page-break-after: auto !important;
+    break-after: auto !important;
+  }
+
+  /* Force the entire content to fit on one page by reducing all spacing */
+  .resume-two-column-layout .resume-column-left > *,
+  .resume-two-column-layout .resume-column-right > * {
+    margin-top: 0.25rem !important;
+    margin-bottom: 0.25rem !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  /* Make first elements have no top margin */
+  .resume-two-column-layout .resume-column-left > *:first-child,
+  .resume-two-column-layout .resume-column-right > *:first-child {
+    margin-top: 0 !important;
+  }
+
+  /* Reduce line heights throughout to save vertical space */
+  .resume-two-column-layout .resume-column-left,
+  .resume-two-column-layout .resume-column-right {
+    line-height: 1.3 !important;
+  }
+
+  .resume-two-column-layout .resume-column-left *,
+  .resume-two-column-layout .resume-column-right * {
+    line-height: 1.3 !important;
+  }
+
+  /* COMPREHENSIVE TWO-COLUMN LAYOUT FIXES FOR ALL TEMPLATES */
+
+  /* Force two-column grid layout to work in PDF */
+  .resume-two-column-layout .resume-columns {
+    display: grid !important;
+    grid-template-columns: 1fr 2fr !important;
+    gap: 0.5in !important;
+    align-items: start !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Ensure left and right columns are properly contained */
+  .resume-two-column-layout .resume-column-left,
+  .resume-two-column-layout .resume-column-right {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    word-wrap: break-word !important;
+    hyphens: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Professional template specific fixes */
+  .resume-two-column-layout.template-professional .resume-heading-2 {
+    font-size: 16pt !important;
+    margin: 1rem 0 0.5rem 0 !important;
+    padding: 0 !important;
+    border-bottom: none !important;
+    text-transform: uppercase !important;
+    font-weight: 600 !important;
+  }
+
+  .resume-two-column-layout.template-professional .resume-heading-2::after {
+    content: '' !important;
+    position: absolute !important;
+    bottom: -3px !important;
+    left: 0 !important;
+    width: 30px !important;
+    height: 2px !important;
+    background: #888888 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Modern template specific fixes */
+  .resume-two-column-layout.template-modern .resume-heading-2 {
+    font-size: 14pt !important;
+    margin: 1.5rem 0 0.75rem 0 !important;
+    padding: 0.3rem 0.75rem 0.3rem 1rem !important;
+    background: #f8f8f8 !important;
+    border-left: 3px solid #333333 !important;
+    border-radius: 0 3px 3px 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Minimalist template specific fixes */
+  .resume-two-column-layout.template-minimalist .resume-heading-2 {
+    font-size: 16pt !important;
+    margin: 2rem 0 1rem 0 !important;
+    padding: 0 !important;
+    font-weight: 300 !important;
+    border-bottom: 1px solid #ddd !important;
+    padding-bottom: 0.25rem !important;
+  }
+
+  /* Creative template specific fixes */
+  .resume-two-column-layout.template-creative .resume-heading-2 {
+    font-size: 16pt !important;
+    margin: 1.5rem 0 0.75rem 0 !important;
+    padding: 0 !important;
+    color: #1f2937 !important;
+    font-weight: 600 !important;
+    position: relative !important;
+  }
+
+  .resume-two-column-layout.template-creative .resume-heading-2::before {
+    content: '' !important;
+    position: absolute !important;
+    left: -15px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 8px !important;
+    height: 8px !important;
+    background: linear-gradient(45deg, #4b5563, #6b7280) !important;
+    border-radius: 50% !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Executive template specific fixes */
+  .resume-two-column-layout.template-executive .resume-heading-2 {
+    font-size: 15pt !important;
+    margin: 1.5rem 0 0.75rem 0 !important;
+    padding: 0 !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+  }
+
+  /* Force all template content to fit within columns */
+  .resume-two-column-layout .resume-column-left *,
+  .resume-two-column-layout .resume-column-right * {
+    max-width: 100% !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    hyphens: auto !important;
+  }
+
+  /* Prevent column content from overflowing */
+  .resume-two-column-layout .resume-column-left {
+    overflow: hidden !important;
+  }
+
+  .resume-two-column-layout .resume-column-right {
+    overflow: hidden !important;
+  }
+
+  /* Force proper spacing between sections in columns */
+  .resume-two-column-layout .resume-column-left > *:not(:last-child),
+  .resume-two-column-layout .resume-column-right > *:not(:last-child) {
+    margin-bottom: 1.5rem !important;
+  }
+
+  /* Ensure lists and paragraphs fit properly in columns */
+  .resume-two-column-layout .resume-list,
+  .resume-two-column-layout ul,
+  .resume-two-column-layout ol {
+    margin: 0.5rem 0 !important;
+    padding-left: 1rem !important;
+    max-width: 100% !important;
+  }
+
+  .resume-two-column-layout .resume-list-item,
+  .resume-two-column-layout li {
+    margin-bottom: 0.25rem !important;
+    line-height: 1.4 !important;
+    max-width: 100% !important;
+    word-wrap: break-word !important;
+  }
+
+  /* Force proper paragraph spacing in columns */
+  .resume-two-column-layout .resume-paragraph,
+  .resume-two-column-layout p {
+    margin: 0.5rem 0 !important;
+    line-height: 1.5 !important;
+    max-width: 100% !important;
+    word-wrap: break-word !important;
   }
 
       /* COMPREHENSIVE FONT AND STYLING CONSISTENCY FOR PDF */
@@ -872,6 +1164,21 @@ export const printStyles = `
     .resume-list-item, li {
       font-size: 12pt !important;
       line-height: 1.5 !important;
+    }
+
+    /* Control spacing for BR and NBSP elements in PDF */
+    .resume-br, br {
+      line-height: 0.25 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      display: block !important;
+      height: 0.25rem !important;
+    }
+
+    /* Reduce excessive spacing from non-breaking spaces in PDF */
+    .resume-template {
+      word-spacing: normal !important;
+      letter-spacing: normal !important;
     }
 }
 `;

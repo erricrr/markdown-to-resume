@@ -235,7 +235,7 @@ export const exportToPDF = async (resumeData: ResumeData) => {
 /* Page settings for PDF - MATCH LIVE PREVIEW MARGINS */
 @page {
   size: A4;
-  margin: 0.25in 0.5rem;
+  margin: 0.5rem 0.25rem;
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
   color-adjust: exact !important;
@@ -264,7 +264,7 @@ body::before, body::after {
 
 /* Final override with maximum specificity to ensure PDF matches preview exactly */
 html body .resume-template {
-  padding: 0.25in 0.5rem !important;
+  padding: 0.5rem 0.25rem !important;
   margin: 0 !important;
   box-shadow: none !important;
   background: white !important;

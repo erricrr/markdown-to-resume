@@ -80,7 +80,7 @@ export const useDynamicCSS = () => {
     allCSS += `
 /* ADDITIONAL CONSISTENCY CSS FOR PREVIEW AND PDF */
 .resume-template {
-  padding: 0.25in 0.5rem !important;
+  padding: 0.5rem 0.25rem !important;
   width: 8.5in !important;
   min-height: 11in !important;
   box-sizing: border-box !important;
@@ -159,7 +159,7 @@ export const useDynamicCSS = () => {
 .resume-template.template-minimalist,
 .resume-template.template-executive,
 .resume-template.template-creative {
-  padding: 0.25in 0.5rem !important;
+  padding: 0.5rem 0.25rem !important;
 }
 
 /* Force all background colors and images to display/print */

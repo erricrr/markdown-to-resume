@@ -102,14 +102,14 @@
     width: 8.5in;
     min-height: 11in;
     margin: 0 auto;
-    padding: 0.25in 0.5rem;
+    padding: 0.5rem 0.25rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Preview Container Styles */
 .resume-preview-container {
     --preview-scale: 0.75;
-    padding: 0.25in 0.5rem;
+    padding: 0.5rem 0.25rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     margin: 0 auto;
