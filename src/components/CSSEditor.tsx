@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Code, Download, RotateCcw, Eye, Bug } from 'lucide-react';
+import { Code, Download, RotateCcw, Eye, Bug, Palette } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { templateStyles } from '../styles/resumeTemplates';
 
@@ -55,13 +55,13 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
     setActiveTab(selectedTemplate);
   }, [selectedTemplate]);
 
-  // Initialize CSS for all templates on mount
+  // Initialize CSS for all templates on mount - ONLY ONCE
   useEffect(() => {
     console.log('🚀 Initializing CSS for all templates...');
     Object.entries(defaultTemplateCSS).forEach(([template, css]) => {
       onCSSChange(template, css);
     });
-  }, [onCSSChange]);
+  }, []); // Empty dependency array - only run once on mount
 
   const handleCSSChange = (template: string, css: string) => {
     console.log(`✏️ CSS changed for ${template}`);
@@ -121,6 +121,57 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
     } else {
       console.warn(`No default CSS found for template: ${template}`);
     }
+  };
+
+  const handleCustomizationExample = (template: string) => {
+    const customizationCSS = `/* Customization Example for ${template} */
+:root {
+  /* Change font family */
+  --resume-font-family: 'Georgia', serif !important;
+
+  /* Adjust font sizes */
+  --resume-font-size: 11pt !important;
+  --resume-h1-font-size: 22pt !important;
+  --resume-h2-font-size: 15pt !important;
+
+  /* Customize margins (top, right, bottom, left) */
+  --resume-margin-top: 0.75rem !important;
+  --resume-margin-bottom: 0.75rem !important;
+  --resume-margin-left: 0.5rem !important;
+  --resume-margin-right: 0.5rem !important;
+
+  /* Adjust line height */
+  --resume-line-height: 1.4 !important;
+}
+
+/* Template-specific customizations */
+.template-${template} {
+  /* Add your custom styles here */
+  color: #2d3748 !important;
+}
+
+.template-${template} .resume-heading-1 {
+  color: #1a202c !important;
+  text-align: center !important;
+}
+
+.template-${template} .resume-heading-2 {
+  color: #2d3748 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  padding-bottom: 0.25rem !important;
+}`;
+
+    console.log(`🎨 Applying customization example to ${template}`);
+    setTemplateCSS(prev => ({
+      ...prev,
+      [template]: customizationCSS
+    }));
+    onCSSChange(template, customizationCSS);
+
+    toast({
+      title: "Customization Example Applied",
+      description: `Applied font, margin, and styling customizations to ${template} template. Edit the CSS to make it your own!`
+    });
   };
 
   const handleExportCSS = (template: string) => {
@@ -258,6 +309,15 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
                     <Button
                       variant="outline"
                       size="sm"
+                      onClick={() => handleCustomizationExample(template.id)}
+                      className="flex items-center gap-1"
+                    >
+                      <Palette className="h-3 w-3" />
+                      Customize
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => handleResetTemplate(template.id)}
                       className="flex items-center gap-1"
                     >
@@ -289,7 +349,8 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
                   <p>💡 <strong>Tip:</strong> Changes apply immediately to Live Preview and PDF export.</p>
                   <p>🎯 <strong>Target classes:</strong> .template-{template.id}, .resume-heading-1, .resume-heading-2, etc.</p>
                   <p>⚠️ <strong>Note:</strong> Some advanced CSS like pseudo-elements (::before/::after) may not print correctly in the PDF.</p>
-                  <p>📏 <strong>Margins:</strong> Padding is fixed at 0.5rem (top/bottom) and 0.25rem (left/right) for consistent PDF output.</p>
+                  <p>🎨 <strong>Customize fonts & margins:</strong> Use CSS variables like --resume-font-family, --resume-margin-left, --resume-font-size</p>
+                  <p>📏 <strong>Available variables:</strong> --resume-font-family, --resume-font-size, --resume-line-height, --resume-margin-top/bottom/left/right, --resume-h1/h2/h3-font-size</p>
                   <p>📝 <strong>Best practice:</strong> Use !important for critical styles to ensure they work in the PDF.</p>
                 </div>
               </div>

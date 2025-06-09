@@ -2,6 +2,23 @@
 // This file is used by: Live Preview, PDF Export, and CSS Editor
 
 export const baseResumeStyles = `
+/* Import Google Fonts for customization */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lato:wght@300;400;700&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;600&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&family=Source+Sans+Pro:wght@300;400;600&family=Roboto:wght@300;400;500;700&family=Georgia:wght@400;700&family=Times+New+Roman:wght@400;700&display=swap');
+
+/* CSS Custom Properties for User Customization */
+:root {
+  --resume-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --resume-font-size: 12pt;
+  --resume-line-height: 1.5;
+  --resume-margin-top: 0.5rem;
+  --resume-margin-bottom: 0.5rem;
+  --resume-margin-left: 0.25rem;
+  --resume-margin-right: 0.25rem;
+  --resume-h1-font-size: 24pt;
+  --resume-h2-font-size: 16pt;
+  --resume-h3-font-size: 14pt;
+}
+
 /* Reset and base styles */
 * {
   margin: 0;
@@ -12,10 +29,11 @@ export const baseResumeStyles = `
 body {
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--resume-font-family);
   background: white;
   color: #374151;
-  line-height: 1.5;
+  line-height: var(--resume-line-height);
+  font-size: var(--resume-font-size);
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
   text-rendering: optimizeLegibility;
@@ -28,16 +46,19 @@ body {
   width: 8.5in;
   min-height: 11in;
   margin: 0 auto;
-  padding: 0.75in 0.5in;
+  padding: var(--resume-margin-top) var(--resume-margin-left) var(--resume-margin-bottom) var(--resume-margin-right);
   background: white;
   box-shadow: none;
   box-sizing: border-box;
+  font-family: var(--resume-font-family);
+  font-size: var(--resume-font-size);
+  line-height: var(--resume-line-height);
 }
 
 /* Base Typography */
-.resume-heading-1 { font-size: 2rem; font-weight: bold; color: #000; margin-bottom: 0.5rem; }
-.resume-heading-2 { font-size: 1.25rem; font-weight: 600; color: #000; margin-top: 1.5rem; margin-bottom: 0.75rem; }
-.resume-heading-3 { font-size: 1.125rem; font-weight: 500; color: #374151; margin-top: 1rem; margin-bottom: 0.5rem; }
+.resume-heading-1 { font-size: var(--resume-h1-font-size); font-weight: bold; color: #000; margin-bottom: 0.5rem; font-family: var(--resume-font-family); }
+.resume-heading-2 { font-size: var(--resume-h2-font-size); font-weight: 600; color: #000; margin-top: 1.5rem; margin-bottom: 0.75rem; font-family: var(--resume-font-family); }
+.resume-heading-3 { font-size: var(--resume-h3-font-size); font-weight: 500; color: #374151; margin-top: 1rem; margin-bottom: 0.5rem; font-family: var(--resume-font-family); }
 .resume-paragraph { margin-bottom: 0.75rem; line-height: 1.5; color: #374151; }
 .resume-strong { font-weight: 600; color: #000; }
 .resume-emphasis { font-style: italic; color: #374151; }
@@ -661,13 +682,16 @@ export const printStyles = `
   }
 
   .resume-template {
-    padding: 0.5rem 0.25rem !important;
+    padding: var(--resume-margin-top) var(--resume-margin-left) var(--resume-margin-bottom) var(--resume-margin-right) !important;
     width: 8.5in !important;
     min-height: 11in !important;
     box-sizing: border-box !important;
     margin: 0 !important;
     background: white !important;
     box-shadow: none !important;
+    font-family: var(--resume-font-family) !important;
+    font-size: var(--resume-font-size) !important;
+    line-height: var(--resume-line-height) !important;
   }
 
   /* AGGRESSIVE SUMMARY SPACING FIXES - Override everything */
@@ -861,8 +885,10 @@ export const printStyles = `
     padding-bottom: 0 !important;
   }
 
-  /* NUCLEAR OPTION: FORCE ALL TWO-COLUMN CONTENT TO STAY ON PAGE 1 */
-  .resume-two-column-layout * {
+  /* SELECTIVE PAGE BREAK PREVENTION FOR TWO-COLUMN LAYOUTS */
+  .resume-two-column-layout .resume-header,
+  .resume-two-column-layout .resume-summary-section,
+  .resume-two-column-layout .resume-columns {
     page-break-before: avoid !important;
     break-before: avoid !important;
     page-break-after: avoid !important;
@@ -911,10 +937,36 @@ export const printStyles = `
 
   /* Force summary to be ultra-compact */
   .resume-two-column-layout .resume-summary-section {
-    margin: 0.25rem 0 0.5rem 0 !important;
-    padding: 0 !important;
+    margin: 0.25rem 0 0.75rem 0 !important;
+    padding: 0 0 0.25rem 0 !important;
     line-height: 1.2 !important;
     font-size: 11pt !important;
+  }
+
+  /* Ensure proper spacing between summary and columns */
+  .resume-two-column-layout .resume-summary-section + .resume-columns {
+    margin-top: 0.75rem !important;
+    padding-top: 0.5rem !important;
+  }
+
+  /* CRITICAL: Fix for first H2 elements getting cut off at top of columns */
+  .resume-two-column-layout .resume-column-left > .resume-heading-2:first-child,
+  .resume-two-column-layout .resume-column-right > .resume-heading-2:first-child,
+  .resume-two-column-layout .resume-column-left > h2:first-child,
+  .resume-two-column-layout .resume-column-right > h2:first-child {
+    margin-top: 1rem !important;
+    padding-top: 0.5rem !important;
+    page-break-before: avoid !important;
+    break-before: avoid !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Force columns to have top padding to prevent cutoff */
+  .resume-two-column-layout .resume-column-left,
+  .resume-two-column-layout .resume-column-right {
+    padding-top: 0.5rem !important;
+    margin-top: 0 !important;
   }
 
   /* CRITICAL: Treat entire two-column layout as unbreakable unit */
@@ -930,16 +982,29 @@ export const printStyles = `
   /* Force the entire content to fit on one page by reducing all spacing */
   .resume-two-column-layout .resume-column-left > *,
   .resume-two-column-layout .resume-column-right > * {
-    margin-top: 0.25rem !important;
+    margin-top: 0.5rem !important;
     margin-bottom: 0.25rem !important;
     padding-top: 0 !important;
     padding-bottom: 0 !important;
   }
 
-  /* Make first elements have no top margin */
+  /* Make first elements have proper top margin to prevent cutoff */
   .resume-two-column-layout .resume-column-left > *:first-child,
   .resume-two-column-layout .resume-column-right > *:first-child {
-    margin-top: 0 !important;
+    margin-top: 1rem !important;
+    padding-top: 0.25rem !important;
+  }
+
+  /* Ensure H2 headings have sufficient top margin to prevent cutoff */
+  .resume-two-column-layout .resume-column-left .resume-heading-2,
+  .resume-two-column-layout .resume-column-right .resume-heading-2,
+  .resume-two-column-layout .resume-column-left h2,
+  .resume-two-column-layout .resume-column-right h2 {
+    margin-top: 0.75rem !important;
+    margin-bottom: 0.5rem !important;
+    padding-top: 0.25rem !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
   }
 
   /* Reduce line heights throughout to save vertical space */
@@ -983,10 +1048,23 @@ export const printStyles = `
   .resume-two-column-layout.template-professional .resume-heading-2 {
     font-size: 16pt !important;
     margin: 1rem 0 0.5rem 0 !important;
-    padding: 0 !important;
+    padding: 0.25rem 0 0 0 !important;
     border-bottom: none !important;
     text-transform: uppercase !important;
     font-weight: 600 !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Professional template - first H2 in columns */
+  .resume-two-column-layout.template-professional .resume-column-left > .resume-heading-2:first-child,
+  .resume-two-column-layout.template-professional .resume-column-right > .resume-heading-2:first-child,
+  .resume-two-column-layout.template-professional .resume-column-left > h2:first-child,
+  .resume-two-column-layout.template-professional .resume-column-right > h2:first-child {
+    margin-top: 1.25rem !important;
+    padding-top: 0.75rem !important;
   }
 
   .resume-two-column-layout.template-professional .resume-heading-2::after {
@@ -1004,33 +1082,71 @@ export const printStyles = `
   /* Modern template specific fixes */
   .resume-two-column-layout.template-modern .resume-heading-2 {
     font-size: 14pt !important;
-    margin: 1.5rem 0 0.75rem 0 !important;
-    padding: 0.3rem 0.75rem 0.3rem 1rem !important;
+    margin: 1rem 0 0.75rem 0 !important;
+    padding: 0.5rem 0.75rem 0.3rem 1rem !important;
     background: #f8f8f8 !important;
     border-left: 3px solid #333333 !important;
     border-radius: 0 3px 3px 0 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Modern template - first H2 in columns */
+  .resume-two-column-layout.template-modern .resume-column-left > .resume-heading-2:first-child,
+  .resume-two-column-layout.template-modern .resume-column-right > .resume-heading-2:first-child,
+  .resume-two-column-layout.template-modern .resume-column-left > h2:first-child,
+  .resume-two-column-layout.template-modern .resume-column-right > h2:first-child {
+    margin-top: 1.25rem !important;
+    padding-top: 0.75rem !important;
   }
 
   /* Minimalist template specific fixes */
   .resume-two-column-layout.template-minimalist .resume-heading-2 {
     font-size: 16pt !important;
-    margin: 2rem 0 1rem 0 !important;
-    padding: 0 !important;
+    margin: 1rem 0 1rem 0 !important;
+    padding: 0.25rem 0 0.25rem 0 !important;
     font-weight: 300 !important;
     border-bottom: 1px solid #ddd !important;
-    padding-bottom: 0.25rem !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Minimalist template - first H2 in columns */
+  .resume-two-column-layout.template-minimalist .resume-column-left > .resume-heading-2:first-child,
+  .resume-two-column-layout.template-minimalist .resume-column-right > .resume-heading-2:first-child,
+  .resume-two-column-layout.template-minimalist .resume-column-left > h2:first-child,
+  .resume-two-column-layout.template-minimalist .resume-column-right > h2:first-child {
+    margin-top: 1.25rem !important;
+    padding-top: 0.75rem !important;
   }
 
   /* Creative template specific fixes */
   .resume-two-column-layout.template-creative .resume-heading-2 {
     font-size: 16pt !important;
-    margin: 1.5rem 0 0.75rem 0 !important;
-    padding: 0 !important;
+    margin: 1rem 0 0.75rem 0 !important;
+    padding: 0.25rem 0 0 0 !important;
     color: #1f2937 !important;
     font-weight: 600 !important;
     position: relative !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Creative template - first H2 in columns */
+  .resume-two-column-layout.template-creative .resume-column-left > .resume-heading-2:first-child,
+  .resume-two-column-layout.template-creative .resume-column-right > .resume-heading-2:first-child,
+  .resume-two-column-layout.template-creative .resume-column-left > h2:first-child,
+  .resume-two-column-layout.template-creative .resume-column-right > h2:first-child {
+    margin-top: 1.25rem !important;
+    padding-top: 0.75rem !important;
   }
 
   .resume-two-column-layout.template-creative .resume-heading-2::before {
@@ -1050,11 +1166,24 @@ export const printStyles = `
   /* Executive template specific fixes */
   .resume-two-column-layout.template-executive .resume-heading-2 {
     font-size: 15pt !important;
-    margin: 1.5rem 0 0.75rem 0 !important;
-    padding: 0 !important;
+    margin: 1rem 0 0.75rem 0 !important;
+    padding: 0.25rem 0 0 0 !important;
     font-weight: 600 !important;
     text-transform: uppercase !important;
     letter-spacing: 1px !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Executive template - first H2 in columns */
+  .resume-two-column-layout.template-executive .resume-column-left > .resume-heading-2:first-child,
+  .resume-two-column-layout.template-executive .resume-column-right > .resume-heading-2:first-child,
+  .resume-two-column-layout.template-executive .resume-column-left > h2:first-child,
+  .resume-two-column-layout.template-executive .resume-column-right > h2:first-child {
+    margin-top: 1.25rem !important;
+    padding-top: 0.75rem !important;
   }
 
   /* Force all template content to fit within columns */
@@ -1137,33 +1266,38 @@ export const printStyles = `
 
     /* Ensure heading fonts are consistent */
     .resume-heading-1, h1 {
-      font-size: 24pt !important;
+      font-size: var(--resume-h1-font-size) !important;
       font-weight: bold !important;
       line-height: 1.2 !important;
+      font-family: var(--resume-font-family) !important;
     }
 
     .resume-heading-2, h2 {
-      font-size: 16pt !important;
+      font-size: var(--resume-h2-font-size) !important;
       font-weight: bold !important;
       line-height: 1.3 !important;
+      font-family: var(--resume-font-family) !important;
     }
 
     .resume-heading-3, h3 {
-      font-size: 14pt !important;
+      font-size: var(--resume-h3-font-size) !important;
       font-weight: bold !important;
       line-height: 1.3 !important;
+      font-family: var(--resume-font-family) !important;
     }
 
     /* Force paragraph and list consistency */
     .resume-paragraph, p {
-      font-size: 12pt !important;
-      line-height: 1.5 !important;
+      font-size: var(--resume-font-size) !important;
+      line-height: var(--resume-line-height) !important;
       margin: 0.5rem 0 !important;
+      font-family: var(--resume-font-family) !important;
     }
 
     .resume-list-item, li {
-      font-size: 12pt !important;
-      line-height: 1.5 !important;
+      font-size: var(--resume-font-size) !important;
+      line-height: var(--resume-line-height) !important;
+      font-family: var(--resume-font-family) !important;
     }
 
     /* Control spacing for BR and NBSP elements in PDF */

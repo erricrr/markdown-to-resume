@@ -80,12 +80,15 @@ export const useDynamicCSS = () => {
     allCSS += `
 /* ADDITIONAL CONSISTENCY CSS FOR PREVIEW AND PDF */
 .resume-template {
-  padding: 0.5rem 0.25rem !important;
+  padding: var(--resume-margin-top) var(--resume-margin-left) var(--resume-margin-bottom) var(--resume-margin-right) !important;
   width: 8.5in !important;
   min-height: 11in !important;
   box-sizing: border-box !important;
   background: white !important;
   margin: 0 !important;
+  font-family: var(--resume-font-family) !important;
+  font-size: var(--resume-font-size) !important;
+  line-height: var(--resume-line-height) !important;
 }
 
 /* Force exact font rendering to match PDF */
@@ -116,41 +119,46 @@ export const useDynamicCSS = () => {
 
 /* Force consistent font sizes that match PDF exactly */
 .resume-template {
-  font-size: 12pt !important;
-  line-height: 1.5 !important;
+  font-size: var(--resume-font-size) !important;
+  line-height: var(--resume-line-height) !important;
 }
 
 .resume-template .resume-heading-1,
 .resume-template h1 {
-  font-size: 24pt !important;
+  font-size: var(--resume-h1-font-size) !important;
   font-weight: bold !important;
   line-height: 1.2 !important;
+  font-family: var(--resume-font-family) !important;
 }
 
 .resume-template .resume-heading-2,
 .resume-template h2 {
-  font-size: 16pt !important;
+  font-size: var(--resume-h2-font-size) !important;
   font-weight: bold !important;
   line-height: 1.3 !important;
+  font-family: var(--resume-font-family) !important;
 }
 
 .resume-template .resume-heading-3,
 .resume-template h3 {
-  font-size: 14pt !important;
+  font-size: var(--resume-h3-font-size) !important;
   font-weight: bold !important;
   line-height: 1.3 !important;
+  font-family: var(--resume-font-family) !important;
 }
 
 .resume-template .resume-paragraph,
 .resume-template p {
-  font-size: 12pt !important;
-  line-height: 1.5 !important;
+  font-size: var(--resume-font-size) !important;
+  line-height: var(--resume-line-height) !important;
+  font-family: var(--resume-font-family) !important;
 }
 
 .resume-template .resume-list-item,
 .resume-template li {
-  font-size: 12pt !important;
-  line-height: 1.5 !important;
+  font-size: var(--resume-font-size) !important;
+  line-height: var(--resume-line-height) !important;
+  font-family: var(--resume-font-family) !important;
 }
 
 /* Reset any template-specific padding to ensure consistent margins */
@@ -159,7 +167,7 @@ export const useDynamicCSS = () => {
 .resume-template.template-minimalist,
 .resume-template.template-executive,
 .resume-template.template-creative {
-  padding: 0.5rem 0.25rem !important;
+  padding: var(--resume-margin-top) var(--resume-margin-left) var(--resume-margin-bottom) var(--resume-margin-right) !important;
 }
 
 /* Force all background colors and images to display/print */

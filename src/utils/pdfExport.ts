@@ -235,7 +235,7 @@ export const exportToPDF = async (resumeData: ResumeData) => {
 /* Page settings for PDF - MATCH LIVE PREVIEW MARGINS */
 @page {
   size: A4;
-  margin: 0.5rem 0.25rem;
+  margin: var(--resume-margin-top) var(--resume-margin-left);
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
   color-adjust: exact !important;
@@ -264,13 +264,16 @@ body::before, body::after {
 
 /* Final override with maximum specificity to ensure PDF matches preview exactly */
 html body .resume-template {
-  padding: 0.5rem 0.25rem !important;
+  padding: var(--resume-margin-top) var(--resume-margin-left) var(--resume-margin-bottom) var(--resume-margin-right) !important;
   margin: 0 !important;
   box-shadow: none !important;
   background: white !important;
   width: 8.5in !important;
   min-height: 11in !important;
   box-sizing: border-box !important;
+  font-family: var(--resume-font-family) !important;
+  font-size: var(--resume-font-size) !important;
+  line-height: var(--resume-line-height) !important;
 }
 
 /* Force exact font rendering to match preview */
@@ -301,41 +304,46 @@ html body .resume-template li::marker {
 
 /* Force consistent font sizes that match live preview exactly */
 html body .resume-template {
-  font-size: 12pt !important;
-  line-height: 1.5 !important;
+  font-size: var(--resume-font-size) !important;
+  line-height: var(--resume-line-height) !important;
 }
 
 html body .resume-template .resume-heading-1,
 html body .resume-template h1 {
-  font-size: 24pt !important;
+  font-size: var(--resume-h1-font-size) !important;
   font-weight: bold !important;
   line-height: 1.2 !important;
+  font-family: var(--resume-font-family) !important;
 }
 
 html body .resume-template .resume-heading-2,
 html body .resume-template h2 {
-  font-size: 16pt !important;
+  font-size: var(--resume-h2-font-size) !important;
   font-weight: bold !important;
   line-height: 1.3 !important;
+  font-family: var(--resume-font-family) !important;
 }
 
 html body .resume-template .resume-heading-3,
 html body .resume-template h3 {
-  font-size: 14pt !important;
+  font-size: var(--resume-h3-font-size) !important;
   font-weight: bold !important;
   line-height: 1.3 !important;
+  font-family: var(--resume-font-family) !important;
 }
 
 html body .resume-template .resume-paragraph,
 html body .resume-template p {
-  font-size: 12pt !important;
-  line-height: 1.5 !important;
+  font-size: var(--resume-font-size) !important;
+  line-height: var(--resume-line-height) !important;
+  font-family: var(--resume-font-family) !important;
 }
 
 html body .resume-template .resume-list-item,
 html body .resume-template li {
-  font-size: 12pt !important;
-  line-height: 1.5 !important;
+  font-size: var(--resume-font-size) !important;
+  line-height: var(--resume-line-height) !important;
+  font-family: var(--resume-font-family) !important;
 }
 `;
 
