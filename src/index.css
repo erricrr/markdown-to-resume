@@ -4,8 +4,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Import our single source of truth for resume templates */
-@import url('./styles/resumeTemplates.css');
+/* Resume templates are now injected dynamically via useDynamicCSS hook */
+/* This eliminates the need for a separate CSS file - true single source of truth! */
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. */
 
