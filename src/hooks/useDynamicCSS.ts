@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
-import { defaultTemplateCSS } from '@/components/CSSEditor';
+import { templateStyles } from '../styles/resumeTemplates';
 
 export const useDynamicCSS = () => {
   const styleElementRef = useRef<HTMLStyleElement | null>(null);
@@ -7,7 +7,7 @@ export const useDynamicCSS = () => {
 
   useEffect(() => {
     console.log('🔄 useDynamicCSS: Setting up dynamic CSS');
-    
+
     // Remove any existing dynamic style elements
     const existingStyles = document.querySelectorAll('style[data-source="css-editor"]');
     console.log(`🔍 Found ${existingStyles.length} existing dynamic style elements to remove`);
@@ -22,12 +22,12 @@ export const useDynamicCSS = () => {
     console.log('✅ Dynamic CSS style element created and added to head');
 
     // Initialize with default Professional template CSS
-    if (defaultTemplateCSS.professional) {
+    if (templateStyles.professional) {
       console.log('🎨 Initializing with default Professional template CSS');
-      templateCSSRef.current.professional = defaultTemplateCSS.professional;
+      templateCSSRef.current.professional = templateStyles.professional;
       updateAllCSS();
     } else {
-      console.error('❌ Default Professional template CSS not found in defaultTemplateCSS');
+      console.error('❌ Default Professional template CSS not found in templateStyles');
     }
 
     return () => {
@@ -50,17 +50,18 @@ export const useDynamicCSS = () => {
     const allCSS = Object.entries(templateCSSRef.current)
       .map(([template, css]) => {
         // Add high specificity to ensure our CSS overrides the default styles
+        // Apply the same specificity boost as in PDF export
         const processedCSS = css.replace(
           /\.template-(\w+)/g,
           '.resume-template.template-$1'
         );
-        return `/* DYNAMIC ${template.toUpperCase()} TEMPLATE */\n${processedCSS}\n`;
+        return `/* DYNAMIC ${template.toUpperCase()} TEMPLATE */\n${css}\n\n/* HIGH SPECIFICITY VERSION */\n${processedCSS}\n`;
       })
       .join('\n');
 
     styleElementRef.current.textContent = allCSS;
     console.log(`🎨 Updated dynamic CSS (${allCSS.length} chars):`, allCSS.substring(0, 200) + '...');
-    
+
     // Log the current state of the style element
     console.log('📝 Style element content length:', styleElementRef.current.textContent?.length);
     console.log('🏷️ Style element in DOM:', document.contains(styleElementRef.current));
