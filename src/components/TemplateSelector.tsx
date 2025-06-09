@@ -53,13 +53,13 @@ export const TemplateSelector = ({ selectedTemplate, onTemplateChange }: Templat
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="flex items-center gap-2">
+        <Button variant="outline" className="flex items-center gap-2 text-xs sm:text-sm">
           {/* <div className={`w-3 h-3 rounded-full ${currentTemplate.color}`} /> */}
           <span>{currentTemplate.name}</span>
-          <ChevronDown className="h-4 w-4" />
+          <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-64 p-2">
+      <DropdownMenuContent className="w-48 sm:w-64 p-2">
         <div className="grid gap-2">
           {templates.map((template) => (
             <DropdownMenuItem

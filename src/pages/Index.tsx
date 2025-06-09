@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import { FileText, Printer, Columns2, FileStack, Code, Eye } from "lucide-react";
 import { ResumePreview } from "@/components/ResumePreview";
 import { PrintPreview } from "@/components/PrintPreview";
@@ -214,42 +215,47 @@ const Index = () => {
     if (inputMode === "twoColumn") {
       return (
         <div className="grid grid-cols-1 gap-6">
-          <Card className="shadow-xl border-0 bg-white overflow-hidden">
-            <div className="p-6 border-b">
-              <div className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-primary" />
-                <h2 className="text-lg font-semibold text-foreground">
-                  Header Section
-                </h2>
+          {/* Header and Summary in single row on all screens */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="shadow-xl border-0 bg-white overflow-hidden">
+              <div className="p-6 border-b">
+                <div className="flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-primary" />
+                  <h2 className="text-lg font-semibold text-foreground">
+                    Header Section
+                  </h2>
+                </div>
               </div>
-            </div>
-            <div className="p-6 pt-0">
-              <Textarea
-                value={header}
-                onChange={(e) => setHeader(e.target.value)}
-                className="min-h-[120px] resize-none"
-                placeholder="Enter header content (name, contact info)..."
-              />
-            </div>
-          </Card>
-          <Card className="shadow-xl border-0 bg-white overflow-hidden">
-            <div className="p-6 border-b">
-              <div className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-primary" />
-                <h2 className="text-lg font-semibold text-foreground">
-                  Summary Section
-                </h2>
+              <div className="p-6 pt-0">
+                <Textarea
+                  value={header}
+                  onChange={(e) => setHeader(e.target.value)}
+                  className="min-h-[120px] resize-none"
+                  placeholder="Enter header content (name, contact info)..."
+                />
               </div>
-            </div>
-            <div className="p-6 pt-0">
-              <Textarea
-                value={summary}
-                onChange={(e) => setSummary(e.target.value)}
-                className="min-h-[100px] resize-none"
-                placeholder="Enter a brief professional summary..."
-              />
-            </div>
-          </Card>
+            </Card>
+            <Card className="shadow-xl border-0 bg-white overflow-hidden">
+              <div className="p-6 border-b">
+                <div className="flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-primary" />
+                  <h2 className="text-lg font-semibold text-foreground">
+                    Summary Section
+                  </h2>
+                </div>
+              </div>
+              <div className="p-6 pt-0">
+                <Textarea
+                  value={summary}
+                  onChange={(e) => setSummary(e.target.value)}
+                  className="min-h-[100px] resize-none"
+                  placeholder="Enter a brief professional summary..."
+                />
+              </div>
+            </Card>
+          </div>
+
+          {/* Left and Right Columns */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card className="shadow-xl border-0 bg-white overflow-hidden">
               <div className="p-6 border-b">
@@ -319,41 +325,33 @@ const Index = () => {
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 sm:py-6 gap-4">
             <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-600 rounded-lg flex items-center justify-center overflow-hidden">
+              <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-600 rounded-lg flex items-center justify-center overflow-hidden">
                 <img
-                src="/markdown.png"
-                alt="Markdown to resume icon"
-                className="h-6 w-6 object-cover"
-              />
-            </div>
+                  src="/markdown.png"
+                  alt="Markdown to resume icon"
+                  className="h-6 w-6 object-cover"
+                />
+              </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
                   Markdown to Resume
                 </h1>
-                <p className="text-sm text-gray-600">
+                <p className="text-xs sm:text-sm text-gray-600">
                   Transform markdown into professional resumes
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
               <div className="flex items-center gap-2">
                 <Columns2 className="h-4 w-4" />
-                <span className="text-sm">Two Column</span>
+                <span className="text-xs sm:text-sm">Two Column</span>
                 <Switch
                   checked={isTwoColumn}
                   onCheckedChange={setIsTwoColumn}
                 />
               </div>
-              {/* <div className="flex items-center gap-2">
-                <FileStack className="h-4 w-4" />
-                <span className="text-sm">Two Page</span>
-                <Switch
-                  checked={isTwoPage}
-                  onCheckedChange={setIsTwoPage}
-                />
-              </div> */}
               <TemplateSelector
                 selectedTemplate={selectedTemplate}
                 onTemplateChange={setSelectedTemplate}
@@ -377,18 +375,24 @@ const Index = () => {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[calc(100vh-200px)]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 h-auto sm:h-[calc(100vh-200px)]">
           {/* Left Panel - Tabs for Editor and CSS */}
           <div className="flex flex-col h-full">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
-              <TabsList className="grid w-full grid-cols-2 mb-4">
-                <TabsTrigger value="editor" className="flex items-center gap-2">
-                  <FileText className="h-4 w-4" />
-                  Content Editor
+              <TabsList className="flex w-full mb-4 gap-1 p-1 bg-muted rounded-lg">
+                <TabsTrigger
+                  value="editor"
+                  className="flex-1 flex items-center justify-center gap-1 text-xs sm:text-sm py-1.5 px-2 rounded-md h-8 data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                >
+                  <FileText className="h-3 w-3 sm:h-4 sm:w-4 mr-1 shrink-0" />
+                  <span className="truncate">Content Editor</span>
                 </TabsTrigger>
-                <TabsTrigger value="css" className="flex items-center gap-2">
-                  <Code className="h-4 w-4" />
-                  CSS Editor
+                <TabsTrigger
+                  value="css"
+                  className="flex-1 flex items-center justify-center gap-1 text-xs sm:text-sm py-1.5 px-2 rounded-md h-8 data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                >
+                  <Code className="h-3 w-3 sm:h-4 sm:w-4 mr-1 shrink-0" />
+                  <span className="truncate">CSS Editor</span>
                 </TabsTrigger>
               </TabsList>
 
@@ -410,11 +414,16 @@ const Index = () => {
           {/* Right Panel - Preview */}
           <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col">
             <div className="p-6 border-b">
-              <div className="flex items-center gap-2">
-                <Eye className="h-5 w-5 text-primary" />
-                <h2 className="text-lg font-semibold text-foreground">
-                  Live Preview
-                </h2>
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <Eye className="h-5 w-5 text-primary" />
+                  <h2 className="text-lg font-semibold text-foreground">
+                    Live Preview
+                  </h2>
+                </div>
+                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                  PDF-accurate preview
+                </Badge>
               </div>
             </div>
             <div className="flex-1 overflow-auto p-4 bg-gray-50">

@@ -169,7 +169,7 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
   return (
     <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col h-full">
       <div className="p-6 border-b">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <Code className="h-5 w-5 text-primary" />
             <h2 className="text-lg font-semibold text-foreground">
@@ -177,15 +177,6 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
             </h2>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleDebug}
-              className="flex items-center gap-1"
-            >
-              <Bug className="h-3 w-3" />
-              Debug
-            </Button>
             <Badge variant="secondary" className="text-xs">
               Live Preview
             </Badge>
@@ -196,15 +187,14 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
       <div className="flex-1 overflow-hidden">
         <Tabs value={activeTab} onValueChange={handleTabChange} className="h-full flex flex-col">
           <div className="px-6 pt-4">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="flex flex-wrap w-full p-1 gap-1 bg-muted rounded-lg justify-center">
               {templates.map((template) => (
                 <TabsTrigger
                   key={template.id}
                   value={template.id}
-                  className="flex items-center gap-2 text-xs"
+                  className="flex-1 min-w-0 max-w-[calc(50%-0.125rem)] sm:max-w-[calc(33.333%-0.125rem)] md:max-w-[calc(20%-0.125rem)] flex items-center justify-center text-[10px] sm:text-xs py-1.5 px-1 overflow-hidden whitespace-nowrap rounded-md h-8 data-[state=active]:bg-white data-[state=active]:shadow-sm"
                 >
-                  {/* <div className={`w-2 h-2 rounded-full ${template.color}`} /> */}
-                  {template.name}
+                  <span className="truncate block w-full text-center">{template.name}</span>
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -217,21 +207,14 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
               className="flex-1 px-6 pb-6 mt-4 overflow-auto"
             >
               <div className="h-full flex flex-col gap-4">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center gap-2">
-                    {/* <div className={`w-3 h-3 rounded-full ${template.color}`} /> */}
-                    <h3 className="font-medium">{template.name} Template</h3>
+                    <h3 className="font-medium text-sm sm:text-base">
+                      <span className="hidden sm:inline">{template.name}</span>
+                      <span className="sm:hidden">{template.name}</span>
+                    </h3>
                   </div>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleTestCSS(template.id)}
-                      className="flex items-center gap-1 bg-yellow-50 hover:bg-yellow-100 border-yellow-300"
-                    >
-                      <Eye className="h-3 w-3" />
-                      Test
-                    </Button>
+                  <div className="flex flex-wrap gap-2">
                     <Button
                       variant="outline"
                       size="sm"
@@ -263,10 +246,11 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
                 </div>
 
                 <div className="text-xs text-muted-foreground bg-gray-50 p-3 rounded">
-                  <p>💡 <strong>Tip:</strong> Changes apply immediately. Try changing background colors or font sizes.</p>
+                  <p>💡 <strong>Tip:</strong> Changes apply immediately to Live Preview and PDF export.</p>
                   <p>🎯 <strong>Target classes:</strong> .template-{template.id}, .resume-heading-1, .resume-heading-2, etc.</p>
-                  <p>🧪 <strong>Test:</strong> Click "Test" for bright colors to verify live preview works.</p>
-                  <p>🐛 <strong>Debug:</strong> Click "Debug" button to check CSS injection in console.</p>
+                  <p>⚠️ <strong>Note:</strong> Some advanced CSS like pseudo-elements (::before/::after) may not print correctly in the PDF.</p>
+                  <p>📏 <strong>Margins:</strong> Padding is fixed at 0.25in (top/bottom) and 0.75in (left/right) for consistent PDF output.</p>
+                  <p>📝 <strong>Best practice:</strong> Use !important for critical styles to ensure they work in the PDF.</p>
                 </div>
               </div>
             </TabsContent>

@@ -42,10 +42,10 @@ export const ResumeTemplates = ({ htmlContent, template: propTemplate, isTwoColu
 
   const getContainerClasses = () => {
     if (isPreview) {
-      // For preview: scale to fit container width
+      // For preview: scale to fit container width but maintain PDF proportions and margins
       return cn(
         'resume-template resume-preview-container w-full bg-white shadow-lg',
-        'transform-gpu origin-top',
+        'transform-gpu origin-top print-accurate',
         getTemplateClasses()
       );
     } else {
@@ -58,7 +58,7 @@ export const ResumeTemplates = ({ htmlContent, template: propTemplate, isTwoColu
   };
 
   return (
-    <div className="w-full overflow-hidden">
+    <div className="w-full overflow-hidden flex flex-col">
       <div
         className={getContainerClasses()}
         dangerouslySetInnerHTML={{ __html: htmlContent }}
@@ -67,9 +67,17 @@ export const ResumeTemplates = ({ htmlContent, template: propTemplate, isTwoColu
           minHeight: '11in',
           transformOrigin: 'top left',
           transform: 'scale(var(--preview-scale, 0.75))',
-          margin: '0 auto'
+          margin: '0 auto',
+          padding: '0.25in 0.75in', // Match PDF margins
+          boxSizing: 'border-box',
         } : undefined}
       />
+      {isPreview && (
+        <div className="text-xs text-center text-muted-foreground mt-3 px-4">
+          <p className="mb-1">This preview uses the same margins (0.25in top/bottom, 0.75in left/right) as the PDF export.</p>
+          <p>All CSS in the editor is applied to both preview and PDF. For best results, use !important for critical styles.</p>
+        </div>
+      )}
     </div>
   );
 };

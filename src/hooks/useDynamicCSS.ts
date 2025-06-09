@@ -49,15 +49,109 @@ export const useDynamicCSS = () => {
     // Start with base resume styles (includes bullets, layout, etc.)
     let allCSS = `/* BASE RESUME STYLES */\n${baseResumeStyles}\n\n`;
 
-    // Add all template CSS with high specificity
+    // Add consistency CSS to ensure preview matches PDF
+    allCSS += `
+/* CONSISTENCY CSS FOR PREVIEW AND PDF */
+.resume-template {
+  padding: 0.25in 0.75in !important;
+  width: 8.5in !important;
+  min-height: 11in !important;
+  box-sizing: border-box !important;
+}
+
+/* Reset any template-specific padding to ensure consistent margins */
+.resume-template.template-professional,
+.resume-template.template-modern,
+.resume-template.template-minimalist,
+.resume-template.template-executive,
+.resume-template.template-creative {
+  padding: 0.25in 0.75in !important;
+}
+
+/* AGGRESSIVE SUMMARY SPACING FIXES - Override everything */
+.resume-two-column-layout .resume-summary-section,
+.resume-two-column-layout .resume-summary-section *,
+.resume-two-column-layout .resume-heading-summary,
+.resume-two-column-layout [class*="summary"] {
+  margin: 0 !important;
+  padding: 0 !important;
+  page-break-after: avoid !important;
+  break-after: avoid !important;
+  page-break-before: avoid !important;
+  break-before: avoid !important;
+}
+
+/* Force summary to be compact */
+.resume-two-column-layout .resume-summary-section {
+  margin-bottom: 0.125in !important;
+  padding-bottom: 0 !important;
+  line-height: 1.2 !important;
+}
+
+/* Remove all spacing around columns container */
+.resume-two-column-layout .resume-columns {
+  margin: 0 !important;
+  padding: 0 !important;
+  page-break-before: avoid !important;
+  break-before: avoid !important;
+}
+
+/* Enhanced summary spacing control for two-column layouts */
+.resume-two-column-layout .resume-columns > *:first-child,
+.resume-two-column-layout .resume-column-left > *:first-child,
+.resume-two-column-layout .resume-column-left .resume-heading-2:first-child,
+.resume-two-column-layout .resume-columns .resume-heading-2:first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Two-page specific styling */
+.resume-two-page-layout .resume-page-first,
+.resume-two-page-layout .resume-page-second {
+  padding: 0.25in 0.75in !important;
+  box-sizing: border-box !important;
+}
+
+.resume-two-page-layout .resume-page-first {
+  margin-bottom: 0.25in !important;
+}
+
+.resume-two-page-layout .resume-page-second {
+  margin-top: 0.25in !important;
+}
+
+/* Fix for two-column layout consistency */
+.resume-two-column-layout .resume-columns {
+  display: grid !important;
+  grid-template-columns: 1fr 2fr !important;
+  gap: 1in !important;
+  align-items: start !important;
+}
+
+/* Force all background colors and images to display/print */
+* {
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+  color-adjust: exact !important;
+}
+`;
+
+    // Process and add all template CSS with high specificity
     const templateCSS = Object.entries(templateCSSRef.current)
       .map(([template, css]) => {
-        // Add high specificity to ensure our CSS overrides the default styles
-        // Apply the same specificity boost as in PDF export
-        const processedCSS = css.replace(
-          /\.template-(\w+)/g,
-          '.resume-template.template-$1'
+        // Process CSS to ensure high specificity
+        // 1. Increase specificity for template selectors
+        let processedCSS = css.replace(
+          /\.template-(\w+)\s+([^{]*){/g,
+          '.resume-template.template-$1 $2{'
         );
+
+        // 2. Add !important to properties that don't already have it
+        processedCSS = processedCSS.replace(
+          /:\s*([^!][^;]*);/g,
+          ': $1 !important;'
+        );
+
         return `/* DYNAMIC ${template.toUpperCase()} TEMPLATE */\n${css}\n\n/* HIGH SPECIFICITY VERSION */\n${processedCSS}\n`;
       })
       .join('\n');

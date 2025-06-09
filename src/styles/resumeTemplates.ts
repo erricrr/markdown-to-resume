@@ -28,9 +28,10 @@ body {
   width: 8.5in;
   min-height: 11in;
   margin: 0 auto;
-  padding: 0.75in;
+  padding: 0.75in 0.5in;
   background: white;
   box-shadow: none;
+  box-sizing: border-box;
 }
 
 /* Base Typography */
@@ -118,6 +119,34 @@ body {
 .resume-two-column-layout .resume-header .resume-paragraph {
   text-align: center !important;
   margin-bottom: 0.5rem !important;
+}
+
+/* DRY APPROACH: AGGRESSIVE summary spacing fixes for ALL two-column layouts */
+.resume-two-column-layout .resume-summary-section,
+.resume-two-column-layout .resume-summary-section *,
+.resume-two-column-layout .resume-heading-summary,
+.resume-two-column-layout [class*="summary"],
+.resume-two-column-layout .resume-columns > *:first-child,
+.resume-two-column-layout .resume-column-left > *:first-child {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Force summary to be compact */
+.resume-two-column-layout .resume-summary-section {
+  margin-bottom: 0.125rem !important;
+  padding-bottom: 0 !important;
+  line-height: 1.2 !important;
+  page-break-after: avoid !important;
+  break-after: avoid !important;
+}
+
+/* Remove all spacing around columns container */
+.resume-two-column-layout .resume-columns {
+  margin: 0 !important;
+  padding: 0 !important;
+  page-break-before: avoid !important;
+  break-before: avoid !important;
 }
 
 /* Two Page Layout Styles */
@@ -366,116 +395,141 @@ export const templateStyles = {
 `,
 
   creative: `
-/* Creative Template - Modern and clean */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+/* Creative Template - Modern greyscale design with clean styling */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 .template-creative {
   background: white;
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  padding: 0.75rem 2.5rem 2.5rem 6rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding: 0.5in 0.75in;
   position: relative;
-  border-left: none !important;
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
 }
 
-.template-creative::before {
-  content: "" !important;
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 8px !important;
-  height: 100% !important;
-  background-color: #000 !important;
-  -webkit-print-color-adjust: exact !important;
-  print-color-adjust: exact !important;
-}
-
+/* Modern greyscale header section */
 .template-creative .resume-heading-1 {
-  font-size: 2.25rem;
-  font-weight: 700;
-  color: #000;
-  margin-bottom: 1rem;
-  padding-left: 0;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+  padding: 1rem 0;
+  text-align: center;
+  letter-spacing: -0.5px;
   position: relative;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 
+/* Add a decorative line below the name */
 .template-creative .resume-heading-1::after {
   content: "";
   position: absolute;
-  bottom: -0.25rem;
-  left: 0;
-  width: 80%;
-  height: 2px;
-  background: linear-gradient(to right, #000, #6b7280, transparent) !important;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: #4b5563;
+  border-radius: 2px;
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
 }
 
+/* Section headings with modern accent */
 .template-creative .resume-heading-2 {
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   font-weight: 700;
-  color: #000;
-  margin-top: 1.5rem;
-  margin-bottom: 0.75rem;
+  color: #374151;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding-left: 1.5rem;
+  letter-spacing: 1.5px;
   position: relative;
-  display: flex !important;
-  align-items: center !important;
-}
-
-.template-creative .resume-heading-2::before {
-  content: "■" !important;
-  position: absolute;
-  left: 0;
-  color: #000 !important;
-  font-size: 0.7rem;
+  padding-left: 0;
+  border-left: 4px solid #6b7280;
+  padding-left: 1rem;
+  background: linear-gradient(90deg, rgba(107, 114, 128, 0.1), transparent);
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
 }
 
+/* Content styling */
 .template-creative p,
 .template-creative li {
-  color: #4a4a4a;
-  margin: 0.5rem 0 !important;
+  color: #374151;
+  margin: 0.75rem 0;
   font-weight: 400;
-  padding: 0 !important;
   font-size: 1rem;
   line-height: 1.6;
   display: block;
 }
 
+/* Enhanced list styling */
 .template-creative ul,
 .template-creative ol {
-  margin: 0.5rem 0 !important;
-  padding-left: 1.5rem !important;
-  margin-left: 0.5rem;
+  margin: 1rem 0;
+  padding-left: 1.5rem;
 }
 
 .template-creative li {
   position: relative;
-  padding-left: 0 !important;
-  margin-left: 0;
+  padding-left: 0;
+  margin-bottom: 0.5rem;
 }
 
+/* Custom bullet points */
+.template-creative .resume-list-item::before {
+  content: "▶" !important;
+  color: #6b7280 !important;
+  font-weight: bold;
+  margin-right: 0.5rem;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+/* Links with accent styling */
 .template-creative a {
-  color: #333333;
+  color: #374151;
   text-decoration: none;
   font-weight: 500;
-  border-bottom: 1px solid #dddddd;
+  border-bottom: 2px solid transparent;
   transition: all 0.2s ease;
   padding-bottom: 1px;
 }
 
 .template-creative a:hover {
-  border-bottom-color: #999999;
+  border-bottom-color: #6b7280;
+}
+
+/* Subtle contact info styling */
+.template-creative .resume-paragraph:first-of-type {
+  text-align: center;
+  color: #6b7280;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 /* Hide HR in creative template */
 .template-creative hr {
   display: none;
+}
+
+/* Two-column specific adjustments */
+.template-creative.resume-two-column-layout .resume-heading-1 {
+  font-size: 2rem;
+  text-align: left;
+  padding: 0.5rem 0;
+}
+
+.template-creative.resume-two-column-layout .resume-heading-1::after {
+  left: 0;
+  transform: none;
+  width: 40px;
 }
 `,
 
@@ -563,7 +617,7 @@ export const printStyles = `
 @media print {
   @page {
     size: A4;
-    margin: 0.75in 0.5in 0.75in 0.5in;
+    margin: 0.25in 0.75in;
     @top-left { content: ""; }
     @top-center { content: ""; }
     @top-right { content: ""; }
@@ -573,7 +627,7 @@ export const printStyles = `
   }
 
   @page :first {
-    margin: 0.75in 0.5in 0.75in 0.5in;
+    margin: 0.25in 0.75in;
     @top-left { content: ""; }
     @top-center { content: ""; }
     @top-right { content: ""; }
@@ -594,75 +648,90 @@ export const printStyles = `
   body {
     margin: 0 !important;
     padding: 0 !important;
-    background: white !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
   }
 
   .resume-template {
+    padding: 0.25in 0.75in !important;
+    width: 8.5in !important;
+    min-height: 11in !important;
+    box-sizing: border-box !important;
     margin: 0 !important;
-    padding: 0 !important;
+    background: white !important;
     box-shadow: none !important;
-    width: 100% !important;
-    min-height: auto !important;
   }
 
+  /* AGGRESSIVE SUMMARY SPACING FIXES - Override everything */
+  .resume-two-column-layout .resume-summary-section,
+  .resume-two-column-layout .resume-summary-section *,
+  .resume-two-column-layout .resume-heading-summary,
+  .resume-two-column-layout [class*="summary"] {
+    margin: 0 !important;
+    padding: 0 !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+    page-break-before: avoid !important;
+    break-before: avoid !important;
+  }
+
+  /* Force summary to be compact */
+  .resume-two-column-layout .resume-summary-section {
+    margin-bottom: 0.125in !important;
+    padding-bottom: 0 !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Remove all spacing around columns container */
+  .resume-two-column-layout .resume-columns {
+    margin: 0 !important;
+    padding: 0 !important;
+    page-break-before: avoid !important;
+    break-before: avoid !important;
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+  }
+
+  /* Enhanced summary spacing control for two-column layouts */
+  .resume-two-column-layout .resume-columns > *:first-child,
+  .resume-two-column-layout .resume-column-left > *:first-child,
+  .resume-two-column-layout .resume-column-left .resume-heading-2:first-child,
+  .resume-two-column-layout .resume-columns .resume-heading-2:first-child {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  /* Two-page specific styling for margins */
+  .resume-two-page-layout .resume-page-first,
+  .resume-two-page-layout .resume-page-second {
+    padding: 0.25in 0.75in !important;
+    box-sizing: border-box !important;
+  }
+
+  .resume-two-page-layout .resume-page-first {
+    page-break-after: always !important;
+    margin-bottom: 0 !important;
+  }
+
+  .resume-two-page-layout .resume-page-second {
+    margin-top: 0 !important;
+    padding-top: 0.25in !important;
+  }
+
+  /* Fix for two-column layout */
+  .resume-two-column-layout .resume-columns {
+    display: grid !important;
+    grid-template-columns: 1fr 2fr !important;
+    gap: 1in !important;
+    align-items: start !important;
+  }
+
+  /* Ensure all custom styles are applied with high specificity */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     color-adjust: exact !important;
-  }
-
-  *::before, *::after {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-    color-adjust: exact !important;
-    display: block !important;
-  }
-
-  /* Ensure all template-specific styles print correctly */
-  .template-modern .resume-heading-1::after {
-    background: linear-gradient(90deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%) !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-    display: block !important;
-  }
-
-  .template-creative {
-    padding: 0.75rem 2.5rem 2.5rem 6rem !important;
-  }
-
-  .template-creative::before {
-    background-color: #000 !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-
-  .template-creative .resume-heading-2::before {
-    content: "■" !important;
-    position: absolute !important;
-    left: 0 !important;
-    color: #000 !important;
-    font-size: 0.7rem !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-
-  /* High specificity version for PDF export */
-  .resume-template.template-creative .resume-heading-2::before {
-    content: "■" !important;
-    position: absolute !important;
-    left: 0 !important;
-    color: #000 !important;
-    font-size: 0.7rem !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-
-  .template-executive .resume-heading-2 {
-    background-color: #f8f9fa !important;
-    border-left: 3px solid #333333 !important;
-    border-bottom: 3px solid #333333 !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
   }
 }
 `;

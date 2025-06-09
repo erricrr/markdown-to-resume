@@ -1,6 +1,8 @@
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
-import { getCompleteCSS } from '../styles/resumeTemplates';
+import { getCompleteCSS, printStyles } from '../styles/resumeTemplates';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 interface ResumeData {
   markdown: string;
@@ -169,7 +171,23 @@ export const exportToPDF = async (resumeData: ResumeData) => {
     const dynamicStyleElement = document.getElementById('dynamic-template-css') as HTMLStyleElement;
     if (dynamicStyleElement && dynamicStyleElement.textContent) {
       console.log('🎨 Found dynamic CSS for PDF export:', dynamicStyleElement.textContent.length, 'characters');
-      return dynamicStyleElement.textContent;
+      // Process the CSS to add !important to critical properties for PDF
+      let processedCSS = dynamicStyleElement.textContent;
+
+      // Add !important to common CSS properties that might not print
+      const importantProperties = [
+        'color', 'background-color', 'background', 'font-size', 'font-weight',
+        'font-family', 'margin', 'padding', 'border', 'text-align', 'display',
+        'grid-template-columns', 'flex-direction', 'justify-content', 'align-items'
+      ];
+
+      importantProperties.forEach(prop => {
+        // Add !important if not already present
+        const regex = new RegExp(`(${prop}\\s*:\\s*[^;!]+)(?!.*!important)`, 'gi');
+        processedCSS = processedCSS.replace(regex, '$1 !important');
+      });
+
+      return processedCSS;
     } else {
       console.warn('⚠️ No dynamic CSS found, using fallback styles');
       return '';
@@ -182,9 +200,112 @@ export const exportToPDF = async (resumeData: ResumeData) => {
 
   console.log('📄 PDF Export Info:');
   console.log('- Template:', resumeData.template);
-  console.log('- Template Classes:', templateClasses);
-  console.log('- Dynamic CSS Length:', dynamicCSS.length);
-  console.log('- Has Dynamic CSS:', !!dynamicCSS);
+  console.log('- Classes:', templateClasses);
+  console.log('- Two Column:', resumeData.isTwoColumn);
+  console.log('- Two Page:', resumeData.isTwoPage);
+  console.log('- Dynamic CSS length:', dynamicCSS.length);
+
+  const cssContent = `
+/* Reset and base styles */
+* {
+  box-sizing: border-box !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+  color-adjust: exact !important;
+}
+
+/* Ensure custom CSS properties are honored in PDF */
+@page {
+  size: A4;
+  margin: 0.25in 0.75in;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+  color-adjust: exact !important;
+}
+
+/* Critical important styles that must be consistent */
+.resume-template {
+  padding: 0.25in 0.75in !important;
+  width: 8.5in !important;
+  min-height: 11in !important;
+  box-sizing: border-box !important;
+}
+
+/* AGGRESSIVE SUMMARY SPACING FIXES - Override everything */
+.resume-two-column-layout .resume-summary-section,
+.resume-two-column-layout .resume-summary-section *,
+.resume-two-column-layout .resume-heading-summary,
+.resume-two-column-layout [class*="summary"] {
+  margin: 0 !important;
+  padding: 0 !important;
+  page-break-after: avoid !important;
+  break-after: avoid !important;
+  page-break-before: avoid !important;
+  break-before: avoid !important;
+}
+
+/* Force summary to be compact */
+.resume-two-column-layout .resume-summary-section {
+  margin-bottom: 0.125in !important;
+  padding-bottom: 0 !important;
+  line-height: 1.2 !important;
+}
+
+/* Remove all spacing around columns container */
+.resume-two-column-layout .resume-columns {
+  margin: 0 !important;
+  padding: 0 !important;
+  page-break-before: avoid !important;
+  break-before: avoid !important;
+  page-break-inside: auto !important;
+  break-inside: auto !important;
+}
+
+/* Enhanced summary spacing control for two-column layouts */
+.resume-two-column-layout .resume-columns > *:first-child,
+.resume-two-column-layout .resume-column-left > *:first-child,
+.resume-two-column-layout .resume-column-left .resume-heading-2:first-child,
+.resume-two-column-layout .resume-columns .resume-heading-2:first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Two-page specific styling for margins */
+.resume-two-page-layout .resume-page-first,
+.resume-two-page-layout .resume-page-second {
+  padding: 0.25in 0.75in !important;
+  box-sizing: border-box !important;
+}
+
+.resume-two-page-layout .resume-page-first {
+  page-break-after: always !important;
+  margin-bottom: 0 !important;
+}
+
+.resume-two-page-layout .resume-page-second {
+  margin-top: 0 !important;
+  padding-top: 0.25in !important;
+}
+
+/* Fix for two-column layout */
+.resume-two-column-layout .resume-columns {
+  display: grid !important;
+  grid-template-columns: 1fr 2fr !important;
+  gap: 1in !important;
+  align-items: start !important;
+}
+
+${printStyles}
+
+/* DYNAMIC CSS FROM EDITOR - HIGHEST PRIORITY */
+${dynamicCSS}
+
+/* Override any conflicting styles with maximum specificity */
+html body .resume-template {
+  padding: 0.25in 0.75in !important;
+  margin: 0 !important;
+}
+`;
 
   // Get the complete CSS from our single source of truth
   const baseCSS = getCompleteCSS(resumeData.template);
@@ -209,14 +330,66 @@ export const exportToPDF = async (resumeData: ResumeData) => {
    ======================================== */
 ${dynamicCSS}
 
-/* Ensure dynamic CSS has maximum specificity for PDF export */
-${dynamicCSS ? dynamicCSS.replace(/\.template-(\w+)/g, '.resume-template.template-$1') : ''}
+/* Enhanced specificity version to ensure CSS works in PDF */
+${dynamicCSS}
 
 /* Additional PDF-specific overrides to ensure consistency */
 ${dynamicCSS ? `
-/* Force dynamic styles to take precedence in PDF */
-.resume-template * {
-  /* Dynamic CSS will override these base styles */
+/* Force dynamic styles to take precedence in PDF - Use correct margins */
+.resume-template {
+  padding: 0.25in 0.75in !important;
+  width: 8.5in !important;
+  min-height: 11in !important;
+  box-sizing: border-box !important;
+}
+
+/* Ensure custom CSS properties are honored in PDF */
+@page {
+  size: A4;
+  margin: 0.25in 0.75in;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+  color-adjust: exact !important;
+}
+
+/* Two-page specific styling for margins */
+.resume-two-page-layout .resume-page-first,
+.resume-two-page-layout .resume-page-second {
+  padding: 0.25in 0.75in !important;
+  box-sizing: border-box !important;
+}
+
+.resume-two-page-layout .resume-page-first {
+  page-break-after: always !important;
+  margin-bottom: 0 !important;
+}
+
+.resume-two-page-layout .resume-page-second {
+  page-break-before: always !important;
+  margin-top: 0.25in !important;
+}
+
+/* Fix for two-column layout in PDF */
+.resume-two-column-layout .resume-columns {
+  display: grid !important;
+  grid-template-columns: 1fr 2fr !important;
+  gap: 1in !important;
+}
+
+/* Force all background colors and images to print */
+* {
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+  color-adjust: exact !important;
+}
+
+/* Override any template-specific paddings */
+.resume-template.template-professional,
+.resume-template.template-modern,
+.resume-template.template-minimalist,
+.resume-template.template-executive,
+.resume-template.template-creative {
+  padding: 0.25in 0.75in !important;
 }
 ` : ''}
 

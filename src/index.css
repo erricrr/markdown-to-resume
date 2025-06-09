@@ -115,6 +115,14 @@
     margin: 0 auto;
 }
 
+/* Print-accurate preview styles */
+.print-accurate {
+    box-sizing: border-box !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+}
+
 /* Responsive scaling for different screen sizes */
 @media (max-width: 1400px) {
     .resume-preview-container {
@@ -276,16 +284,50 @@
     @apply w-full mb-3 pb-2;
 }
 
+/* Ensure consistent grid layout that matches PDF output */
 .resume-two-column-layout .resume-columns {
-    @apply grid grid-cols-3 gap-6;
+    display: grid !important;
+    grid-template-columns: 1fr 2fr !important;
+    gap: 1.5rem !important;
 }
 
 .resume-two-column-layout .resume-column-left {
-    @apply col-span-1 pr-4;
+    @apply pr-4;
 }
 
 .resume-two-column-layout .resume-column-right {
-    @apply col-span-2;
+    @apply col-span-1;
+}
+
+/* Never change the grid for large to medium screens - it must match PDF output */
+@media (min-width: 769px) {
+    .resume-two-column-layout .resume-columns {
+        display: grid !important;
+        grid-template-columns: 1fr 2fr !important;
+        gap: 1.5rem !important;
+    }
+
+    .resume-two-column-layout .resume-column-left,
+    .resume-two-column-layout .resume-column-right {
+        width: 100% !important;
+    }
+}
+
+/* Only change to single column on very small screens */
+@media (max-width: 480px) {
+    .resume-two-column-layout .resume-columns {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+
+    .resume-two-column-layout .resume-column-left {
+        @apply col-span-1 pr-0 pb-4;
+    }
+
+    .resume-two-column-layout .resume-column-right {
+        @apply col-span-1;
+    }
 }
 
 /* Two column specific heading adjustments - use !important to ensure consistency */
@@ -320,21 +362,6 @@
 .resume-two-column-layout .resume-column-right .resume-heading-2 {
     margin-top: 0 !important;
     margin-bottom: 0.75rem !important;
-}
-
-/* Responsive adjustments for two column */
-@media (max-width: 768px) {
-    .resume-two-column-layout .resume-columns {
-        @apply grid-cols-1 gap-4;
-    }
-
-    .resume-two-column-layout .resume-column-left {
-        @apply col-span-1 pr-0 pb-4;
-    }
-
-    .resume-two-column-layout .resume-column-right {
-        @apply col-span-1;
-    }
 }
 
 /* Combined Two-Page + Two-Column Layout */
