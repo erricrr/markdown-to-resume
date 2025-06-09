@@ -37,6 +37,9 @@ body {
   overflow: visible;
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #374151;
+  line-height: 1.5;
 }
 
 /* Base heading styles */
@@ -71,12 +74,31 @@ body {
 .resume-list {
   margin-bottom: 1rem;
   padding-left: 1.5rem;
+  list-style-type: none !important;
 }
 
 .resume-list-item {
   margin-bottom: 0.5rem;
   line-height: 1.5;
   color: #374151;
+  display: list-item !important;
+  list-style-type: none !important;
+  position: relative;
+  padding-left: 0.8rem;
+  text-indent: -0.8rem;
+}
+
+.resume-list-item::before {
+  content: "• ";
+  color: #000000;
+  font-weight: bold;
+  display: inline-block;
+  width: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.resume-list-item::marker {
+  content: none;
 }
 
 .resume-strong {
@@ -94,6 +116,64 @@ body {
   height: 1px;
   background-color: #e5e7eb;
   margin: 1.5rem 0;
+}
+
+/* Two Column Layout Styles */
+.resume-two-column-layout .resume-two-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.resume-two-column-layout .resume-header {
+  width: 100%;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+}
+
+.resume-two-column-layout .resume-columns {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 1.5rem;
+}
+
+.resume-two-column-layout .resume-column-left {
+  padding-right: 1rem;
+}
+
+.resume-two-column-layout .resume-header .resume-heading-1 {
+  font-size: 1.5rem !important;
+  text-align: center !important;
+}
+
+.resume-two-column-layout .resume-header .resume-paragraph {
+  text-align: center !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* Two Page Layout Styles */
+.resume-two-page-layout .resume-two-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.resume-two-page-layout .resume-page-first {
+  width: 100%;
+  min-height: 9in;
+  background: white;
+  padding: 0;
+  margin-bottom: 2rem;
+  overflow: hidden;
+  page-break-after: always;
+  border: 1px solid #e5e7eb;
+}
+
+.resume-two-page-layout .resume-page-second {
+  width: 100%;
+  min-height: 9in;
+  background: white;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
 }
 
 /* PROFESSIONAL TEMPLATE */

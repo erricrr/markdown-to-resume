@@ -87,6 +87,64 @@ body {
   padding: 0.75rem;
   vertical-align: top;
 }
+
+/* Two Column Layout Styles */
+.resume-two-column-layout .resume-two-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.resume-two-column-layout .resume-header {
+  width: 100%;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+}
+
+.resume-two-column-layout .resume-columns {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 1.5rem;
+}
+
+.resume-two-column-layout .resume-column-left {
+  padding-right: 1rem;
+}
+
+.resume-two-column-layout .resume-header .resume-heading-1 {
+  font-size: 1.5rem !important;
+  text-align: center !important;
+}
+
+.resume-two-column-layout .resume-header .resume-paragraph {
+  text-align: center !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* Two Page Layout Styles */
+.resume-two-page-layout .resume-two-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.resume-two-page-layout .resume-page-first {
+  width: 100%;
+  min-height: 9in;
+  background: white;
+  padding: 0;
+  margin-bottom: 2rem;
+  overflow: hidden;
+  page-break-after: always;
+  border: 1px solid #e5e7eb;
+}
+
+.resume-two-page-layout .resume-page-second {
+  width: 100%;
+  min-height: 9in;
+  background: white;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
 `;
 
 export const templateStyles = {
