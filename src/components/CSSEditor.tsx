@@ -160,9 +160,49 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
       console.error('❌ Dynamic CSS Element NOT Found!');
     }
 
+    // NEW: Log all style elements for debugging
+    const allStyleElements = Array.from(document.querySelectorAll('style'));
+    console.log('📊 ALL STYLE ELEMENTS ON PAGE:');
+    allStyleElements.forEach((styleEl, index) => {
+      const source = styleEl.id || styleEl.getAttribute('data-source') || `style-${index}`;
+      const length = styleEl.textContent?.length || 0;
+      console.log(`  ${index + 1}. ${source}: ${length} chars`);
+
+      // Show first 200 chars of each style element
+      if (styleEl.textContent) {
+        console.log(`     Preview: ${styleEl.textContent.substring(0, 200)}...`);
+      }
+    });
+
+    // Check computed styles of the resume template element
+    const resumeTemplate = document.querySelector('.resume-template');
+    if (resumeTemplate) {
+      const computedStyles = window.getComputedStyle(resumeTemplate);
+      console.log('🎯 COMPUTED STYLES FOR .resume-template:');
+      console.log('- Font Family:', computedStyles.fontFamily);
+      console.log('- Font Size:', computedStyles.fontSize);
+      console.log('- Line Height:', computedStyles.lineHeight);
+      console.log('- Margin:', computedStyles.margin);
+      console.log('- Padding:', computedStyles.padding);
+      console.log('- Background:', computedStyles.background);
+
+      // Check h1 styling
+      const h1 = resumeTemplate.querySelector('.resume-heading-1, h1');
+      if (h1) {
+        const h1Styles = window.getComputedStyle(h1);
+        console.log('🎯 COMPUTED STYLES FOR H1/HEADING-1:');
+        console.log('- Font Family:', h1Styles.fontFamily);
+        console.log('- Font Size:', h1Styles.fontSize);
+        console.log('- Font Weight:', h1Styles.fontWeight);
+        console.log('- Line Height:', h1Styles.lineHeight);
+        console.log('- Margin:', h1Styles.margin);
+        console.log('- Color:', h1Styles.color);
+      }
+    }
+
     toast({
       title: "Debug Info",
-      description: "Check the browser console for CSS debug information."
+      description: "Check the browser console for detailed CSS debug information."
     });
   };
 

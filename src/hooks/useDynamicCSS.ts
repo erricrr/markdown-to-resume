@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
-import { templateStyles, baseResumeStyles } from '../styles/resumeTemplates';
+import { templateStyles, baseResumeStyles, printStyles } from '../styles/resumeTemplates';
 
 export const useDynamicCSS = () => {
   const styleElementRef = useRef<HTMLStyleElement | null>(null);
@@ -49,14 +49,50 @@ export const useDynamicCSS = () => {
     // Start with base resume styles (includes bullets, layout, etc.)
     let allCSS = `/* BASE RESUME STYLES */\n${baseResumeStyles}\n\n`;
 
+    // Add all default template styles from single source of truth
+    allCSS += `/* DEFAULT TEMPLATE STYLES FROM SINGLE SOURCE OF TRUTH */\n`;
+    Object.entries(templateStyles).forEach(([templateName, templateCSS]) => {
+      allCSS += `\n/* ${templateName.toUpperCase()} TEMPLATE */\n${templateCSS}\n`;
+    });
+
+    // NEW: Add print styles directly to live preview for perfect PDF consistency
+    // Extract print styles and apply them directly (not wrapped in @media print)
+    const getPrintStylesForLivePreview = () => {
+      let printCSS = printStyles;
+
+      // Remove @media print wrapper and closing brace
+      printCSS = printCSS.replace(/@media print\s*\{/, '');
+      printCSS = printCSS.replace(/\}\s*$/, '');
+
+      // IMPORTANT: Remove header/footer hiding rules that are only for PDF printing
+      // These rules would hide the application header in the live preview
+      printCSS = printCSS.replace(/header,\s*footer,\s*\.header,\s*\.footer\s*\{\s*display:\s*none\s*!\s*important;\s*\}/g, '');
+      printCSS = printCSS.replace(/body::before,\s*body::after\s*\{\s*display:\s*none\s*!\s*important;\s*\}/g, '');
+
+      console.log('🖨️ Applying print styles to live preview for PDF consistency (excluding header-hiding rules)');
+      return printCSS;
+    };
+
+    const printCSSForPreview = getPrintStylesForLivePreview();
+    allCSS += `\n/* PRINT STYLES APPLIED TO LIVE PREVIEW FOR PDF CONSISTENCY */\n${printCSSForPreview}\n`;
+
     // Add consistency CSS to ensure preview matches PDF
     allCSS += `
-/* CONSISTENCY CSS FOR PREVIEW AND PDF */
+/* ADDITIONAL CONSISTENCY CSS FOR PREVIEW AND PDF */
 .resume-template {
   padding: 0.25in 0.75in !important;
   width: 8.5in !important;
   min-height: 11in !important;
   box-sizing: border-box !important;
+  background: white !important;
+  margin: 0 !important;
+}
+
+/* Force exact font rendering to match PDF */
+.resume-template * {
+  -webkit-font-smoothing: auto !important;
+  -moz-osx-font-smoothing: auto !important;
+  text-rendering: optimizeLegibility !important;
 }
 
 /* Reset any template-specific padding to ensure consistent margins */
@@ -66,66 +102,6 @@ export const useDynamicCSS = () => {
 .resume-template.template-executive,
 .resume-template.template-creative {
   padding: 0.25in 0.75in !important;
-}
-
-/* AGGRESSIVE SUMMARY SPACING FIXES - Override everything */
-.resume-two-column-layout .resume-summary-section,
-.resume-two-column-layout .resume-summary-section *,
-.resume-two-column-layout .resume-heading-summary,
-.resume-two-column-layout [class*="summary"] {
-  margin: 0 !important;
-  padding: 0 !important;
-  page-break-after: avoid !important;
-  break-after: avoid !important;
-  page-break-before: avoid !important;
-  break-before: avoid !important;
-}
-
-/* Force summary to be compact */
-.resume-two-column-layout .resume-summary-section {
-  margin-bottom: 0.125in !important;
-  padding-bottom: 0 !important;
-  line-height: 1.2 !important;
-}
-
-/* Remove all spacing around columns container */
-.resume-two-column-layout .resume-columns {
-  margin: 0 !important;
-  padding: 0 !important;
-  page-break-before: avoid !important;
-  break-before: avoid !important;
-}
-
-/* Enhanced summary spacing control for two-column layouts */
-.resume-two-column-layout .resume-columns > *:first-child,
-.resume-two-column-layout .resume-column-left > *:first-child,
-.resume-two-column-layout .resume-column-left .resume-heading-2:first-child,
-.resume-two-column-layout .resume-columns .resume-heading-2:first-child {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
-/* Two-page specific styling */
-.resume-two-page-layout .resume-page-first,
-.resume-two-page-layout .resume-page-second {
-  padding: 0.25in 0.75in !important;
-  box-sizing: border-box !important;
-}
-
-.resume-two-page-layout .resume-page-first {
-  margin-bottom: 0.25in !important;
-}
-
-.resume-two-page-layout .resume-page-second {
-  margin-top: 0.25in !important;
-}
-
-/* Fix for two-column layout consistency */
-.resume-two-column-layout .resume-columns {
-  display: grid !important;
-  grid-template-columns: 1fr 2fr !important;
-  gap: 1in !important;
-  align-items: start !important;
 }
 
 /* Force all background colors and images to display/print */

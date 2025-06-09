@@ -727,6 +727,44 @@ export const printStyles = `
     align-items: start !important;
   }
 
+  /* ULTRA-AGGRESSIVE FIXES FOR TWO-COLUMN SUMMARY ISSUES */
+  .resume-two-column-layout .resume-summary-section + * {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  .resume-two-column-layout .resume-summary-section ~ * {
+    page-break-before: avoid !important;
+    break-before: avoid !important;
+  }
+
+  /* Force everything after summary to stay on same page */
+  .resume-two-column-layout .resume-columns,
+  .resume-two-column-layout .resume-column-left,
+  .resume-two-column-layout .resume-column-right {
+    page-break-before: avoid !important;
+    break-before: avoid !important;
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+  }
+
+  /* Specific targeting for summary paragraph element */
+  .resume-two-column-layout .resume-summary-section p,
+  .resume-two-column-layout .resume-summary-section div,
+  .resume-two-column-layout .resume-summary-section span {
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Override any default spacing on summary content */
+  .resume-two-column-layout .resume-summary-section * {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
   /* Ensure all custom styles are applied with high specificity */
   * {
     -webkit-print-color-adjust: exact !important;

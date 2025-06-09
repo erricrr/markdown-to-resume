@@ -171,50 +171,65 @@ export const exportToPDF = async (resumeData: ResumeData) => {
     const dynamicStyleElement = document.getElementById('dynamic-template-css') as HTMLStyleElement;
     if (dynamicStyleElement && dynamicStyleElement.textContent) {
       console.log('🎨 Found dynamic CSS for PDF export:', dynamicStyleElement.textContent.length, 'characters');
-      // Process the CSS to add !important to critical properties for PDF
-      let processedCSS = dynamicStyleElement.textContent;
-
-      // Add !important to common CSS properties that might not print
-      const importantProperties = [
-        'color', 'background-color', 'background', 'font-size', 'font-weight',
-        'font-family', 'margin', 'padding', 'border', 'text-align', 'display',
-        'grid-template-columns', 'flex-direction', 'justify-content', 'align-items'
-      ];
-
-      importantProperties.forEach(prop => {
-        // Add !important if not already present
-        const regex = new RegExp(`(${prop}\\s*:\\s*[^;!]+)(?!.*!important)`, 'gi');
-        processedCSS = processedCSS.replace(regex, '$1 !important');
-      });
-
-      return processedCSS;
+      return dynamicStyleElement.textContent;
     } else {
       console.warn('⚠️ No dynamic CSS found, using fallback styles');
       return '';
     }
   };
 
+  // NEW: Get ALL styles from the live preview to ensure exact consistency
+  const getAllLivePreviewStyles = () => {
+    console.log('🔍 Capturing ALL live preview styles for PDF consistency...');
+
+    // Get all style elements from the page
+    const allStyleElements = Array.from(document.querySelectorAll('style'));
+    let allCSS = '';
+
+    allStyleElements.forEach((styleEl, index) => {
+      if (styleEl.textContent) {
+        const source = styleEl.id || styleEl.getAttribute('data-source') || `style-${index}`;
+        allCSS += `\n/* CAPTURED FROM: ${source} */\n${styleEl.textContent}\n`;
+      }
+    });
+
+    // Also capture any inline styles from stylesheet links (though these should be in CSS files)
+    const linkElements = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
+    linkElements.forEach((link) => {
+      const href = (link as HTMLLinkElement).href;
+      allCSS += `\n/* EXTERNAL STYLESHEET: ${href} */\n`;
+    });
+
+    console.log('📊 Captured total CSS for PDF:', allCSS.length, 'characters');
+    return allCSS;
+  };
+
+  // NEW: Function to get print styles without @media print wrapper
+  const getPrintStylesForPDF = () => {
+    // Extract the content from inside @media print { ... }
+    let printCSS = printStyles;
+
+    // Remove @media print wrapper and closing brace
+    printCSS = printCSS.replace(/@media print\s*\{/, '');
+    printCSS = printCSS.replace(/\}\s*$/, '');
+
+    console.log('🖨️ Extracted print styles for PDF:', printCSS.length, 'characters');
+    return printCSS;
+  };
+
   const htmlContent = getHtmlContent();
   const templateClasses = getTemplateClasses();
-  const dynamicCSS = getDynamicCSS();
+  const allLivePreviewCSS = getAllLivePreviewStyles();
 
   console.log('📄 PDF Export Info:');
   console.log('- Template:', resumeData.template);
   console.log('- Classes:', templateClasses);
   console.log('- Two Column:', resumeData.isTwoColumn);
   console.log('- Two Page:', resumeData.isTwoPage);
-  console.log('- Dynamic CSS length:', dynamicCSS.length);
+  console.log('- Total captured CSS length:', allLivePreviewCSS.length);
 
   const cssContent = `
-/* Reset and base styles */
-* {
-  box-sizing: border-box !important;
-  -webkit-print-color-adjust: exact !important;
-  print-color-adjust: exact !important;
-  color-adjust: exact !important;
-}
-
-/* Ensure custom CSS properties are honored in PDF */
+/* Page settings for PDF */
 @page {
   size: A4;
   margin: 0.25in 0.75in;
@@ -223,92 +238,45 @@ export const exportToPDF = async (resumeData: ResumeData) => {
   color-adjust: exact !important;
 }
 
-/* Critical important styles that must be consistent */
-.resume-template {
+/* ALL CSS CAPTURED FROM LIVE PREVIEW FOR EXACT CONSISTENCY */
+${allLivePreviewCSS}
+
+/* PDF-specific overrides to ensure proper printing */
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+  color-adjust: exact !important;
+}
+
+/* Hide elements that shouldn't appear in PDF */
+header, footer, .header, .footer {
+  display: none !important;
+}
+
+body::before, body::after {
+  display: none !important;
+}
+
+/* Final override with maximum specificity to ensure PDF matches preview exactly */
+html body .resume-template {
   padding: 0.25in 0.75in !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  background: white !important;
   width: 8.5in !important;
   min-height: 11in !important;
   box-sizing: border-box !important;
 }
 
-/* AGGRESSIVE SUMMARY SPACING FIXES - Override everything */
-.resume-two-column-layout .resume-summary-section,
-.resume-two-column-layout .resume-summary-section *,
-.resume-two-column-layout .resume-heading-summary,
-.resume-two-column-layout [class*="summary"] {
-  margin: 0 !important;
-  padding: 0 !important;
-  page-break-after: avoid !important;
-  break-after: avoid !important;
-  page-break-before: avoid !important;
-  break-before: avoid !important;
-}
-
-/* Force summary to be compact */
-.resume-two-column-layout .resume-summary-section {
-  margin-bottom: 0.125in !important;
-  padding-bottom: 0 !important;
-  line-height: 1.2 !important;
-}
-
-/* Remove all spacing around columns container */
-.resume-two-column-layout .resume-columns {
-  margin: 0 !important;
-  padding: 0 !important;
-  page-break-before: avoid !important;
-  break-before: avoid !important;
-  page-break-inside: auto !important;
-  break-inside: auto !important;
-}
-
-/* Enhanced summary spacing control for two-column layouts */
-.resume-two-column-layout .resume-columns > *:first-child,
-.resume-two-column-layout .resume-column-left > *:first-child,
-.resume-two-column-layout .resume-column-left .resume-heading-2:first-child,
-.resume-two-column-layout .resume-columns .resume-heading-2:first-child {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
-/* Two-page specific styling for margins */
-.resume-two-page-layout .resume-page-first,
-.resume-two-page-layout .resume-page-second {
-  padding: 0.25in 0.75in !important;
-  box-sizing: border-box !important;
-}
-
-.resume-two-page-layout .resume-page-first {
-  page-break-after: always !important;
-  margin-bottom: 0 !important;
-}
-
-.resume-two-page-layout .resume-page-second {
-  margin-top: 0 !important;
-  padding-top: 0.25in !important;
-}
-
-/* Fix for two-column layout */
-.resume-two-column-layout .resume-columns {
-  display: grid !important;
-  grid-template-columns: 1fr 2fr !important;
-  gap: 1in !important;
-  align-items: start !important;
-}
-
-${printStyles}
-
-/* DYNAMIC CSS FROM EDITOR - HIGHEST PRIORITY */
-${dynamicCSS}
-
-/* Override any conflicting styles with maximum specificity */
-html body .resume-template {
-  padding: 0.25in 0.75in !important;
-  margin: 0 !important;
+/* Force exact font rendering to match preview */
+html body .resume-template * {
+  -webkit-font-smoothing: auto !important;
+  -moz-osx-font-smoothing: auto !important;
+  text-rendering: optimizeLegibility !important;
 }
 `;
-
-  // Get the complete CSS from our single source of truth
-  const baseCSS = getCompleteCSS(resumeData.template);
 
   // Create the complete HTML document with embedded CSS
   const fullHtml = `
@@ -320,79 +288,9 @@ html body .resume-template {
       <title>Resume</title>
       <style>
         /* ========================================
-           BASE STYLES FROM SINGLE SOURCE OF TRUTH
+           COMPLETE CSS FROM SINGLE SOURCE OF TRUTH
            ======================================== */
-        ${baseCSS}
-
-/* ========================================
-   DYNAMIC CSS FROM CSS EDITOR - HIGHEST PRIORITY
-   This CSS comes from the live CSS editor and should override all default styles
-   ======================================== */
-${dynamicCSS}
-
-/* Enhanced specificity version to ensure CSS works in PDF */
-${dynamicCSS}
-
-/* Additional PDF-specific overrides to ensure consistency */
-${dynamicCSS ? `
-/* Force dynamic styles to take precedence in PDF - Use correct margins */
-.resume-template {
-  padding: 0.25in 0.75in !important;
-  width: 8.5in !important;
-  min-height: 11in !important;
-  box-sizing: border-box !important;
-}
-
-/* Ensure custom CSS properties are honored in PDF */
-@page {
-  size: A4;
-  margin: 0.25in 0.75in;
-  -webkit-print-color-adjust: exact !important;
-  print-color-adjust: exact !important;
-  color-adjust: exact !important;
-}
-
-/* Two-page specific styling for margins */
-.resume-two-page-layout .resume-page-first,
-.resume-two-page-layout .resume-page-second {
-  padding: 0.25in 0.75in !important;
-  box-sizing: border-box !important;
-}
-
-.resume-two-page-layout .resume-page-first {
-  page-break-after: always !important;
-  margin-bottom: 0 !important;
-}
-
-.resume-two-page-layout .resume-page-second {
-  page-break-before: always !important;
-  margin-top: 0.25in !important;
-}
-
-/* Fix for two-column layout in PDF */
-.resume-two-column-layout .resume-columns {
-  display: grid !important;
-  grid-template-columns: 1fr 2fr !important;
-  gap: 1in !important;
-}
-
-/* Force all background colors and images to print */
-* {
-  -webkit-print-color-adjust: exact !important;
-  print-color-adjust: exact !important;
-  color-adjust: exact !important;
-}
-
-/* Override any template-specific paddings */
-.resume-template.template-professional,
-.resume-template.template-modern,
-.resume-template.template-minimalist,
-.resume-template.template-executive,
-.resume-template.template-creative {
-  padding: 0.25in 0.75in !important;
-}
-` : ''}
-
+        ${cssContent}
       </style>
     </head>
     <body>
@@ -402,34 +300,16 @@ ${dynamicCSS ? `
       <script>
         // Auto-open print dialog after page loads
         window.onload = function() {
-          // Try to disable headers and footers if possible
-          if (window.chrome && window.chrome.webstore) {
-            // Chrome-specific: attempt to set print options
-            const printOptions = {
-              headerFooterEnabled: false,
-              marginsType: 1, // No margins
-              isLandscape: false,
-              shouldPrintBackgrounds: true,
-              shouldPrintSelectionOnly: false
-            };
-          }
-
           setTimeout(function() {
             window.print();
           }, 500);
         };
-
-        // Additional attempt to hide headers/footers
-        document.addEventListener('DOMContentLoaded', function() {
-          // Set page title to empty to minimize header content
-          document.title = '';
-        });
       </script>
     </body>
     </html>
   `;
 
-    // Open in new window
+  // Open in new window
   const printWindow = window.open('', '_blank');
   if (printWindow) {
     printWindow.document.write(fullHtml);
