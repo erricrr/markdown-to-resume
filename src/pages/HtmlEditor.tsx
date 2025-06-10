@@ -479,11 +479,11 @@ const HtmlEditor = () => {
                 </Badge>
               </div>
             </div>
-            <div className="flex-1 p-6 pt-0">
+            <div className="flex-1 p-6 pt-0 overflow-hidden">
               <Textarea
                 value={html}
                 onChange={(e) => setHtml(e.target.value)}
-                className="min-h-[600px] font-mono text-sm resize-none"
+                className="h-full w-full font-mono text-sm resize-none overflow-auto"
                 placeholder="Enter your HTML content with embedded CSS and JavaScript..."
               />
             </div>
