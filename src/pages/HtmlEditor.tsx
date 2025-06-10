@@ -26,7 +26,6 @@ const defaultHtml = `<!DOCTYPE html>
         .resume {
             max-width: 1000px;
             margin: 0 auto;
-            background: white;
             padding: 40px;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
             border-radius: 8px;
@@ -185,7 +184,6 @@ const defaultHtml = `<!DOCTYPE html>
             }
 
             html, body {
-                background: white !important;
                 padding: 0 !important;
                 margin: 0 !important;
                 -webkit-print-color-adjust: exact !important;
@@ -197,7 +195,6 @@ const defaultHtml = `<!DOCTYPE html>
                 border-radius: 0;
                 padding: 20px;
                 max-width: none;
-                background: white !important;
             }
 
             .left-column {

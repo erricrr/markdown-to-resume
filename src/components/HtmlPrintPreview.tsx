@@ -21,10 +21,6 @@ export const HtmlPrintPreview = ({ html }: HtmlPrintPreviewProps) => {
                   console.log('Print function called with HTML length:', html.length);
     console.log('HTML preview (first 200 chars):', html.substring(0, 200));
 
-    // Debug: Check for background colors in the HTML
-    const backgroundMatches = html.match(/background[^;]*:[^;]*[^}]*/gi);
-    console.log('Found background styles:', backgroundMatches);
-
     // Debug: Check if Contact section spacing is being modified
     if (html.includes('.section {')) {
       const sectionMatch = html.match(/\.section\s*{[^}]*}/);
@@ -37,27 +33,51 @@ export const HtmlPrintPreview = ({ html }: HtmlPrintPreviewProps) => {
       // Aggressive approach - force background colors to work in print
       let enhancedHtml = html;
 
-      // Force background color preservation by adding inline styles - comprehensive approach
+            // Don't modify the HTML - just rely on CSS overrides to preserve colors
+
+      // Debug: Log what CSS we're working with
+      console.log('HTML contains background styles:', html.includes('background'));
+      console.log('HTML contains CSS blocks:', html.includes('<style>'));
+
+      // More comprehensive background color preservation - catch ALL patterns
       enhancedHtml = enhancedHtml.replace(
-        /style\s*=\s*"([^"]*)"/gi,
-        (match, styles) => {
-          // Add color preservation to ALL inline styles
-          return `style="${styles}; -webkit-print-color-adjust: exact !important; color-adjust: exact !important; print-color-adjust: exact !important; forced-color-adjust: none !important;"`;
+        /(background(?:-color|-image)?:\s*[^;]+;)/gi,
+        (match) => {
+          console.log('Found background CSS:', match);
+          return `${match} -webkit-print-color-adjust: exact !important; color-adjust: exact !important;`;
         }
       );
 
-      // Also target CSS background rules and duplicate them as box-shadow for guaranteed printing
+      // Catch inline styles in HTML elements
       enhancedHtml = enhancedHtml.replace(
-        /background:\s*([^;]+);/gi,
-        (match, color) => {
-          return `background: ${color}; box-shadow: inset 0 0 0 1000px ${color.split(' ')[0]}; -webkit-print-color-adjust: exact !important;`;
+        /style="([^"]*background[^"]*)"/gi,
+        (match, styleContent) => {
+          console.log('Found inline background style:', match);
+          return `style="${styleContent}; -webkit-print-color-adjust: exact !important; color-adjust: exact !important;"`;
         }
       );
 
+      // Add color preservation to ALL CSS rules that contain background
       enhancedHtml = enhancedHtml.replace(
-        /background-color:\s*([^;]+);/gi,
-        (match, color) => {
-          return `background-color: ${color}; box-shadow: inset 0 0 0 1000px ${color}; -webkit-print-color-adjust: exact !important;`;
+        /([.#]?[a-zA-Z0-9_-]+[^{]*{[^}]*background[^}]*})/gi,
+        (match) => {
+          console.log('Found CSS rule with background:', match);
+          if (!match.includes('print-color-adjust')) {
+            return match.replace('}', ' -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }');
+          }
+          return match;
+        }
+      );
+
+      // Catch body/html styles specifically
+      enhancedHtml = enhancedHtml.replace(
+        /((?:body|html)\s*{[^}]*})/gi,
+        (match) => {
+          console.log('Found body/html CSS rule:', match);
+          if (!match.includes('print-color-adjust')) {
+            return match.replace('}', ' -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }');
+          }
+          return match;
         }
       );
 
