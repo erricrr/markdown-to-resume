@@ -17,9 +17,10 @@ export const baseResumeStyles = `
   --resume-h1-font-size: 28pt;
   --resume-h2-font-size: 14pt;
   --resume-h3-font-size: 12pt;
-  --resume-section-spacing: 10pt;
-  --resume-summary-spacing-top: 0.25rem;
-  --resume-summary-spacing-bottom: 0.125rem;
+  --resume-section-spacing: 8pt;
+  --resume-summary-spacing: 0.25rem;
+  --resume-header-spacing: 0.125rem;
+  --resume-contact-spacing: 0.25rem;
 }
 
 /* Reset and base styles */
@@ -58,16 +59,68 @@ body {
   line-height: var(--resume-line-height);
 }
 
-/* Base Typography */
-.resume-heading-1 { font-size: var(--resume-h1-font-size); font-weight: bold; color: #000; margin-bottom: 0.5rem; font-family: var(--resume-font-family); }
-.resume-heading-2 { font-size: var(--resume-h2-font-size); font-weight: 600; color: #000; margin-top: 1.5rem; margin-bottom: 0.75rem; font-family: var(--resume-font-family); }
-.resume-heading-3 { font-size: var(--resume-h3-font-size); font-weight: 500; color: #374151; margin-top: 0.75rem; margin-bottom: 0.375rem; font-family: var(--resume-font-family); line-height: 1.3; }
-.resume-paragraph { margin-bottom: 0.75rem; line-height: var(--resume-line-height); color: #374151; }
+/* Base Typography with Professional Spacing */
+.resume-heading-1 {
+  font-size: var(--resume-h1-font-size);
+  font-weight: bold;
+  color: #000;
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+  font-family: var(--resume-font-family);
+  line-height: 1.1;
+}
+.resume-heading-2 {
+  font-size: var(--resume-h2-font-size);
+  font-weight: 600;
+  color: #000;
+  margin-top: 1.5rem;
+  margin-bottom: var(--resume-section-spacing);
+  font-family: var(--resume-font-family);
+}
+.resume-heading-3 {
+  font-size: var(--resume-h3-font-size);
+  font-weight: 500;
+  color: #374151;
+  margin-top: 0.75rem;
+  margin-bottom: 0.375rem;
+  font-family: var(--resume-font-family);
+  line-height: 1.3;
+}
+.resume-paragraph {
+  margin-bottom: 0.5rem;
+  line-height: var(--resume-line-height);
+  color: #374151;
+}
 .resume-strong { font-weight: 600; color: #000; }
 .resume-emphasis { font-style: italic; color: #374151; text-align: left; }
 .resume-link { color: #374151; text-decoration: underline; }
 .resume-hr { border: 0; border-top: 1px solid #d1d5db; margin: 1rem 0; }
 .resume-code { background-color: #f3f4f6; padding: 0.125rem 0.25rem; border-radius: 0.25rem; font-size: 0.875rem; font-family: monospace; }
+
+/* Professional Header and Contact Styling */
+.resume-header {
+  margin-bottom: var(--resume-header-spacing);
+  text-align: center;
+}
+.resume-header h1 {
+  margin-bottom: var(--resume-header-spacing);
+}
+.resume-contact-info {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--resume-contact-spacing);
+  margin-bottom: var(--resume-contact-spacing);
+  font-size: 11pt;
+  line-height: 1.2;
+}
+.resume-contact-item {
+  white-space: nowrap;
+}
+.resume-contact-separator {
+  color: #666;
+  margin: 0 0.125rem;
+}
 
 /* Control spacing for BR and NBSP elements */
 .resume-br, br {
@@ -128,18 +181,18 @@ body {
   vertical-align: top;
 }
 
-/* Section spacing - add breathing room between sections */
+/* Section spacing - add 8pt breathing room between sections */
+.resume-heading-2 {
+  margin-bottom: var(--resume-section-spacing);
+}
+
+/* Ensure consistent spacing after each main section */
 .resume-heading-2 + * {
-  margin-top: 0.25rem;
+  margin-top: 0;
 }
 
-/* Add spacing after sections */
-.resume-heading-2:not(:last-child) {
-  margin-bottom: calc(var(--resume-section-spacing) * 0.5);
-}
-
-/* Add space after the content that follows a heading */
-.resume-heading-2 + *:not(:last-child) {
+/* Add breathing room after section content */
+.resume-heading-2 ~ *:last-child {
   margin-bottom: var(--resume-section-spacing);
 }
 
@@ -151,14 +204,16 @@ body {
 
 .resume-two-column-layout .resume-header {
   width: 100%;
-  margin-bottom: 0.25rem;
+  margin-bottom: var(--resume-header-spacing);
   padding-bottom: 0;
+  text-align: center;
 }
 
 .resume-two-column-layout .resume-columns {
   display: grid;
   grid-template-columns: 1fr 2fr;
   gap: 1.5rem;
+  margin-top: var(--resume-contact-spacing);
 }
 
 .resume-two-column-layout .resume-column-left {
@@ -168,11 +223,19 @@ body {
 .resume-two-column-layout .resume-header .resume-heading-1 {
   font-size: var(--resume-h1-font-size) !important;
   text-align: center !important;
+  margin-bottom: var(--resume-header-spacing) !important;
 }
 
 .resume-two-column-layout .resume-header .resume-paragraph {
   text-align: center !important;
-  margin-bottom: 0.5rem !important;
+  margin-bottom: var(--resume-header-spacing) !important;
+  font-size: 11pt;
+  line-height: 1.2;
+}
+
+.resume-two-column-layout .resume-contact-info {
+  justify-content: center;
+  margin-bottom: var(--resume-header-spacing);
 }
 
 /* DRY APPROACH: AGGRESSIVE summary spacing fixes for ALL two-column layouts */
@@ -186,10 +249,11 @@ body {
   padding: 0 !important;
 }
 
-/* Force summary to be compact with minimal bottom spacing */
+/* Uniform summary spacing for two-column layouts */
 .resume-two-column-layout .resume-summary-section {
-  margin-bottom: 0.0625rem !important;
-  padding-bottom: 0.125rem !important;
+  margin-top: var(--resume-summary-spacing) !important;
+  margin-bottom: var(--resume-summary-spacing) !important;
+  padding: 0 !important;
   line-height: 1.2 !important;
   page-break-after: avoid !important;
   break-after: avoid !important;
@@ -245,11 +309,12 @@ export const templateStyles = {
   font-size: var(--resume-h1-font-size);
   font-weight: 600;
   color: #222222;
-  margin: 0 0 0.5rem 0;
-  padding-bottom: 0.5rem;
+  margin: 0 0 var(--resume-header-spacing) 0;
+  padding-bottom: var(--resume-header-spacing);
   border-bottom: 2px solid #e0e0e0;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  line-height: 1.1;
 }
 
 .template-professional .resume-heading-2 {
@@ -257,7 +322,8 @@ export const templateStyles = {
   font-size: var(--resume-h2-font-size);
   font-weight: 600;
   color: #444444;
-  margin: 2rem 0 0.75rem 0;
+  margin-top: 1.5rem;
+  margin-bottom: var(--resume-section-spacing);
   text-transform: uppercase;
   letter-spacing: 1px;
   position: relative;
@@ -317,7 +383,7 @@ export const templateStyles = {
   font-size: var(--resume-h1-font-size);
   font-weight: 600;
   color: #000;
-  margin-bottom: 1rem;
+  margin-bottom: var(--resume-header-spacing);
   letter-spacing: -0.02em;
   line-height: 1.1;
   position: relative;
@@ -341,7 +407,8 @@ export const templateStyles = {
   font-size: var(--resume-h2-font-size);
   font-weight: 700;
   color: #333333;
-  margin: 2.5rem 0 1rem 0;
+  margin-top: 1.5rem;
+  margin-bottom: var(--resume-section-spacing);
   text-transform: uppercase;
   letter-spacing: 1.5px;
   position: relative;
@@ -404,20 +471,21 @@ export const templateStyles = {
   font-size: var(--resume-h1-font-size);
   font-weight: 300;
   color: #222222;
-  margin: 0 0 1.5rem 0;
-  padding-bottom: 0.5rem;
+  margin: 0 0 var(--resume-header-spacing) 0;
+  padding-bottom: var(--resume-header-spacing);
   border-bottom: 1px solid #e5e5e5;
   letter-spacing: -0.5px;
+  line-height: 1.1;
 }
 
 .template-minimalist .resume-heading-2 {
   font-size: var(--resume-h2-font-size);
-  font-weight: 400;
+  font-weight: 600;
   color: #666666;
-  margin: 2.5rem 0 0.5rem 0;
+  margin-top: 1.5rem;
+  margin-bottom: var(--resume-section-spacing);
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  font-weight: 600;
 }
 
 .template-minimalist hr {
@@ -465,10 +533,11 @@ export const templateStyles = {
   font-size: var(--resume-h1-font-size);
   font-weight: 800;
   color: #1f2937;
-  margin-bottom: 0.5rem;
-  padding: 1rem 0;
+  margin-bottom: var(--resume-header-spacing);
+  padding: var(--resume-header-spacing) 0;
   text-align: center;
   letter-spacing: -0.5px;
+  line-height: 1.1;
   position: relative;
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
@@ -494,14 +563,13 @@ export const templateStyles = {
   font-size: var(--resume-h2-font-size);
   font-weight: 700;
   color: #374151;
-  margin-top: 2rem;
-  margin-bottom: 1rem;
+  margin-top: 1.5rem;
+  margin-bottom: var(--resume-section-spacing);
   text-transform: uppercase;
   letter-spacing: 1.5px;
   position: relative;
-  padding-left: 0;
-  border-left: 4px solid #6b7280;
   padding-left: 1rem;
+  border-left: 4px solid #6b7280;
   background: linear-gradient(90deg, rgba(107, 114, 128, 0.1), transparent);
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
@@ -592,12 +660,13 @@ export const templateStyles = {
   font-size: var(--resume-h1-font-size);
   font-weight: 700;
   color: #111111;
-  margin: 0 0 1.5rem 0;
+  margin: 0 0 var(--resume-header-spacing) 0;
   text-align: left;
   text-transform: uppercase;
   letter-spacing: 1px;
+  line-height: 1.1;
   position: relative;
-  padding-bottom: 1rem;
+  padding-bottom: var(--resume-header-spacing);
   border-bottom: 1px solid #e0e0e0;
 }
 
@@ -606,7 +675,8 @@ export const templateStyles = {
   font-size: var(--resume-h2-font-size);
   font-weight: 600;
   color: #333333;
-  margin: 2rem 0 1rem 0;
+  margin-top: 1.5rem;
+  margin-bottom: var(--resume-section-spacing);
   padding: 0.25rem 0 0.25rem 0.5rem;
   border-left: 3px solid #333333;
   border-bottom: 3px solid #333333;
@@ -921,7 +991,7 @@ export const printStyles = `
 
   /* ULTRA-COMPACT HEADER FOR TWO-COLUMN LAYOUTS */
   .resume-two-column-layout .resume-header {
-    margin: 0 0 var(--resume-summary-spacing-top) 0 !important;
+    margin: 0 !important;
     padding: 0 !important;
     line-height: 1.1 !important;
     page-break-after: avoid !important;
@@ -939,33 +1009,28 @@ export const printStyles = `
 
   /* Specific Professional template header fixes */
   .resume-two-column-layout.template-professional .resume-header {
-    margin-bottom: var(--resume-summary-spacing-top) !important;
-    padding-bottom: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   .resume-two-column-layout.template-professional .resume-header .resume-heading-1 {
     font-size: var(--resume-h1-font-size) !important;
     line-height: 1.0 !important;
-    margin: 0 0 var(--resume-summary-spacing-top) 0 !important;
+    margin: 0 !important;
     padding: 0 0 0.125rem 0 !important;
     border-bottom: 1px solid #e0e0e0 !important;
   }
 
-  /* Override conflicting header spacing rules for balanced summary spacing */
-  .resume-two-column-layout .resume-header .resume-heading-1 {
-    margin-bottom: var(--resume-summary-spacing-top) !important;
-    padding-bottom: 0 !important;
-  }
-
-  /* Balanced summary spacing for two-column layout */
+  /* Uniform summary spacing for two-column layout in print */
   .resume-two-column-layout .resume-summary-section {
-    margin: var(--resume-summary-spacing-top) 0 var(--resume-summary-spacing-bottom) 0 !important;
+    margin-top: var(--resume-summary-spacing) !important;
+    margin-bottom: var(--resume-summary-spacing) !important;
     padding: 0 !important;
     line-height: 1.2 !important;
     font-size: 11pt !important;
   }
 
-  /* Ensure minimal spacing between summary and columns */
+  /* Remove spacing between summary and columns */
   .resume-two-column-layout .resume-summary-section + .resume-columns {
     margin-top: 0 !important;
     padding-top: 0 !important;
@@ -1288,18 +1353,18 @@ export const printStyles = `
     letter-spacing: normal !important;
   }
 
-  /* Section spacing in PDF - add breathing room between sections */
+  /* Section spacing in PDF - add 8pt breathing room between sections */
+  .resume-heading-2 {
+    margin-bottom: var(--resume-section-spacing) !important;
+  }
+
+  /* Ensure consistent spacing after each main section in PDF */
   .resume-heading-2 + * {
-    margin-top: 0.25rem !important;
+    margin-top: 0 !important;
   }
 
-  /* Add spacing after sections in PDF */
-  .resume-heading-2:not(:last-child) {
-    margin-bottom: calc(var(--resume-section-spacing) * 0.5) !important;
-  }
-
-  /* Add space after the content that follows a heading in PDF */
-  .resume-heading-2 + *:not(:last-child) {
+  /* Add breathing room after section content in PDF */
+  .resume-heading-2 ~ *:last-child {
     margin-bottom: var(--resume-section-spacing) !important;
   }
 }

@@ -171,6 +171,21 @@ export const useDynamicCSS = () => {
   text-align: left !important;
 }
 
+/* Section spacing - add 8pt breathing room between sections */
+.resume-template .resume-heading-2 {
+  margin-bottom: var(--resume-section-spacing) !important;
+}
+
+/* Ensure consistent spacing after each main section */
+.resume-template .resume-heading-2 + * {
+  margin-top: 0 !important;
+}
+
+/* Add breathing room after section content */
+.resume-template .resume-heading-2 ~ *:last-child {
+  margin-bottom: var(--resume-section-spacing) !important;
+}
+
 /* Reset any template-specific padding to ensure consistent margins */
 .resume-template.template-professional,
 .resume-template.template-modern,

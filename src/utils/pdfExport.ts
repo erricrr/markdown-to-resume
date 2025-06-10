@@ -356,18 +356,18 @@ html body .resume-template i {
   text-align: left !important;
 }
 
-/* Section spacing in PDF - add breathing room between sections */
+/* Section spacing in PDF - add 8pt breathing room between sections */
+html body .resume-template .resume-heading-2 {
+  margin-bottom: var(--resume-section-spacing) !important;
+}
+
+/* Ensure consistent spacing after each main section in PDF */
 html body .resume-template .resume-heading-2 + * {
-  margin-top: 0.25rem !important;
+  margin-top: 0 !important;
 }
 
-/* Add spacing after sections in PDF */
-html body .resume-template .resume-heading-2:not(:last-child) {
-  margin-bottom: calc(var(--resume-section-spacing) * 0.5) !important;
-}
-
-/* Add space after the content that follows a heading in PDF */
-html body .resume-template .resume-heading-2 + *:not(:last-child) {
+/* Add breathing room after section content in PDF */
+html body .resume-template .resume-heading-2 ~ *:last-child {
   margin-bottom: var(--resume-section-spacing) !important;
 }
 `;

@@ -75,7 +75,7 @@ export const ResumeTemplates = ({ htmlContent, template: propTemplate, isTwoColu
       {isPreview && (
         <div className="text-xs text-center text-muted-foreground mt-3 px-4">
           <p className="mb-1">Preview uses 0.5 inch margins on all sides. Font size 11pt with 1.15 line spacing.</p>
-          <p>Section spacing of 10pt creates professional "breathing room" between content.</p>
+          <p>Section spacing of 8pt creates professional "breathing room" between content.</p>
         </div>
       )}
     </div>
