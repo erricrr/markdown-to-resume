@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useRef } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 
 interface HtmlPreviewProps {
   html: string;
@@ -7,9 +7,37 @@ interface HtmlPreviewProps {
 export const HtmlPreview = forwardRef<HTMLDivElement, HtmlPreviewProps>(
   ({ html }, ref) => {
     const iframeRef = useRef<HTMLIFrameElement>(null);
+    const [isInitialRender, setIsInitialRender] = useState(true);
+    const previousHtmlRef = useRef(html);
+    const resizeTimeoutRef = useRef<number | null>(null);
 
     useEffect(() => {
-      console.log('HtmlPreview useEffect triggered, html length:', html.length);
+      // Debounce html updates to avoid frequent re-renders
+      if (!isInitialRender && Math.abs(html.length - previousHtmlRef.current.length) < 5) {
+        if (resizeTimeoutRef.current) {
+          clearTimeout(resizeTimeoutRef.current);
+        }
+
+        resizeTimeoutRef.current = window.setTimeout(() => {
+          previousHtmlRef.current = html;
+          updateIframeContent();
+        }, 500);
+
+        return () => {
+          if (resizeTimeoutRef.current) {
+            clearTimeout(resizeTimeoutRef.current);
+          }
+        };
+      }
+
+      // For initial render or significant changes, update immediately
+      previousHtmlRef.current = html;
+      setIsInitialRender(false);
+      updateIframeContent();
+    }, [html]);
+
+    const updateIframeContent = () => {
+      console.log('HtmlPreview updateIframeContent triggered');
 
       if (iframeRef.current) {
         const iframe = iframeRef.current;
@@ -59,6 +87,21 @@ export const HtmlPreview = forwardRef<HTMLDivElement, HtmlPreviewProps>(
       .resume, body > div {
         max-width: 100% !important;
         overflow-x: hidden !important;
+        width: auto !important;
+        margin: 0 auto !important;
+      }
+      /* Scale content to fit the available width */
+      @media (max-width: 1000px) {
+        .resume, body > div {
+          transform: scale(0.95);
+          transform-origin: top center;
+        }
+      }
+      @media (max-width: 800px) {
+        .resume, body > div {
+          transform: scale(0.9);
+          transform-origin: top center;
+        }
       }
       @media print {
         body {
@@ -113,6 +156,21 @@ ${html}
       .resume, body > div {
         max-width: 100% !important;
         overflow-x: hidden !important;
+        width: auto !important;
+        margin: 0 auto !important;
+      }
+      /* Scale content to fit the available width */
+      @media (max-width: 1000px) {
+        .resume, body > div {
+          transform: scale(0.95);
+          transform-origin: top center;
+        }
+      }
+      @media (max-width: 800px) {
+        .resume, body > div {
+          transform: scale(0.9);
+          transform-origin: top center;
+        }
       }
       @media print {
         body {
@@ -177,6 +235,7 @@ ${html}
             if (iframeDoc.body) {
               // Wait for any CSS layouts to be calculated
               setTimeout(() => {
+                // Get the content size
                 const height = Math.max(
                   iframeDoc.body.scrollHeight,
                   iframeDoc.body.offsetHeight,
@@ -184,12 +243,26 @@ ${html}
                   iframeDoc.documentElement.scrollHeight,
                   iframeDoc.documentElement.offsetHeight
                 );
+
+                // Set height with max-height to prevent overflow
                 iframe.style.height = Math.max(height, 400) + 'px';
 
-                // Ensure document width is limited to iframe width
-                if (iframeDoc.body.firstChild && (iframeDoc.body.firstChild as HTMLElement).style) {
-                  (iframeDoc.body.firstChild as HTMLElement).style.maxWidth = '100%';
-                  (iframeDoc.body.firstChild as HTMLElement).style.overflowX = 'hidden';
+                // Scale content if needed
+                if (iframeDoc.body.firstChild) {
+                  const container = iframeDoc.body.firstChild as HTMLElement;
+                  if (container.style) {
+                    container.style.maxWidth = '100%';
+                    container.style.overflowX = 'hidden';
+                    container.style.margin = '0 auto';
+
+                    // Apply additional scaling for smaller viewports
+                    const parentWidth = iframe.parentElement?.clientWidth || 0;
+                    if (container.offsetWidth > parentWidth && parentWidth > 0) {
+                      const scale = Math.min(1, parentWidth / container.offsetWidth);
+                      container.style.transform = `scale(${scale})`;
+                      container.style.transformOrigin = 'top left';
+                    }
+                  }
                 }
               }, 50);
             }
@@ -229,7 +302,7 @@ ${html}
           }
         }, 50); // Close the setTimeout
       }
-    }, [html]);
+    };
 
     return (
       <div ref={ref} className="w-full h-full">

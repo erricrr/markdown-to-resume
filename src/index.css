@@ -108,7 +108,6 @@
 
 /* Preview Container Styles */
 .resume-preview-container {
-    --preview-scale: 0.75;
     padding: 0.5rem 0.25rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
@@ -121,42 +120,6 @@
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     color-adjust: exact !important;
-}
-
-/* Responsive scaling for different screen sizes */
-@media (max-width: 1400px) {
-    .resume-preview-container {
-        --preview-scale: 0.65;
-    }
-}
-
-@media (max-width: 1200px) {
-    .resume-preview-container {
-        --preview-scale: 0.55;
-    }
-}
-
-@media (max-width: 1024px) {
-    .resume-preview-container {
-        --preview-scale: 0.45;
-    }
-}
-
-@media (max-width: 768px) {
-    .resume-preview-container {
-        --preview-scale: 0.35;
-    }
-}
-
-/* Print Preview Styles */
-.print-preview-container {
-    @apply bg-gray-100 p-8 rounded-lg;
-}
-
-.print-preview-container .resume-template {
-    @apply shadow-lg border border-gray-200;
-    transform: scale(0.8);
-    transform-origin: top center;
 }
 
 /* Two Page Layout Styles */

@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils';
+import { useEffect, useState } from 'react';
 
 interface ResumeTemplatesProps {
   htmlContent: string;
@@ -6,12 +7,33 @@ interface ResumeTemplatesProps {
   isTwoColumn?: boolean;
   isTwoPage?: boolean;
   isPreview?: boolean;
+  containerWidth?: number;
 }
 
 // List of valid template IDs
 const validTemplates = ['professional', 'modern', 'minimalist', 'creative', 'executive'];
 
-export const ResumeTemplates = ({ htmlContent, template: propTemplate, isTwoColumn = false, isTwoPage = false, isPreview = true }: ResumeTemplatesProps) => {
+export const ResumeTemplates = ({
+  htmlContent,
+  template: propTemplate,
+  isTwoColumn = false,
+  isTwoPage = false,
+  isPreview = true,
+  containerWidth = 0
+}: ResumeTemplatesProps) => {
+  // Calculate scaling factor based on container width
+  const [scale, setScale] = useState(0.75); // Default scale
+
+  useEffect(() => {
+    if (containerWidth && containerWidth > 0) {
+      // 8.5in = 816px at 96dpi
+      const documentWidth = 816;
+      // Calculate scale with max of 0.95 and min of 0.45
+      const newScale = Math.min(0.95, Math.max(0.45, containerWidth / documentWidth * 0.95));
+      setScale(newScale);
+    }
+  }, [containerWidth]);
+
   // Ensure we always have a valid template
   const template = validTemplates.includes(propTemplate) ? propTemplate : 'professional';
   const getTemplateClasses = () => {
@@ -66,7 +88,7 @@ export const ResumeTemplates = ({ htmlContent, template: propTemplate, isTwoColu
           width: '8.5in',
           minHeight: '11in',
           transformOrigin: 'top left',
-          transform: 'scale(var(--preview-scale, 0.75))',
+          transform: `scale(${scale})`,
           margin: '0 auto',
           padding: '0.5in',
           boxSizing: 'border-box',

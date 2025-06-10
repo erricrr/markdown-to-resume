@@ -1,4 +1,4 @@
-import { forwardRef, useEffect } from 'react';
+import { forwardRef, useEffect, useState, useRef, MutableRefObject } from 'react';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import { ResumeTemplates } from '@/components/ResumeTemplates';
@@ -28,10 +28,38 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
       ? propTemplate as TemplateType
       : 'professional';
 
+    // Add state to force re-render on container resize
+    const [containerWidth, setContainerWidth] = useState(0);
+    const localRef = useRef<HTMLDivElement>(null);
+    const resolvedRef = ref || localRef;
+
     // Log template changes for debugging
     useEffect(() => {
       console.log('🔍 ResumePreview: Template set to', template);
     }, [template]);
+
+    // Set up resize observer to detect container width changes
+    useEffect(() => {
+      // Get the current element from the ref
+      const element = (resolvedRef as MutableRefObject<HTMLDivElement | null>).current;
+      if (!element) return;
+
+      const resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          const width = entry.contentRect.width;
+          if (width !== containerWidth) {
+            setContainerWidth(width);
+          }
+        }
+      });
+
+      resizeObserver.observe(element);
+
+      return () => {
+        resizeObserver.disconnect();
+      };
+    }, [resolvedRef, containerWidth]);
+
     const parseMarkdown = (md: string) => {
       try {
         // Configure marked with basic options
@@ -168,13 +196,14 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
     const htmlContent = getHtmlContent();
 
     return (
-      <div ref={ref} className="resume-container">
+      <div ref={resolvedRef} className="resume-container" style={{ width: '100%' }}>
         <ResumeTemplates
           htmlContent={htmlContent}
           template={template}
           isTwoColumn={isTwoColumn}
           isTwoPage={isTwoPage}
           isPreview={true}
+          containerWidth={containerWidth}
         />
       </div>
     );

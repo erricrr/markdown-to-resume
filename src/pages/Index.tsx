@@ -18,7 +18,7 @@ const Index = () => {
               </div>
               <div>
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-                  Resume Builder
+                VivaPDF
                 </h1>
                 <p className="text-xs sm:text-sm text-gray-600">
                   Create professional resumes with Markdown or HTML
