@@ -178,7 +178,7 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
 
   /* Spacing customization - section spacing creates "breathing room" */
   --resume-section-spacing: 8pt !important;
-  --resume-summary-spacing: 0.25rem !important;
+                 --resume-summary-spacing: 0.75rem !important;
   --resume-header-spacing: 0.125rem !important; /* Space around header elements */
   --resume-contact-spacing: 0.375rem !important; /* Space between H1 and contact info */
 }
@@ -468,7 +468,7 @@ ${originalCSS}`;
                   <p>🎨 <strong>Add Examples:</strong> Adds customization examples you can uncomment and edit.</p>
                   <p>⚙️ <strong>CSS Variables:</strong> Use --resume-font-family, --resume-font-size, --resume-line-height (default 1.15), --resume-h1-font-size (default 28pt), --resume-margin-top/bottom/left/right (default 0.5in).</p>
                   <p>📐 <strong>Section spacing:</strong> Use --resume-section-spacing (default 8pt) to control breathing room between sections.</p>
-                  <p>📐 <strong>Two-column layout:</strong> Use --resume-summary-spacing (default 0.25rem) to control uniform spacing above/below summary.</p>
+                  <p>📐 <strong>Two-column layout:</strong> Use --resume-summary-spacing (default 0.75rem) to control uniform spacing above/below summary.</p>
                   <p>⚠️ <strong>Important:</strong> Use .resume-template selector and add !important to ensure styles work in PDF.</p>
                 </div>
               </div>

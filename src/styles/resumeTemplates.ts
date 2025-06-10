@@ -18,7 +18,7 @@ export const baseResumeStyles = `
   --resume-h2-font-size: 14pt;
   --resume-h3-font-size: 12pt;
   --resume-section-spacing: 8pt;
-  --resume-summary-spacing: 0.25rem;
+  --resume-summary-spacing: 0.75rem;
   --resume-header-spacing: 0.125rem;
   --resume-contact-spacing: 0.375rem; /* Increased spacing between H1 and contact info */
 }
@@ -213,7 +213,7 @@ body {
   display: grid;
   grid-template-columns: 1fr 2fr;
   gap: 1.5rem;
-  margin-top: var(--resume-contact-spacing);
+  margin-top: 0.125rem; /* REDUCED spacing from summary */
 }
 
 .resume-two-column-layout .resume-column-left {
@@ -254,7 +254,7 @@ body {
 /* Uniform summary spacing for two-column layouts */
 .resume-two-column-layout .resume-summary-section {
   margin-top: var(--resume-summary-spacing) !important;
-  margin-bottom: var(--resume-summary-spacing) !important;
+  margin-bottom: 0.125rem !important; /* REDUCED spacing before columns */
   padding: 0 !important;
   line-height: 1.2 !important;
   text-align: left !important; /* ALWAYS left-align summary text */
@@ -301,6 +301,43 @@ body {
   .resume-two-column-layout.template-modern .resume-contact-info,
   .resume-two-column-layout.template-creative .resume-contact-info {
     justify-content: center !important;
+  }
+
+  /* Professional template: Increase spacing around H1 border line in two-column mode */
+  .resume-two-column-layout.template-professional .resume-header .resume-heading-1 {
+    padding-bottom: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+    border-bottom: 2px solid #e0e0e0 !important;
+  }
+
+  /* Professional template: Match Creative template summary spacing exactly */
+  .resume-two-column-layout.template-professional .resume-summary-section {
+    margin-top: var(--resume-summary-spacing) !important; /* Same as Creative: 0.75rem */
+    margin-bottom: 0.125rem !important; /* Same as Creative: 0.125rem */
+  }
+
+  .resume-two-column-layout.template-professional .resume-summary-section p {
+    margin: 0 !important; /* Remove extra paragraph margins in summary */
+    padding: 0 !important; /* Also remove any padding conflicts */
+  }
+
+  /* Minimalist template: Match Creative template summary spacing exactly */
+  .resume-two-column-layout.template-minimalist .resume-summary-section {
+    margin-top: var(--resume-summary-spacing) !important; /* Same as Creative: 0.75rem */
+    margin-bottom: 0.125rem !important; /* Same as Creative: 0.125rem */
+  }
+
+  .resume-two-column-layout.template-minimalist .resume-summary-section p {
+    margin: 0 !important; /* Remove extra paragraph margins in summary */
+    padding: 0 !important; /* Also remove any padding conflicts */
+  }
+
+  /* Override any index.css conflicts for Professional and Minimalist templates */
+  .resume-two-column-layout.template-professional .resume-summary-section,
+  .resume-two-column-layout.template-minimalist .resume-summary-section {
+    margin-top: var(--resume-summary-spacing) !important; /* Ensure consistent top spacing: 0.75rem */
+    margin-bottom: 0.125rem !important; /* Force override index.css mb-2 */
+    padding-bottom: 0 !important; /* Force override index.css pb-1 */
   }
 
   /* Minimalist & Executive Templates: Left-aligned headers */
@@ -1006,8 +1043,8 @@ export const printStyles = `
   /* Force Professional template H1 border to not cause page breaks */
   .resume-two-column-layout.template-professional .resume-heading-1 {
     border-bottom: 2px solid #e0e0e0 !important;
-    padding-bottom: 0.25rem !important;
-    margin-bottom: 0.125rem !important;
+    padding-bottom: 0.5rem !important; /* Increased spacing below H1 */
+    margin-bottom: 0.5rem !important; /* Increased spacing after border line */
     page-break-after: avoid !important;
     break-after: avoid !important;
     orphans: 3 !important;
@@ -1074,15 +1111,15 @@ export const printStyles = `
   .resume-two-column-layout.template-professional .resume-header .resume-heading-1 {
     font-size: var(--resume-h1-font-size) !important;
     line-height: 1.0 !important;
-    margin: 0 !important;
-    padding: 0 0 0.125rem 0 !important;
-    border-bottom: 1px solid #e0e0e0 !important;
+    margin: 0 0 0.5rem 0 !important; /* Increased margin after border line */
+    padding: 0 0 0.5rem 0 !important; /* Increased padding below H1 */
+    border-bottom: 2px solid #e0e0e0 !important; /* Consistent border with live preview */
   }
 
   /* Uniform summary spacing for two-column layout in print */
   .resume-two-column-layout .resume-summary-section {
     margin-top: var(--resume-summary-spacing) !important;
-    margin-bottom: var(--resume-summary-spacing) !important;
+    margin-bottom: 0.125rem !important; /* REDUCED spacing before columns in print */
     padding: 0 !important;
     line-height: 1.2 !important;
     font-size: 11pt !important;
@@ -1152,10 +1189,37 @@ export const printStyles = `
     border-top: none !important;
   }
 
-  /* Remove spacing between summary and columns */
+  /* REDUCED spacing between summary and columns */
   .resume-two-column-layout .resume-summary-section + .resume-columns {
-    margin-top: 0 !important;
+    margin-top: -0.25rem !important; /* Negative margin to reduce gap */
     padding-top: 0 !important;
+  }
+
+  /* Reduce bottom margin of summary section in two-column layout */
+  .resume-two-column-layout .resume-summary-section {
+    margin-bottom: 0.125rem !important; /* Reduced from default summary spacing */
+  }
+
+  /* Professional and Minimalist template: Match Creative template summary spacing in print */
+  .resume-two-column-layout.template-professional .resume-summary-section,
+  .resume-two-column-layout.template-minimalist .resume-summary-section {
+    margin-top: var(--resume-summary-spacing) !important; /* Same as Creative: 0.75rem */
+    margin-bottom: 0.125rem !important; /* Same as Creative: 0.125rem */
+  }
+
+  /* Remove template-specific paragraph margins from summary sections in print */
+  .resume-two-column-layout.template-professional .resume-summary-section p,
+  .resume-two-column-layout.template-minimalist .resume-summary-section p {
+    margin: 0 !important; /* Remove extra paragraph margins that conflict */
+    padding: 0 !important; /* Also remove any padding conflicts */
+  }
+
+  /* Override any base CSS conflicts for Professional and Minimalist templates in print */
+  .resume-two-column-layout.template-professional .resume-summary-section,
+  .resume-two-column-layout.template-minimalist .resume-summary-section {
+    margin-top: var(--resume-summary-spacing) !important; /* Same as Creative: 0.75rem */
+    margin-bottom: 0.125rem !important; /* Same as Creative: 0.125rem */
+    padding-bottom: 0 !important; /* Override any base CSS padding */
   }
 
   /* CRITICAL: Fix for first H2 elements getting cut off at top of columns */
