@@ -180,7 +180,7 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
   --resume-section-spacing: 8pt !important;
   --resume-summary-spacing: 0.25rem !important;
   --resume-header-spacing: 0.125rem !important; /* Space around header elements */
-  --resume-contact-spacing: 0.25rem !important; /* Space between contact items */
+  --resume-contact-spacing: 0.375rem !important; /* Space between H1 and contact info */
 }
 */
 
@@ -193,6 +193,43 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
 .template-${template} {
   /* Change the main text color */
   color: #2d3748 !important;
+}
+*/
+
+/*
+ * TWO-COLUMN HEADER ALIGNMENT CUSTOMIZATION
+ * Force your preferred alignment for two-column layouts
+ */
+
+/*
+/* Force header to be left-aligned in two-column mode */
+.resume-two-column-layout.template-${template} .resume-header {
+  text-align: left !important;
+}
+
+.resume-two-column-layout.template-${template} .resume-header .resume-heading-1,
+.resume-two-column-layout.template-${template} .resume-header .resume-paragraph {
+  text-align: left !important;
+}
+
+.resume-two-column-layout.template-${template} .resume-contact-info {
+  justify-content: flex-start !important;
+}
+*/
+
+/*
+/* Force header to be centered in two-column mode */
+.resume-two-column-layout.template-${template} .resume-header {
+  text-align: center !important;
+}
+
+.resume-two-column-layout.template-${template} .resume-header .resume-heading-1,
+.resume-two-column-layout.template-${template} .resume-header .resume-paragraph {
+  text-align: center !important;
+}
+
+.resume-two-column-layout.template-${template} .resume-contact-info {
+  justify-content: center !important;
 }
 */
 

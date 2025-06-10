@@ -20,7 +20,7 @@ export const baseResumeStyles = `
   --resume-section-spacing: 8pt;
   --resume-summary-spacing: 0.25rem;
   --resume-header-spacing: 0.125rem;
-  --resume-contact-spacing: 0.25rem;
+  --resume-contact-spacing: 0.375rem; /* Increased spacing between H1 and contact info */
 }
 
 /* Reset and base styles */
@@ -204,9 +204,9 @@ body {
 
 .resume-two-column-layout .resume-header {
   width: 100%;
-  margin-bottom: var(--resume-header-spacing);
+  margin-bottom: var(--resume-contact-spacing);
   padding-bottom: 0;
-  text-align: center;
+  /* Don't force text-align here - let templates decide */
 }
 
 .resume-two-column-layout .resume-columns {
@@ -222,20 +222,22 @@ body {
 
 .resume-two-column-layout .resume-header .resume-heading-1 {
   font-size: var(--resume-h1-font-size) !important;
-  text-align: center !important;
-  margin-bottom: var(--resume-header-spacing) !important;
+  margin-bottom: var(--resume-contact-spacing) !important;
+  /* Remove forced centering - let templates decide alignment */
 }
 
 .resume-two-column-layout .resume-header .resume-paragraph {
-  text-align: center !important;
-  margin-bottom: var(--resume-header-spacing) !important;
+  margin-top: var(--resume-contact-spacing) !important;
+  margin-bottom: var(--resume-contact-spacing) !important;
   font-size: 11pt;
   line-height: 1.2;
+  /* Remove forced centering for contact info - let templates decide */
 }
 
 .resume-two-column-layout .resume-contact-info {
-  justify-content: center;
-  margin-bottom: var(--resume-header-spacing);
+  margin-top: var(--resume-contact-spacing);
+  margin-bottom: var(--resume-contact-spacing);
+  /* Remove forced centering - let templates decide */
 }
 
 /* DRY APPROACH: AGGRESSIVE summary spacing fixes for ALL two-column layouts */
@@ -255,17 +257,72 @@ body {
   margin-bottom: var(--resume-summary-spacing) !important;
   padding: 0 !important;
   line-height: 1.2 !important;
+  text-align: left !important; /* ALWAYS left-align summary text */
   page-break-after: avoid !important;
   break-after: avoid !important;
 }
 
-/* Remove all spacing around columns container */
-.resume-two-column-layout .resume-columns {
-  margin: 0 !important;
-  padding: 0 !important;
-  page-break-before: avoid !important;
-  break-before: avoid !important;
+/* Ensure all summary content is left-aligned */
+.resume-two-column-layout .resume-summary-section *,
+.resume-two-column-layout .resume-summary-section p {
+  text-align: left !important;
 }
+
+  /* Remove all spacing around columns container */
+  .resume-two-column-layout .resume-columns {
+    margin: 0 !important;
+    padding: 0 !important;
+    page-break-before: avoid !important;
+    break-before: avoid !important;
+  }
+
+  /* TEMPLATE-SPECIFIC HEADER ALIGNMENT FOR TWO-COLUMN LAYOUTS */
+
+  /* Professional & Modern & Creative Templates: Centered headers */
+  .resume-two-column-layout.template-professional .resume-header,
+  .resume-two-column-layout.template-modern .resume-header,
+  .resume-two-column-layout.template-creative .resume-header {
+    text-align: center !important;
+  }
+
+  .resume-two-column-layout.template-professional .resume-header .resume-heading-1,
+  .resume-two-column-layout.template-modern .resume-header .resume-heading-1,
+  .resume-two-column-layout.template-creative .resume-header .resume-heading-1 {
+    text-align: center !important;
+  }
+
+  .resume-two-column-layout.template-professional .resume-header .resume-paragraph,
+  .resume-two-column-layout.template-modern .resume-header .resume-paragraph,
+  .resume-two-column-layout.template-creative .resume-header .resume-paragraph {
+    text-align: center !important;
+  }
+
+  .resume-two-column-layout.template-professional .resume-contact-info,
+  .resume-two-column-layout.template-modern .resume-contact-info,
+  .resume-two-column-layout.template-creative .resume-contact-info {
+    justify-content: center !important;
+  }
+
+  /* Minimalist & Executive Templates: Left-aligned headers */
+  .resume-two-column-layout.template-minimalist .resume-header,
+  .resume-two-column-layout.template-executive .resume-header {
+    text-align: left !important;
+  }
+
+  .resume-two-column-layout.template-minimalist .resume-header .resume-heading-1,
+  .resume-two-column-layout.template-executive .resume-header .resume-heading-1 {
+    text-align: left !important;
+  }
+
+  .resume-two-column-layout.template-minimalist .resume-header .resume-paragraph,
+  .resume-two-column-layout.template-executive .resume-header .resume-paragraph {
+    text-align: left !important;
+  }
+
+  .resume-two-column-layout.template-minimalist .resume-contact-info,
+  .resume-two-column-layout.template-executive .resume-contact-info {
+    justify-content: flex-start !important;
+  }
 
 /* Two Page Layout Styles */
 .resume-two-page-layout .resume-two-page {
@@ -533,8 +590,8 @@ export const templateStyles = {
   font-size: var(--resume-h1-font-size);
   font-weight: 800;
   color: #1f2937;
-  margin-bottom: var(--resume-header-spacing);
-  padding: var(--resume-header-spacing) 0;
+  margin-bottom: var(--resume-contact-spacing);
+  padding: var(--resume-header-spacing) 0 calc(var(--resume-header-spacing) + 0.25rem) 0;
   text-align: center;
   letter-spacing: -0.5px;
   line-height: 1.1;
@@ -543,19 +600,30 @@ export const templateStyles = {
   print-color-adjust: exact !important;
 }
 
-/* Add a decorative line below the name */
+/* Decorative line below H1 - REMOVED for cleaner two-column layout */
 .template-creative .resume-heading-1::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 3px;
-  background: #4b5563;
-  border-radius: 2px;
-  -webkit-print-color-adjust: exact !important;
-  print-color-adjust: exact !important;
+  display: none;
+}
+
+/* Two-column mode: Clean layout without decorative lines */
+.resume-two-column-layout.template-creative .resume-heading-1::after {
+  display: none !important;
+}
+
+/* Clean spacing in Creative template two-column header */
+.resume-two-column-layout.template-creative .resume-header .resume-heading-1 {
+  padding-bottom: var(--resume-header-spacing);
+  margin-bottom: var(--resume-contact-spacing);
+  border-bottom: none !important; /* Remove any inherited borders */
+}
+
+/* Remove any borders from Creative template header elements in two-column mode */
+.resume-two-column-layout.template-creative .resume-header,
+.resume-two-column-layout.template-creative .resume-header *,
+.resume-two-column-layout.template-creative .resume-summary-section {
+  border: none !important;
+  border-bottom: none !important;
+  border-top: none !important;
 }
 
 /* Section headings with modern accent */
@@ -617,14 +685,14 @@ export const templateStyles = {
   border-bottom-color: #6b7280;
 }
 
-/* Subtle contact info styling */
+/* Subtle contact info styling - REMOVED border for cleaner layout */
 .template-creative .resume-paragraph:first-of-type {
   text-align: center;
   color: #6b7280;
   font-size: var(--resume-font-size);
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 1rem;
+  padding-bottom: 0;
+  /* border-bottom removed for cleaner two-column header */
 }
 
 /* Hide HR in creative template */
@@ -632,18 +700,8 @@ export const templateStyles = {
   display: none;
 }
 
-/* Two-column specific adjustments */
-.template-creative.resume-two-column-layout .resume-heading-1 {
-  font-size: var(--resume-h1-font-size);
-  text-align: left;
-  padding: 0.5rem 0;
-}
-
-.template-creative.resume-two-column-layout .resume-heading-1::after {
-  left: 0;
-  transform: none;
-  width: 40px;
-}
+/* Two-column specific adjustments - REMOVED CONFLICTING OVERRIDE */
+/* The Creative template now properly inherits two-column alignment from template-specific rules */
 `,
 
   executive: `
@@ -1028,6 +1086,70 @@ export const printStyles = `
     padding: 0 !important;
     line-height: 1.2 !important;
     font-size: 11pt !important;
+    text-align: left !important; /* ALWAYS left-align summary in print */
+  }
+
+  /* Ensure all summary content is left-aligned in print */
+  .resume-two-column-layout .resume-summary-section *,
+  .resume-two-column-layout .resume-summary-section p {
+    text-align: left !important;
+  }
+
+  /* TEMPLATE-SPECIFIC HEADER ALIGNMENT FOR TWO-COLUMN LAYOUTS IN PRINT */
+
+  /* Professional & Modern & Creative Templates: Centered headers in print */
+  .resume-two-column-layout.template-professional .resume-header,
+  .resume-two-column-layout.template-modern .resume-header,
+  .resume-two-column-layout.template-creative .resume-header {
+    text-align: center !important;
+  }
+
+  .resume-two-column-layout.template-professional .resume-header .resume-heading-1,
+  .resume-two-column-layout.template-modern .resume-header .resume-heading-1,
+  .resume-two-column-layout.template-creative .resume-header .resume-heading-1 {
+    text-align: center !important;
+  }
+
+  .resume-two-column-layout.template-professional .resume-header .resume-paragraph,
+  .resume-two-column-layout.template-modern .resume-header .resume-paragraph,
+  .resume-two-column-layout.template-creative .resume-header .resume-paragraph {
+    text-align: center !important;
+  }
+
+    /* Minimalist & Executive Templates: Left-aligned headers in print */
+  .resume-two-column-layout.template-minimalist .resume-header,
+  .resume-two-column-layout.template-executive .resume-header {
+    text-align: left !important;
+  }
+
+  .resume-two-column-layout.template-minimalist .resume-header .resume-heading-1,
+  .resume-two-column-layout.template-executive .resume-header .resume-heading-1 {
+    text-align: left !important;
+  }
+
+  .resume-two-column-layout.template-minimalist .resume-header .resume-paragraph,
+  .resume-two-column-layout.template-executive .resume-header .resume-paragraph {
+    text-align: left !important;
+  }
+
+  /* Creative template clean layout for print - no decorative lines */
+  .resume-two-column-layout.template-creative .resume-heading-1::after {
+    display: none !important;
+  }
+
+  .resume-two-column-layout.template-creative .resume-header .resume-heading-1 {
+    padding-bottom: var(--resume-header-spacing) !important;
+    margin-bottom: var(--resume-contact-spacing) !important;
+    border-bottom: none !important; /* Remove any inherited borders in print */
+  }
+
+  /* Remove any borders from Creative template header elements in print */
+  .resume-two-column-layout.template-creative .resume-header,
+  .resume-two-column-layout.template-creative .resume-header *,
+  .resume-two-column-layout.template-creative .resume-summary-section {
+    border: none !important;
+    border-bottom: none !important;
+    border-top: none !important;
   }
 
   /* Remove spacing between summary and columns */
