@@ -124,7 +124,7 @@ body {
 
 /* Control spacing for BR and NBSP elements */
 .resume-br, br {
-  line-height: 0.5 !important;
+  line-height: 0.25 !important;
   margin: 0 !important;
   padding: 0 !important;
   display: block !important;
