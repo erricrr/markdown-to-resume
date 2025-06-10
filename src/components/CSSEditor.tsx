@@ -92,21 +92,21 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
   const handleTestCSS = (template: string) => {
     const testCSS = `/* TEST CSS for ${template} */
 .template-${template} {
-  background: black !important;
-  color: white !important;
+  background: black;
+  color: white;
 }
 
 .template-${template} .resume-heading-1 {
-  color: red !important;
-  background-color: yellow !important;
-  padding: 20px !important;
-  border: 5px solid blue !important;
+  color: red;
+  background-color: yellow;
+  padding: 20px;
+  border: 5px solid blue;
 }
 
 .template-${template} .resume-heading-2 {
-  color: green !important;
-  background-color: pink !important;
-  padding: 10px !important;
+  color: green;
+  background-color: pink;
+  padding: 10px;
 }`;
 
     console.log(`🧪 Applying test CSS to ${template}`);
@@ -161,26 +161,26 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
 /*
 .resume-template {
   /* Font customization */
-  --resume-font-family: 'Georgia', serif !important;
+  --resume-font-family: 'Georgia', serif;
 
   /* Size customization - current defaults shown */
-  --resume-font-size: 11pt !important;
-  --resume-line-height: 1.15 !important;
-  --resume-h1-font-size: 28pt !important; /* Main name/title - try 24pt, 32pt, 36pt */
-  --resume-h2-font-size: 14pt !important;
-  --resume-h3-font-size: 12pt !important;
+  --resume-font-size: 11pt;
+  --resume-line-height: 1.15;
+  --resume-h1-font-size: 28pt; /* Main name/title - try 24pt, 32pt, 36pt */
+  --resume-h2-font-size: 14pt;
+  --resume-h3-font-size: 12pt;
 
   /* Margins customization - current defaults shown */
-  --resume-margin-top: 0.5in !important;
-  --resume-margin-bottom: 0.5in !important;
-  --resume-margin-left: 0.5in !important;
-  --resume-margin-right: 0.5in !important;
+  --resume-margin-top: 0.5in;
+  --resume-margin-bottom: 0.5in;
+  --resume-margin-left: 0.5in;
+  --resume-margin-right: 0.5in;
 
   /* Spacing customization - section spacing creates "breathing room" */
-  --resume-section-spacing: 8pt !important;
-                 --resume-summary-spacing: 0.75rem !important;
-  --resume-header-spacing: 0.125rem !important; /* Space around header elements */
-  --resume-contact-spacing: 0.375rem !important; /* Space between H1 and contact info */
+  --resume-section-spacing: 8pt;
+                 --resume-summary-spacing: 0.75rem;
+  --resume-header-spacing: 0.125rem; /* Space around header elements */
+  --resume-contact-spacing: 0.375rem; /* Space between H1 and contact info */
 }
 */
 
@@ -192,7 +192,7 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
 /*
 .template-${template} {
   /* Change the main text color */
-  color: #2d3748 !important;
+  color: #2d3748;
 }
 */
 
@@ -204,43 +204,43 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
 /*
 /* Force header to be left-aligned in two-column mode */
 .resume-two-column-layout.template-${template} .resume-header {
-  text-align: left !important;
+  text-align: left;
 }
 
 .resume-two-column-layout.template-${template} .resume-header .resume-heading-1,
 .resume-two-column-layout.template-${template} .resume-header .resume-paragraph {
-  text-align: left !important;
+  text-align: left;
 }
 
 .resume-two-column-layout.template-${template} .resume-contact-info {
-  justify-content: flex-start !important;
+  justify-content: flex-start;
 }
 */
 
 /*
 /* Force header to be centered in two-column mode */
 .resume-two-column-layout.template-${template} .resume-header {
-  text-align: center !important;
+  text-align: center;
 }
 
 .resume-two-column-layout.template-${template} .resume-header .resume-heading-1,
 .resume-two-column-layout.template-${template} .resume-header .resume-paragraph {
-  text-align: center !important;
+  text-align: center;
 }
 
 .resume-two-column-layout.template-${template} .resume-contact-info {
-  justify-content: center !important;
+  justify-content: center;
 }
 */
 
 /*
 .template-${template} .resume-heading-1 {
   /* Customize the main heading (H1) - your name/title */
-  color: #1a202c !important;
-  text-align: center !important;
-  font-size: 32pt !important; /* Override default 28pt - try 24pt, 36pt, 40pt */
-  font-weight: 700 !important; /* Make it bolder */
-  letter-spacing: 1px !important; /* Add spacing between letters */
+  color: #1a202c;
+  text-align: center;
+  font-size: 32pt; /* Override default 28pt - try 24pt, 36pt, 40pt */
+  font-weight: 700; /* Make it bolder */
+  letter-spacing: 1px; /* Add spacing between letters */
 }
 */
 
@@ -250,23 +250,23 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
  */
 
 /*
-.resume-template { --resume-h1-font-size: 24pt !important; } /* Smaller name */
+.resume-template { --resume-h1-font-size: 24pt; } /* Smaller name */
 */
 
 /*
-.resume-template { --resume-h1-font-size: 32pt !important; } /* Larger name */
+.resume-template { --resume-h1-font-size: 32pt; } /* Larger name */
 */
 
 /*
-.resume-template { --resume-h1-font-size: 36pt !important; } /* Very large name */
+.resume-template { --resume-h1-font-size: 36pt; } /* Very large name */
 */
 
 /*
 .template-${template} .resume-heading-2 {
   /* Customize section headings */
-  color: #2d3748 !important;
-  border-bottom: 1px solid #e2e8f0 !important;
-  padding-bottom: 0.25rem !important;
+  color: #2d3748;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 0.25rem;
 }
 */
 
@@ -469,7 +469,7 @@ ${originalCSS}`;
                   <p>⚙️ <strong>CSS Variables:</strong> Use --resume-font-family, --resume-font-size, --resume-line-height (default 1.15), --resume-h1-font-size (default 28pt), --resume-margin-top/bottom/left/right (default 0.5in).</p>
                   <p>📐 <strong>Section spacing:</strong> Use --resume-section-spacing (default 8pt) to control breathing room between sections.</p>
                   <p>📐 <strong>Two-column layout:</strong> Use --resume-summary-spacing (default 0.75rem) to control uniform spacing above/below summary.</p>
-                  <p>⚠️ <strong>Important:</strong> Use .resume-template selector and add !important to ensure styles work in PDF.</p>
+                  <p>⚠️ <strong>Important:</strong> Use .resume-template selector to ensure styles work properly in the preview and PDF.</p>
                 </div>
               </div>
             </TabsContent>
