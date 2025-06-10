@@ -212,22 +212,34 @@
     @apply border-0 border-t border-gray-300 my-4;
 }
 
-/* Table styles - borderless tables */
+/* Table styles - borderless tables with minimal spacing */
 .resume-table {
     @apply w-full mb-4;
     border-collapse: collapse;
 }
 
 .resume-table-header {
-    @apply px-3 py-2 font-semibold text-left;
+    @apply px-1 py-0 font-semibold text-left;
 }
 
 .resume-table-cell {
-    @apply px-3 py-2 align-top;
+    @apply px-1 py-0 align-top;
 }
 
 .resume-table-row {
     /* Remove border */
+}
+
+/* Style for table-based bullet points */
+.resume-table-bullet-item {
+    @apply relative pl-4;
+}
+
+.resume-table-bullet-item::before {
+    content: "•";
+    @apply absolute left-0 text-current font-normal;
+    line-height: 1.0;
+    top: 0.1em;
 }
 
 /* Professional Template - Now using single source of truth from resumeTemplates.css */

@@ -163,7 +163,7 @@ body {
   top: 0.1em;
 }
 
-/* Tables */
+/* Tables - minimal spacing for hidden table layouts */
 .resume-table {
   width: 100%;
   margin-bottom: 1rem;
@@ -171,14 +171,31 @@ body {
 }
 
 .resume-table-header {
-  padding: 0.75rem;
+  padding: 0.125rem 0.25rem;
   font-weight: 600;
   text-align: left;
 }
 
 .resume-table-cell {
-  padding: 0.75rem;
+  padding: 0.125rem 0.25rem;
   vertical-align: top;
+}
+
+/* Style for table-based bullet points */
+.resume-table-bullet-item {
+  position: relative;
+  padding-left: 1rem;
+}
+
+.resume-table-bullet-item::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  font-size: 1.0em;
+  font-weight: normal;
+  color: inherit;
+  line-height: 1.0;
+  top: 0.1em;
 }
 
 /* Section spacing - add 8pt breathing room between sections */

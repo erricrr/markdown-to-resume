@@ -28,7 +28,7 @@ export const exportToPDF = async (resumeData: ResumeData) => {
       const html = marked.parse(md) as string;
 
       // Add resume classes to the HTML elements
-      const processedHtml = html
+      let processedHtml = html
         .replace(/<h1([^>]*)>/g, '<h1$1 class="resume-heading-1">')
         .replace(/<h2([^>]*)>/g, '<h2$1 class="resume-heading-2">')
         .replace(/<h3([^>]*)>/g, '<h3$1 class="resume-heading-3">')
@@ -52,6 +52,18 @@ export const exportToPDF = async (resumeData: ResumeData) => {
         .replace(/<code([^>]*)>/g, '<code$1 class="resume-code">')
         .replace(/<pre([^>]*)>/g, '<pre$1 class="resume-code-block">')
         .replace(/<br([^>]*)>/g, '<br$1 class="resume-br">');
+
+      // Handle bullet points in table cells (content starting with "- " at the beginning)
+      processedHtml = processedHtml.replace(
+        /<td([^>]*class="resume-table-cell"[^>]*)>\s*-\s+([^<]*)<\/td>/g,
+        '<td$1><span class="resume-table-bullet-item">$2</span></td>'
+      );
+
+      // Handle bullet points within paragraph tags in table cells (starting with "- ")
+      processedHtml = processedHtml.replace(
+        /<td([^>]*class="resume-table-cell"[^>]*)><p([^>]*)>\s*-\s+([^<]*)<\/p><\/td>/g,
+        '<td$1><p$2><span class="resume-table-bullet-item">$3</span></p></td>'
+      );
 
       return DOMPurify.sanitize(processedHtml);
     } catch (error) {
