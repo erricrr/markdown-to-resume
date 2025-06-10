@@ -477,7 +477,8 @@ export const templateStyles = {
   font-size: var(--resume-h1-font-size);
   font-weight: 600;
   color: #000;
-  margin-bottom: var(--resume-header-spacing);
+  margin-bottom: calc(var(--resume-header-spacing) + 0.5rem);
+  padding-bottom: 0.25rem;
   letter-spacing: -0.02em;
   line-height: 1.1;
   position: relative;
@@ -486,7 +487,7 @@ export const templateStyles = {
 .template-modern .resume-heading-1::after {
   content: '';
   position: absolute;
-  bottom: -0.5rem;
+  bottom: -0.25rem;
   left: 0;
   width: 100%;
   height: 4px;
