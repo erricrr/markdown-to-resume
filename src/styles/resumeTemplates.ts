@@ -307,7 +307,7 @@ body {
   .resume-two-column-layout.template-professional .resume-header .resume-heading-1 {
     padding-bottom: 0.5rem !important;
     margin-bottom: 0.5rem !important;
-    border-bottom: 2px solid #e0e0e0 !important;
+    border-bottom: 2px solid #888888 !important;
   }
 
   /* Professional template: Match Creative template summary spacing exactly */
@@ -405,7 +405,7 @@ export const templateStyles = {
   color: #222222;
   margin: 0 0 var(--resume-header-spacing) 0;
   padding-bottom: var(--resume-header-spacing);
-  border-bottom: 2px solid #e0e0e0;
+  border-bottom: 2px solid #888888;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   line-height: 1.1;
@@ -501,18 +501,32 @@ export const templateStyles = {
   font-family: 'Montserrat', sans-serif;
   font-size: var(--resume-h2-font-size);
   font-weight: 700;
-  color: #333333;
+  color: #000;
   margin-top: 1.5rem;
   margin-bottom: var(--resume-section-spacing);
   text-transform: uppercase;
   letter-spacing: 1.5px;
   position: relative;
-  display: inline-block;
-  background: #f8f8f8;
-  padding: 0.5rem 1rem 0.5rem 1.5rem;
-  border-radius: 0 4px 4px 0;
-  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%);
-  border-left: 4px solid #333333;
+  padding-left: 1rem;
+  background: linear-gradient(90deg, rgba(107, 114, 128, 0.1), transparent);
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-left: none;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+.template-modern .resume-heading-2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%) !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+  display: block;
 }
 
 .template-modern p,
@@ -668,17 +682,18 @@ export const templateStyles = {
 .template-creative .resume-heading-2 {
   font-size: var(--resume-h2-font-size);
   font-weight: 700;
-  color: #374151;
+  color: #1f2937;
   margin-top: 1.5rem;
   margin-bottom: var(--resume-section-spacing);
   text-transform: uppercase;
   letter-spacing: 1.5px;
   position: relative;
-  padding-left: 1rem;
-  border-left: 4px solid #6b7280;
-  background: linear-gradient(90deg, rgba(107, 114, 128, 0.1), transparent);
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
+  display: inline-block;
+  background: #f8f8f8;
+  padding: 0.5rem 1rem 0.5rem 1.5rem;
+  border-radius: 0 4px 4px 0;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%);
+  border-left: 4px solid #1f2937;
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
 }
@@ -763,7 +778,7 @@ export const templateStyles = {
   line-height: 1.1;
   position: relative;
   padding-bottom: var(--resume-header-spacing);
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 3px solid #333333;
 }
 
 .template-executive .resume-heading-2 {
@@ -1114,7 +1129,7 @@ export const printStyles = `
     line-height: 1.0 !important;
     margin: 0 0 0.5rem 0 !important; /* Increased margin after border line */
     padding: 0 0 0.5rem 0 !important; /* Increased padding below H1 */
-    border-bottom: 2px solid #e0e0e0 !important; /* Consistent border with live preview */
+    border-bottom: 2px solid #888888 !important; /* Consistent border with live preview */
   }
 
   /* Uniform summary spacing for two-column layout in print */
