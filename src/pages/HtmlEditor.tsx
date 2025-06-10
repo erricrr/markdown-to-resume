@@ -482,13 +482,13 @@ const HtmlEditor = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <ResizablePanelGroup
           direction="horizontal"
-          className="h-auto lg:h-[calc(100vh-200px)]"
+          className="h-auto lg:h-[calc(100vh-200px)] max-h-[calc(100vh-200px)]"
           onLayout={handlePanelResize}
         >
           {/* Left Panel - HTML Editor */}
           <ResizablePanel defaultSize={leftPanelSize} minSize={30}>
-            <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col h-full">
-              <div className="p-6 border-b">
+            <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col h-full max-h-full">
+              <div className="p-6 border-b shrink-0">
                 <div className="flex items-center gap-2">
                   <Code className="h-5 w-5 text-primary" />
                   <h2 className="text-lg font-semibold text-foreground">
@@ -514,8 +514,8 @@ const HtmlEditor = () => {
 
           {/* Right Panel - Preview */}
           <ResizablePanel minSize={30}>
-            <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col h-full">
-              <div className="p-6 border-b">
+            <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col h-full max-h-full">
+              <div className="p-6 border-b shrink-0">
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <Eye className="h-5 w-5 text-primary" />
@@ -530,7 +530,7 @@ const HtmlEditor = () => {
               </div>
               <div className="flex-1 overflow-auto p-4 bg-gray-50">
                 <div className="w-full h-full flex items-start justify-center">
-                  <HtmlPreview ref={previewRef} html={html} key={html.length} />
+                  <HtmlPreview ref={previewRef} html={html} />
                 </div>
               </div>
             </Card>

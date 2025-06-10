@@ -412,14 +412,14 @@ const MarkdownEditor = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <ResizablePanelGroup
           direction="horizontal"
-          className="h-auto lg:h-[calc(100vh-200px)]"
+          className="h-auto lg:h-[calc(100vh-200px)] max-h-[calc(100vh-200px)]"
           onLayout={handlePanelResize}
         >
           {/* Left Panel - Tabs for Editor and CSS */}
           <ResizablePanel defaultSize={leftPanelSize} minSize={30}>
-            <div className="flex flex-col h-full">
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
-                <TabsList className="flex w-full mb-4 gap-1 p-1 bg-muted rounded-lg">
+            <div className="flex flex-col h-full max-h-full overflow-hidden">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col overflow-hidden">
+                <TabsList className="flex w-full mb-4 gap-1 p-1 bg-muted rounded-lg shrink-0">
                   <TabsTrigger
                     value="editor"
                     className="flex-1 flex items-center justify-center gap-1 text-xs sm:text-sm py-1.5 px-2 rounded-md h-8 data-[state=active]:bg-white data-[state=active]:shadow-sm"
@@ -456,8 +456,8 @@ const MarkdownEditor = () => {
 
           {/* Right Panel - Preview */}
           <ResizablePanel minSize={30}>
-            <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col h-full">
-              <div className="p-6 border-b">
+            <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col h-full max-h-full">
+              <div className="p-6 border-b shrink-0">
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <Eye className="h-5 w-5 text-primary" />

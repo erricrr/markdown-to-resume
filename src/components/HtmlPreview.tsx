@@ -10,57 +10,63 @@ export const HtmlPreview = forwardRef<HTMLDivElement, HtmlPreviewProps>(
     const [isInitialRender, setIsInitialRender] = useState(true);
     const previousHtmlRef = useRef(html);
     const resizeTimeoutRef = useRef<number | null>(null);
+    const updateTimeoutRef = useRef<number | null>(null);
+    const [renderedHtml, setRenderedHtml] = useState(html);
 
+    // Debounce content updates
     useEffect(() => {
-      // Debounce html updates to avoid frequent re-renders
-      if (!isInitialRender && Math.abs(html.length - previousHtmlRef.current.length) < 5) {
-        if (resizeTimeoutRef.current) {
-          clearTimeout(resizeTimeoutRef.current);
-        }
-
-        resizeTimeoutRef.current = window.setTimeout(() => {
-          previousHtmlRef.current = html;
-          updateIframeContent();
-        }, 500);
-
-        return () => {
-          if (resizeTimeoutRef.current) {
-            clearTimeout(resizeTimeoutRef.current);
-          }
-        };
+      // For initial render, set content immediately
+      if (isInitialRender) {
+        setRenderedHtml(html);
+        setIsInitialRender(false);
+        return;
       }
 
-      // For initial render or significant changes, update immediately
-      previousHtmlRef.current = html;
-      setIsInitialRender(false);
+      // For subsequent updates, debounce the content change
+      if (updateTimeoutRef.current) {
+        clearTimeout(updateTimeoutRef.current);
+      }
+
+      updateTimeoutRef.current = window.setTimeout(() => {
+        setRenderedHtml(html);
+      }, 1000); // Longer debounce for typing
+
+      return () => {
+        if (updateTimeoutRef.current) {
+          clearTimeout(updateTimeoutRef.current);
+        }
+      };
+    }, [html, isInitialRender]);
+
+    useEffect(() => {
+      console.log('HtmlPreview updateIframeContent triggered for renderedHtml');
       updateIframeContent();
-    }, [html]);
+    }, [renderedHtml]);
 
     const updateIframeContent = () => {
-      console.log('HtmlPreview updateIframeContent triggered');
+      if (!iframeRef.current) return;
 
-      if (iframeRef.current) {
-        const iframe = iframeRef.current;
+      const iframe = iframeRef.current;
 
-        // Force iframe to completely reload to ensure clean state
-        iframe.src = 'about:blank';
+      // Force iframe to completely reload to ensure clean state
+      iframe.src = 'about:blank';
 
-        // Wait for iframe to be ready
-        setTimeout(() => {
-          const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+      // Wait for iframe to be ready
+      setTimeout(() => {
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
 
-          if (iframeDoc) {
-            // Clear the iframe first
-            iframeDoc.open();
-            iframeDoc.write('');
-            iframeDoc.close();
+        if (iframeDoc) {
+          // Clear the iframe first
+          iframeDoc.open();
+          iframeDoc.write('');
+          iframeDoc.close();
 
-            // Write the HTML content to the iframe
-            iframeDoc.open();
+          // Write the HTML content to the iframe
+          iframeDoc.open();
 
           // If the HTML doesn't include DOCTYPE, add it along with proper meta tags
-          let htmlContent = html;
-          if (!html.trim().toLowerCase().startsWith('<!doctype')) {
+          let htmlContent = renderedHtml;
+          if (!renderedHtml.trim().toLowerCase().startsWith('<!doctype')) {
             htmlContent = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -129,12 +135,12 @@ export const HtmlPreview = forwardRef<HTMLDivElement, HtmlPreviewProps>(
     </style>
 </head>
 <body>
-${html}
+${renderedHtml}
 </body>
 </html>`;
           } else {
             // If HTML already has DOCTYPE, just ensure it has proper print styles
-            htmlContent = html.replace(
+            htmlContent = renderedHtml.replace(
               /<\/head>/i,
               `<style>
       /* Ensure proper CSS rendering and color preservation */
@@ -293,15 +299,14 @@ ${html}
           };
           window.addEventListener('resize', handleResize);
 
-            // Cleanup function
-            return () => {
-              observer.disconnect();
-              window.removeEventListener('resize', handleResize);
-              clearTimeout(iframe.dataset.resizeTimeout as any);
-            };
-          }
-        }, 50); // Close the setTimeout
-      }
+          // Cleanup function
+          return () => {
+            observer.disconnect();
+            window.removeEventListener('resize', handleResize);
+            clearTimeout(iframe.dataset.resizeTimeout as any);
+          };
+        }
+      }, 50); // Close the setTimeout
     };
 
     return (
