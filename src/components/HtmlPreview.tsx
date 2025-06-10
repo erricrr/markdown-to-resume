@@ -9,18 +9,26 @@ export const HtmlPreview = forwardRef<HTMLDivElement, HtmlPreviewProps>(
     const iframeRef = useRef<HTMLIFrameElement>(null);
 
     useEffect(() => {
+      console.log('HtmlPreview useEffect triggered, html length:', html.length);
+
       if (iframeRef.current) {
         const iframe = iframeRef.current;
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
 
-        if (iframeDoc) {
-          // Clear the iframe first
-          iframeDoc.open();
-          iframeDoc.write('');
-          iframeDoc.close();
+        // Force iframe to completely reload to ensure clean state
+        iframe.src = 'about:blank';
 
-          // Write the HTML content to the iframe
-          iframeDoc.open();
+        // Wait for iframe to be ready
+        setTimeout(() => {
+          const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+
+          if (iframeDoc) {
+            // Clear the iframe first
+            iframeDoc.open();
+            iframeDoc.write('');
+            iframeDoc.close();
+
+            // Write the HTML content to the iframe
+            iframeDoc.open();
 
           // If the HTML doesn't include DOCTYPE, add it along with proper meta tags
           let htmlContent = html;
@@ -32,7 +40,7 @@ export const HtmlPreview = forwardRef<HTMLDivElement, HtmlPreviewProps>(
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resume Preview</title>
     <style>
-      /* Ensure proper CSS rendering */
+      /* Ensure proper CSS rendering and color preservation */
       html, body {
         margin: 0;
         padding: 0;
@@ -42,6 +50,9 @@ export const HtmlPreview = forwardRef<HTMLDivElement, HtmlPreviewProps>(
       }
       * {
         box-sizing: border-box;
+        -webkit-print-color-adjust: exact !important;
+        color-adjust: exact !important;
+        print-color-adjust: exact !important;
       }
       @media print {
         body {
@@ -77,7 +88,7 @@ ${html}
             htmlContent = html.replace(
               /<\/head>/i,
               `<style>
-      /* Ensure proper CSS rendering */
+      /* Ensure proper CSS rendering and color preservation */
       html, body {
         margin: 0;
         padding: 0;
@@ -87,6 +98,9 @@ ${html}
       }
       * {
         box-sizing: border-box;
+        -webkit-print-color-adjust: exact !important;
+        color-adjust: exact !important;
+        print-color-adjust: exact !important;
       }
       @media print {
         body {
@@ -119,6 +133,33 @@ ${html}
           iframeDoc.write(htmlContent);
           iframeDoc.close();
 
+          // Force background color rendering in iframe after load
+          setTimeout(() => {
+            if (iframeDoc && iframeDoc.body) {
+              // Add aggressive color preservation CSS directly to the document
+              const colorStyle = iframeDoc.createElement('style');
+              colorStyle.textContent = `
+                * {
+                  -webkit-print-color-adjust: exact !important;
+                  color-adjust: exact !important;
+                  print-color-adjust: exact !important;
+                  forced-color-adjust: none !important;
+                }
+                [style*="background"] {
+                  background-attachment: local !important;
+                }
+              `;
+              iframeDoc.head.appendChild(colorStyle);
+
+              // Force a repaint by modifying and reverting a style
+              const body = iframeDoc.body;
+              const originalDisplay = body.style.display;
+              body.style.display = 'none';
+              body.offsetHeight; // Trigger reflow
+              body.style.display = originalDisplay;
+            }
+          }, 100);
+
           // Handle iframe resizing to fit content with proper delay for CSS to load
           const resizeIframe = () => {
             if (iframeDoc.body) {
@@ -136,8 +177,8 @@ ${html}
             }
           };
 
-          // Resize after content loads and CSS is applied
-          setTimeout(resizeIframe, 200);
+          // Resize after content loads and CSS is applied - longer delay for color rendering
+          setTimeout(resizeIframe, 400);
 
           // Set up mutation observer to handle dynamic content changes
           const observer = new MutationObserver(() => {
@@ -161,13 +202,14 @@ ${html}
           };
           window.addEventListener('resize', handleResize);
 
-          // Cleanup function
-          return () => {
-            observer.disconnect();
-            window.removeEventListener('resize', handleResize);
-            clearTimeout(iframe.dataset.resizeTimeout as any);
-          };
-        }
+            // Cleanup function
+            return () => {
+              observer.disconnect();
+              window.removeEventListener('resize', handleResize);
+              clearTimeout(iframe.dataset.resizeTimeout as any);
+            };
+          }
+        }, 50); // Close the setTimeout
       }
     }, [html]);
 

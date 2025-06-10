@@ -18,8 +18,12 @@ export const HtmlPrintPreview = ({ html }: HtmlPrintPreviewProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
         const handlePrint = () => {
-            console.log('Print function called with HTML length:', html.length);
+                  console.log('Print function called with HTML length:', html.length);
     console.log('HTML preview (first 200 chars):', html.substring(0, 200));
+
+    // Debug: Check for background colors in the HTML
+    const backgroundMatches = html.match(/background[^;]*:[^;]*[^}]*/gi);
+    console.log('Found background styles:', backgroundMatches);
 
     // Debug: Check if Contact section spacing is being modified
     if (html.includes('.section {')) {
@@ -30,8 +34,32 @@ export const HtmlPrintPreview = ({ html }: HtmlPrintPreviewProps) => {
     // Create a new window for printing
     const printWindow = window.open("", "_blank");
     if (printWindow) {
-      // Simple approach - just preserve everything exactly as is
+      // Aggressive approach - force background colors to work in print
       let enhancedHtml = html;
+
+      // Force background color preservation by adding inline styles - comprehensive approach
+      enhancedHtml = enhancedHtml.replace(
+        /style\s*=\s*"([^"]*)"/gi,
+        (match, styles) => {
+          // Add color preservation to ALL inline styles
+          return `style="${styles}; -webkit-print-color-adjust: exact !important; color-adjust: exact !important; print-color-adjust: exact !important; forced-color-adjust: none !important;"`;
+        }
+      );
+
+      // Also target CSS background rules and duplicate them as box-shadow for guaranteed printing
+      enhancedHtml = enhancedHtml.replace(
+        /background:\s*([^;]+);/gi,
+        (match, color) => {
+          return `background: ${color}; box-shadow: inset 0 0 0 1000px ${color.split(' ')[0]}; -webkit-print-color-adjust: exact !important;`;
+        }
+      );
+
+      enhancedHtml = enhancedHtml.replace(
+        /background-color:\s*([^;]+);/gi,
+        (match, color) => {
+          return `background-color: ${color}; box-shadow: inset 0 0 0 1000px ${color}; -webkit-print-color-adjust: exact !important;`;
+        }
+      );
 
       // Add minimal print-specific CSS that preserves layouts
       const printStyles = `
@@ -41,12 +69,67 @@ export const HtmlPrintPreview = ({ html }: HtmlPrintPreviewProps) => {
             size: A4;
           }
 
+                    /* Force colors OUTSIDE of print media query */
+          html, body, * {
+            -webkit-print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            forced-color-adjust: none !important;
+          }
+
           @media print {
+            /* Override browser print defaults */
+            @page {
+              color-adjust: exact;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+
+            /* FORCE color preservation - maximum browser support */
+            html, body {
+              -webkit-print-color-adjust: exact !important;
+              color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              forced-color-adjust: none !important;
+            }
+
             /* Preserve ALL colors and backgrounds exactly as designed */
             *, *::before, *::after {
               -webkit-print-color-adjust: exact !important;
               color-adjust: exact !important;
               print-color-adjust: exact !important;
+              forced-color-adjust: none !important;
+            }
+
+            /* Force background colors specifically */
+            [style*="background"], [class*="bg"], [style*="background-color"] {
+              -webkit-print-color-adjust: exact !important;
+              color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              forced-color-adjust: none !important;
+              background-attachment: local !important;
+            }
+
+            /* Target common background classes and elements */
+            .left-column, .right-column, .section, .skill, .interactive-section,
+            div, section, span, p, h1, h2, h3, h4, h5, h6, article, aside, main, header, footer {
+              -webkit-print-color-adjust: exact !important;
+              color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              forced-color-adjust: none !important;
+            }
+
+            /* Use box-shadow as backup for background colors */
+            [style*="background: #"], [style*="background-color: #"], [style*="background:#"], [style*="background-color:#"] {
+              box-shadow: inset 0 0 0 1000px currentColor !important;
+            }
+
+            /* Force specific problematic elements */
+            body * {
+              -webkit-print-color-adjust: exact !important;
+              color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              forced-color-adjust: none !important;
             }
 
             /* Remove animations and transitions for clean print */

@@ -512,7 +512,7 @@ const HtmlEditor = () => {
             </div>
             <div className="flex-1 overflow-auto p-4 bg-gray-50">
               <div className="w-full h-full">
-                <HtmlPreview ref={previewRef} html={html} />
+                <HtmlPreview ref={previewRef} html={html} key={html.length} />
               </div>
             </div>
           </Card>
