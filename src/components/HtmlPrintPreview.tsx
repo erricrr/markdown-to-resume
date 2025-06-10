@@ -48,7 +48,13 @@ export const HtmlPrintPreview = ({ html }: HtmlPrintPreviewProps) => {
               transition-delay: 0s !important;
             }
 
-            /* Force grid layouts to stay grid in print */
+            /* Force specific grid containers to preserve their layout */
+            .resume-container {
+              display: grid !important;
+              grid-template-columns: 350px 1fr !important;
+            }
+
+            /* Preserve inline grid styles */
             *[style*="display: grid"],
             *[style*="display:grid"] {
               display: grid !important;
