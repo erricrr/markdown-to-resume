@@ -21,18 +21,18 @@ export const HtmlPrintPreview = ({ html }: HtmlPrintPreviewProps) => {
     // Create a new window for printing
     const printWindow = window.open("", "_blank");
     if (printWindow) {
-      // Enhanced HTML with forced two-column layout
+            // Simple approach - just preserve everything exactly as is
       let enhancedHtml = html;
 
-      // Add print-specific CSS that forces the two-column layout
+      // Add minimal print-specific CSS that preserves layouts
       const printStyles = `
-                <style>
+        <style>
           @page {
             margin: 0;
             size: A4;
           }
 
-                    @media print {
+          @media print {
             /* Preserve ALL colors and backgrounds exactly as designed */
             *, *::before, *::after {
               -webkit-print-color-adjust: exact !important;
@@ -48,35 +48,10 @@ export const HtmlPrintPreview = ({ html }: HtmlPrintPreviewProps) => {
               transition-delay: 0s !important;
             }
 
-                        /* FORCE GRID LAYOUTS TO WORK IN PRINT - maximum specificity */
-            .resume-container,
-            div.resume-container,
-            section.resume-container,
-            .container,
-            div.container,
-            .grid,
-            div.grid,
-            .layout,
-            div.layout,
-            .wrapper,
-            div.wrapper,
-            [class*="container"],
-            [class*="grid"],
-            [class*="layout"],
-            [class*="resume"] {
+            /* Force grid layouts to stay grid in print */
+            *[style*="display: grid"],
+            *[style*="display:grid"] {
               display: grid !important;
-              grid-template-columns: 350px 1fr !important;
-            }
-
-            /* Generic two-column override for any grid */
-            *[style*="grid-template-columns"] {
-              display: grid !important;
-            }
-
-            /* Force common grid containers to be two-column */
-            .main, .content, .app, .page, .document {
-              display: grid !important;
-              grid-template-columns: 350px 1fr !important;
             }
 
             /* Hide interactive elements that don't make sense in print */
