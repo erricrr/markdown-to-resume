@@ -18,10 +18,19 @@ export const HtmlPrintPreview = ({ html }: HtmlPrintPreviewProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
         const handlePrint = () => {
+            console.log('Print function called with HTML length:', html.length);
+    console.log('HTML preview (first 200 chars):', html.substring(0, 200));
+
+    // Debug: Check if Contact section spacing is being modified
+    if (html.includes('.section {')) {
+      const sectionMatch = html.match(/\.section\s*{[^}]*}/);
+      console.log('Found .section CSS rule:', sectionMatch ? sectionMatch[0] : 'Not found');
+    }
+
     // Create a new window for printing
     const printWindow = window.open("", "_blank");
     if (printWindow) {
-            // Simple approach - just preserve everything exactly as is
+      // Simple approach - just preserve everything exactly as is
       let enhancedHtml = html;
 
       // Add minimal print-specific CSS that preserves layouts
@@ -80,7 +89,6 @@ export const HtmlPrintPreview = ({ html }: HtmlPrintPreviewProps) => {
           window.onload = function() {
             setTimeout(() => {
               window.print();
-              setTimeout(() => window.close(), 1000);
             }, 500);
           };
         </script>

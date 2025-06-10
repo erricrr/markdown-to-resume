@@ -53,17 +53,17 @@ const defaultHtml = `<!DOCTYPE html>
             margin-top: 10px;
         }
 
-        /* Two-column layout */
+                /* Two-column layout */
         .content {
             display: grid;
             grid-template-columns: 1fr 2fr;
             gap: 40px;
-            margin-top: 30px;
+            margin-top: 15px;
         }
 
         .left-column {
             background: #f8f9fa;
-            padding: 30px;
+            padding: 20px 25px 25px 25px;
             border-radius: 8px;
         }
 
@@ -72,7 +72,16 @@ const defaultHtml = `<!DOCTYPE html>
         }
 
         .section {
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+        }
+
+        .section:first-child {
+            margin-top: 0;
+            padding-top: 0;
+        }
+
+        .section:first-child h2 {
+            margin-top: 0;
         }
         .section h2 {
             color: #333;
