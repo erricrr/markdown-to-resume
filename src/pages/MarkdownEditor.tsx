@@ -173,7 +173,7 @@ const MarkdownEditor = () => {
 
     if (inputMode === "twoPage") {
       return (
-        <div className="grid grid-cols-1 gap-6">
+        <div className="grid grid-cols-1 gap-6 h-full overflow-auto">
           <Card className="shadow-xl border-0 bg-white overflow-hidden">
             <div className="p-6 border-b">
               <div className="flex items-center gap-2">
@@ -187,7 +187,7 @@ const MarkdownEditor = () => {
               <Textarea
                 value={firstPage}
                 onChange={(e) => setFirstPage(e.target.value)}
-                className="min-h-[300px] resize-none"
+                className="h-[300px] w-full resize-none overflow-y-auto"
                 placeholder="Enter content for the first page..."
               />
             </div>
@@ -205,7 +205,7 @@ const MarkdownEditor = () => {
               <Textarea
                 value={secondPage}
                 onChange={(e) => setSecondPage(e.target.value)}
-                className="min-h-[300px] resize-none"
+                className="h-[300px] w-full resize-none overflow-y-auto"
                 placeholder="Enter content for the second page..."
               />
             </div>
@@ -216,7 +216,7 @@ const MarkdownEditor = () => {
 
     if (inputMode === "twoColumn") {
       return (
-        <div className="grid grid-cols-1 gap-6">
+        <div className="grid grid-cols-1 gap-6 h-full overflow-auto">
           {/* Header and Summary in single row on all screens */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card className="shadow-xl border-0 bg-white overflow-hidden">
@@ -232,7 +232,7 @@ const MarkdownEditor = () => {
                 <Textarea
                   value={header}
                   onChange={(e) => setHeader(e.target.value)}
-                  className="min-h-[120px] resize-none"
+                  className="h-[120px] w-full resize-none overflow-y-auto"
                   placeholder="Enter header content (name, contact info)..."
                 />
               </div>
@@ -250,7 +250,7 @@ const MarkdownEditor = () => {
                 <Textarea
                   value={summary}
                   onChange={(e) => setSummary(e.target.value)}
-                  className="min-h-[100px] resize-none"
+                  className="h-[120px] w-full resize-none overflow-y-auto"
                   placeholder="Enter a brief professional summary..."
                 />
               </div>
@@ -272,7 +272,7 @@ const MarkdownEditor = () => {
                 <Textarea
                   value={leftColumn}
                   onChange={(e) => setLeftColumn(e.target.value)}
-                  className="min-h-[400px] resize-none"
+                  className="h-[300px] w-full resize-none overflow-y-auto"
                   placeholder="Enter left column content (skills, contact, etc.)..."
                 />
               </div>
@@ -290,7 +290,7 @@ const MarkdownEditor = () => {
                 <Textarea
                   value={rightColumn}
                   onChange={(e) => setRightColumn(e.target.value)}
-                  className="min-h-[400px] resize-none"
+                  className="h-[300px] w-full resize-none overflow-y-auto"
                   placeholder="Enter right column content (experience, projects, etc.)..."
                 />
               </div>
@@ -301,7 +301,7 @@ const MarkdownEditor = () => {
     }
 
     return (
-      <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col">
+      <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col h-full">
         <div className="p-6 border-b">
           <div className="flex items-center gap-2">
             <FileText className="h-5 w-5 text-primary" />
@@ -310,11 +310,11 @@ const MarkdownEditor = () => {
             </h2>
           </div>
         </div>
-        <div className="flex-1 p-6 pt-0">
+        <div className="flex-1 p-6 pt-0 overflow-hidden">
           <Textarea
             value={markdown}
             onChange={(e) => setMarkdown(e.target.value)}
-            className="min-h-[600px] resize-none"
+            className="h-full w-full resize-none overflow-y-auto"
             placeholder="Enter your resume in Markdown format..."
           />
         </div>
@@ -395,7 +395,7 @@ const MarkdownEditor = () => {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 h-auto sm:h-[calc(100vh-200px)]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-auto lg:h-[calc(100vh-200px)]">
           {/* Left Panel - Tabs for Editor and CSS */}
           <div className="flex flex-col h-full">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
@@ -432,7 +432,7 @@ const MarkdownEditor = () => {
           </div>
 
           {/* Right Panel - Preview */}
-          <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col">
+          <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col h-full">
             <div className="p-6 border-b">
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">

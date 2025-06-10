@@ -218,7 +218,7 @@ ${html}
         <iframe
           ref={iframeRef}
           className="w-full border-0 bg-white rounded-lg shadow-sm"
-          style={{ minHeight: '600px', minWidth: '800px' }}
+          style={{ height: '100%', minWidth: '800px' }}
           sandbox="allow-scripts allow-same-origin"
           title="HTML Preview"
         />

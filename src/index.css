@@ -94,7 +94,7 @@
 
 /* Resume Template Styles */
 .resume-container {
-    @apply w-full;
+    @apply w-full h-full overflow-auto;
 }
 
 .resume-template {
