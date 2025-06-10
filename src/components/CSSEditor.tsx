@@ -163,21 +163,23 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
   /* Font customization */
   --resume-font-family: 'Georgia', serif !important;
 
-  /* Size customization */
+  /* Size customization - current defaults shown */
   --resume-font-size: 11pt !important;
-  --resume-h1-font-size: 22pt !important;
-  --resume-h2-font-size: 15pt !important;
+  --resume-line-height: 1.15 !important;
+  --resume-h1-font-size: 28pt !important; /* Main name/title - try 24pt, 32pt, 36pt */
+  --resume-h2-font-size: 14pt !important;
+  --resume-h3-font-size: 12pt !important;
 
-  /* Margins customization */
-  --resume-margin-top: 0.75rem !important;
-  --resume-margin-bottom: 0.75rem !important;
-  --resume-margin-left: 0.5rem !important;
-  --resume-margin-right: 0.5rem !important;
+  /* Margins customization - current defaults shown */
+  --resume-margin-top: 0.5in !important;
+  --resume-margin-bottom: 0.5in !important;
+  --resume-margin-left: 0.5in !important;
+  --resume-margin-right: 0.5in !important;
 
-  /* Spacing customization */
-  --resume-line-height: 1.4 !important;
-  --resume-summary-spacing-top: 0.75rem !important;
-  --resume-summary-spacing-bottom: 0.75rem !important;
+  /* Spacing customization - section spacing creates "breathing room" */
+  --resume-section-spacing: 10pt !important;
+  --resume-summary-spacing-top: 0.25rem !important;
+  --resume-summary-spacing-bottom: 0.125rem !important;
 }
 */
 
@@ -195,10 +197,30 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
 
 /*
 .template-${template} .resume-heading-1 {
-  /* Customize the main heading */
+  /* Customize the main heading (H1) - your name/title */
   color: #1a202c !important;
   text-align: center !important;
+  font-size: 32pt !important; /* Override default 28pt - try 24pt, 36pt, 40pt */
+  font-weight: 700 !important; /* Make it bolder */
+  letter-spacing: 1px !important; /* Add spacing between letters */
 }
+*/
+
+/*
+ * H1 FONT SIZE QUICK EXAMPLES
+ * Uncomment one of these to quickly change your name size
+ */
+
+/*
+.resume-template { --resume-h1-font-size: 24pt !important; } /* Smaller name */
+*/
+
+/*
+.resume-template { --resume-h1-font-size: 32pt !important; } /* Larger name */
+*/
+
+/*
+.resume-template { --resume-h1-font-size: 36pt !important; } /* Very large name */
 */
 
 /*
@@ -406,7 +428,7 @@ ${originalCSS}`;
                   <p>💡 <strong>How it works:</strong> Each tab shows CSS for that template. Changes apply immediately to the preview.</p>
                   <p>🔄 <strong>Switching tabs:</strong> Changes the template in the live preview to match the CSS you're editing.</p>
                   <p>🎨 <strong>Add Examples:</strong> Adds customization examples you can uncomment and edit.</p>
-                  <p>⚙️ <strong>CSS Variables:</strong> Use --resume-font-family, --resume-font-size, --resume-line-height, --resume-margin-top/bottom/left/right.</p>
+                  <p>⚙️ <strong>CSS Variables:</strong> Use --resume-font-family, --resume-font-size, --resume-line-height, --resume-h1-font-size (default 28pt), --resume-margin-top/bottom/left/right.</p>
                   <p>📐 <strong>Two-column layout:</strong> Use --resume-summary-spacing-top/bottom to control spacing above/below summary.</p>
                   <p>⚠️ <strong>Important:</strong> Use .resume-template selector and add !important to ensure styles work in PDF.</p>
                 </div>

@@ -142,9 +142,11 @@ export const useDynamicCSS = () => {
 .resume-template .resume-heading-3,
 .resume-template h3 {
   font-size: var(--resume-h3-font-size) !important;
-  font-weight: bold !important;
+  font-weight: 500 !important;
   line-height: 1.3 !important;
   font-family: var(--resume-font-family) !important;
+  margin-top: 0.75rem !important;
+  margin-bottom: 0.375rem !important;
 }
 
 .resume-template .resume-paragraph,
@@ -159,6 +161,14 @@ export const useDynamicCSS = () => {
   font-size: var(--resume-font-size) !important;
   line-height: var(--resume-line-height) !important;
   font-family: var(--resume-font-family) !important;
+}
+
+/* Ensure italic text is always left-aligned */
+.resume-template .resume-emphasis,
+.resume-template em,
+.resume-template i {
+  font-style: italic !important;
+  text-align: left !important;
 }
 
 /* Reset any template-specific padding to ensure consistent margins */

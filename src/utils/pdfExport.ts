@@ -235,7 +235,7 @@ export const exportToPDF = async (resumeData: ResumeData) => {
 /* Page settings for PDF - MATCH LIVE PREVIEW MARGINS */
 @page {
   size: A4;
-  margin: var(--resume-margin-top) var(--resume-margin-left);
+  margin: 0;
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
   color-adjust: exact !important;
@@ -264,7 +264,7 @@ body::before, body::after {
 
 /* Final override with maximum specificity to ensure PDF matches preview exactly */
 html body .resume-template {
-  padding: var(--resume-margin-top) var(--resume-margin-left) var(--resume-margin-bottom) var(--resume-margin-right) !important;
+  padding: var(--resume-margin-top) var(--resume-margin-right) var(--resume-margin-bottom) var(--resume-margin-left) !important;
   margin: 0 !important;
   box-shadow: none !important;
   background: white !important;
@@ -327,9 +327,11 @@ html body .resume-template h2 {
 html body .resume-template .resume-heading-3,
 html body .resume-template h3 {
   font-size: var(--resume-h3-font-size) !important;
-  font-weight: bold !important;
+  font-weight: 500 !important;
   line-height: 1.3 !important;
   font-family: var(--resume-font-family) !important;
+  margin-top: 0.75rem !important;
+  margin-bottom: 0.375rem !important;
 }
 
 html body .resume-template .resume-paragraph,
@@ -344,6 +346,29 @@ html body .resume-template li {
   font-size: var(--resume-font-size) !important;
   line-height: var(--resume-line-height) !important;
   font-family: var(--resume-font-family) !important;
+}
+
+/* Ensure italic text is always left-aligned in PDF */
+html body .resume-template .resume-emphasis,
+html body .resume-template em,
+html body .resume-template i {
+  font-style: italic !important;
+  text-align: left !important;
+}
+
+/* Section spacing in PDF - add breathing room between sections */
+html body .resume-template .resume-heading-2 + * {
+  margin-top: 0.25rem !important;
+}
+
+/* Add spacing after sections in PDF */
+html body .resume-template .resume-heading-2:not(:last-child) {
+  margin-bottom: calc(var(--resume-section-spacing) * 0.5) !important;
+}
+
+/* Add space after the content that follows a heading in PDF */
+html body .resume-template .resume-heading-2 + *:not(:last-child) {
+  margin-bottom: var(--resume-section-spacing) !important;
 }
 `;
 
