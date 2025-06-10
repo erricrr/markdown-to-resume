@@ -198,14 +198,11 @@ const defaultHtml = `<!DOCTYPE html>
             }
 
             .left-column {
-                background: #f8f9fa !important;
                 -webkit-print-color-adjust: exact !important;
                 color-adjust: exact !important;
             }
 
             .skill {
-                background: #e3f2fd !important;
-                color: #1976d2 !important;
                 -webkit-print-color-adjust: exact !important;
                 color-adjust: exact !important;
             }
