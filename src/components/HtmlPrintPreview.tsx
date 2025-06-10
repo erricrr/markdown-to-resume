@@ -17,77 +17,118 @@ interface HtmlPrintPreviewProps {
 export const HtmlPrintPreview = ({ html }: HtmlPrintPreviewProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const handlePrint = () => {
+        const handlePrint = () => {
     // Create a new window for printing
     const printWindow = window.open("", "_blank");
     if (printWindow) {
-      // Add enhanced print styles
-      const enhancedHtml = html.replace(
-        /<\/head>/i,
-        `
-        <style>
-          @media print {
-            @page {
-              margin: 0.5in;
-              size: A4;
-            }
-            body {
-              margin: 0 !important;
-              padding: 0 !important;
-              background: white !important;
-              font-size: 12pt !important;
-              line-height: 1.4 !important;
-            }
-            * {
+      // Enhanced HTML with forced two-column layout
+      let enhancedHtml = html;
+
+      // Add print-specific CSS that forces the two-column layout
+      const printStyles = `
+                <style>
+          @page {
+            margin: 0;
+            size: A4;
+          }
+
+                    @media print {
+            /* Preserve ALL colors and backgrounds exactly as designed */
+            *, *::before, *::after {
               -webkit-print-color-adjust: exact !important;
               color-adjust: exact !important;
+              print-color-adjust: exact !important;
             }
-            .no-print {
+
+            /* Remove animations and transitions for clean print */
+            *, *::before, *::after {
+              animation-duration: 0s !important;
+              animation-delay: 0s !important;
+              transition-duration: 0s !important;
+              transition-delay: 0s !important;
+            }
+
+                        /* FORCE GRID LAYOUTS TO WORK IN PRINT - maximum specificity */
+            .resume-container,
+            div.resume-container,
+            section.resume-container,
+            .container,
+            div.container,
+            .grid,
+            div.grid,
+            .layout,
+            div.layout,
+            .wrapper,
+            div.wrapper,
+            [class*="container"],
+            [class*="grid"],
+            [class*="layout"],
+            [class*="resume"] {
+              display: grid !important;
+              grid-template-columns: 350px 1fr !important;
+            }
+
+            /* Generic two-column override for any grid */
+            *[style*="grid-template-columns"] {
+              display: grid !important;
+            }
+
+            /* Force common grid containers to be two-column */
+            .main, .content, .app, .page, .document {
+              display: grid !important;
+              grid-template-columns: 350px 1fr !important;
+            }
+
+            /* Hide interactive elements that don't make sense in print */
+            button:not([class*="print"]):not([class*="visible"]),
+            input[type="button"],
+            input[type="submit"],
+            input[type="reset"],
+            .interactive-section,
+            [class*="interactive"]:not([class*="print"]) {
               display: none !important;
-            }
-            .page-break-before {
-              page-break-before: always !important;
-            }
-            .page-break-after {
-              page-break-after: always !important;
-            }
-            .page-break-inside-avoid {
-              page-break-inside: avoid !important;
-            }
-            /* Hide interactive elements in print */
-            button, input, select, textarea {
-              display: none !important;
-            }
-            /* Ensure proper text rendering */
-            h1, h2, h3, h4, h5, h6 {
-              page-break-after: avoid !important;
-            }
-            p, li {
-              orphans: 3 !important;
-              widows: 3 !important;
             }
           }
         </style>
-        </head>`
-      );
+
+        <script>
+          window.addEventListener('beforeprint', function() {
+            document.title = 'Resume';
+          });
+
+          window.onload = function() {
+            setTimeout(() => {
+              window.print();
+              setTimeout(() => window.close(), 1000);
+            }, 500);
+          };
+        </script>
+      `;
+
+      // Insert the print styles before closing head tag
+      if (enhancedHtml.includes('</head>')) {
+        enhancedHtml = enhancedHtml.replace('</head>', printStyles + '</head>');
+      } else {
+        // If no head tag, add one
+        enhancedHtml = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Resume</title>
+  ${printStyles}
+</head>
+<body>
+  ${html}
+</body>
+</html>`;
+      }
 
       printWindow.document.write(enhancedHtml);
       printWindow.document.close();
-
-      // Wait for content to load, then print
-      printWindow.onload = () => {
-        setTimeout(() => {
-          printWindow.print();
-          printWindow.close();
-        }, 500);
-      };
     }
   };
 
-  const handleDirectPrint = () => {
-    // For direct printing of the current page
-    window.print();
-  };
+
 
   return (
     <>
@@ -104,9 +145,9 @@ export const HtmlPrintPreview = ({ html }: HtmlPrintPreviewProps) => {
         </DialogTrigger>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Print Options</DialogTitle>
+            <DialogTitle>Print Resume</DialogTitle>
             <DialogDescription>
-              Choose how you want to print your HTML resume
+              Generate a professional PDF of your HTML resume
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-3 mt-4">
@@ -118,28 +159,23 @@ export const HtmlPrintPreview = ({ html }: HtmlPrintPreviewProps) => {
               className="gap-2"
             >
               <Printer className="h-4 w-4" />
-              Print in New Window
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => {
-                handleDirectPrint();
-                setIsOpen(false);
-              }}
-              className="gap-2"
-            >
-              <Printer className="h-4 w-4" />
-              Print Current View
+              Print Resume as PDF
             </Button>
           </div>
           <div className="mt-4 p-3 bg-blue-50 rounded-lg text-sm text-blue-800">
-            <p className="font-medium mb-1">Tips for best PDF results:</p>
+            <p className="font-medium mb-1">📋 Print Dialog Settings:</p>
             <ul className="text-xs space-y-1">
-              <li>• Use "Print in New Window" for better formatting</li>
-              <li>• Select "Save as PDF" in your browser's print dialog</li>
-              <li>• Choose A4 or Letter size for standard resumes</li>
-              <li>• Enable "Background graphics" for colors</li>
+              <li>• <strong>Destination:</strong> "Save as PDF"</li>
+              <li>• <strong>Paper size:</strong> A4 or Letter</li>
+              <li>• <strong>Headers and footers:</strong> OFF (removes metadata)</li>
+              <li>• <strong>Background graphics:</strong> ON (preserves colors)</li>
+              <li>• <strong>Margins:</strong> Minimum</li>
             </ul>
+          </div>
+
+          <div className="mt-3 p-3 bg-amber-50 rounded-lg text-sm text-amber-800">
+            <p className="font-medium mb-1">⚠️ Important:</p>
+            <p className="text-xs">Turn off "Headers and footers" to prevent browser metadata from appearing in your PDF. This ensures a clean, professional resume without URL/date stamps.</p>
           </div>
         </DialogContent>
       </Dialog>

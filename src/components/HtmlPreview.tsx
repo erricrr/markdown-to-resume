@@ -14,68 +14,146 @@ export const HtmlPreview = forwardRef<HTMLDivElement, HtmlPreviewProps>(
         const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
 
         if (iframeDoc) {
-          // Write the HTML content to the iframe
+          // Clear the iframe first
           iframeDoc.open();
-          iframeDoc.write(html);
+          iframeDoc.write('');
           iframeDoc.close();
 
-          // Add print media query styles for better PDF rendering
-          const printStyles = `
-            <style>
-              @media print {
-                body {
-                  margin: 0 !important;
-                  padding: 20px !important;
-                  background: white !important;
-                }
-                * {
-                  -webkit-print-color-adjust: exact !important;
-                  color-adjust: exact !important;
-                }
-                .no-print {
-                  display: none !important;
-                }
-              }
-            </style>
-          `;
+          // Write the HTML content to the iframe
+          iframeDoc.open();
 
-          // Add the print styles to the head
-          if (iframeDoc.head) {
-            const styleElement = iframeDoc.createElement('div');
-            styleElement.innerHTML = printStyles;
-            const style = styleElement.firstChild as HTMLStyleElement;
-            if (style) {
-              iframeDoc.head.appendChild(style);
-            }
+          // If the HTML doesn't include DOCTYPE, add it along with proper meta tags
+          let htmlContent = html;
+          if (!html.trim().toLowerCase().startsWith('<!doctype')) {
+            htmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Preview</title>
+    <style>
+      /* Ensure proper CSS rendering */
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: auto;
+        overflow-x: hidden;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      @media print {
+        body {
+          margin: 0 !important;
+          padding: 20px !important;
+          background: white !important;
+        }
+        * {
+          -webkit-print-color-adjust: exact !important;
+          color-adjust: exact !important;
+        }
+        .no-print {
+          display: none !important;
+        }
+        .page-break-before {
+          page-break-before: always !important;
+        }
+        .page-break-after {
+          page-break-after: always !important;
+        }
+        .page-break-inside-avoid {
+          page-break-inside: avoid !important;
+        }
+      }
+    </style>
+</head>
+<body>
+${html}
+</body>
+</html>`;
+          } else {
+            // If HTML already has DOCTYPE, just ensure it has proper print styles
+            htmlContent = html.replace(
+              /<\/head>/i,
+              `<style>
+      /* Ensure proper CSS rendering */
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: auto;
+        overflow-x: hidden;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      @media print {
+        body {
+          margin: 0 !important;
+          padding: 20px !important;
+          background: white !important;
+        }
+        * {
+          -webkit-print-color-adjust: exact !important;
+          color-adjust: exact !important;
+        }
+        .no-print {
+          display: none !important;
+        }
+        .page-break-before {
+          page-break-before: always !important;
+        }
+        .page-break-after {
+          page-break-after: always !important;
+        }
+        .page-break-inside-avoid {
+          page-break-inside: avoid !important;
+        }
+      }
+    </style>
+</head>`
+            );
           }
 
-          // Handle iframe resizing to fit content
+          iframeDoc.write(htmlContent);
+          iframeDoc.close();
+
+          // Handle iframe resizing to fit content with proper delay for CSS to load
           const resizeIframe = () => {
             if (iframeDoc.body) {
-              const height = Math.max(
-                iframeDoc.body.scrollHeight,
-                iframeDoc.body.offsetHeight,
-                iframeDoc.documentElement.clientHeight,
-                iframeDoc.documentElement.scrollHeight,
-                iframeDoc.documentElement.offsetHeight
-              );
-              iframe.style.height = height + 'px';
+              // Wait for any CSS layouts to be calculated
+              setTimeout(() => {
+                const height = Math.max(
+                  iframeDoc.body.scrollHeight,
+                  iframeDoc.body.offsetHeight,
+                  iframeDoc.documentElement.clientHeight,
+                  iframeDoc.documentElement.scrollHeight,
+                  iframeDoc.documentElement.offsetHeight
+                );
+                iframe.style.height = Math.max(height, 400) + 'px';
+              }, 50);
             }
           };
 
-          // Resize immediately and set up observer for dynamic content
-          setTimeout(resizeIframe, 100);
+          // Resize after content loads and CSS is applied
+          setTimeout(resizeIframe, 200);
 
           // Set up mutation observer to handle dynamic content changes
-          const observer = new MutationObserver(resizeIframe);
-          observer.observe(iframeDoc.body, {
-            childList: true,
-            subtree: true,
-            attributes: true,
-            attributeOldValue: true,
-            characterData: true,
-            characterDataOldValue: true
+          const observer = new MutationObserver(() => {
+            // Debounce resize calls
+            clearTimeout(iframe.dataset.resizeTimeout as any);
+            iframe.dataset.resizeTimeout = setTimeout(resizeIframe, 100) as any;
           });
+
+          if (iframeDoc.body) {
+            observer.observe(iframeDoc.body, {
+              childList: true,
+              subtree: true,
+              attributes: true,
+              characterData: true
+            });
+          }
 
           // Handle window resize
           const handleResize = () => {
@@ -87,6 +165,7 @@ export const HtmlPreview = forwardRef<HTMLDivElement, HtmlPreviewProps>(
           return () => {
             observer.disconnect();
             window.removeEventListener('resize', handleResize);
+            clearTimeout(iframe.dataset.resizeTimeout as any);
           };
         }
       }
@@ -97,7 +176,7 @@ export const HtmlPreview = forwardRef<HTMLDivElement, HtmlPreviewProps>(
         <iframe
           ref={iframeRef}
           className="w-full border-0 bg-white rounded-lg shadow-sm"
-          style={{ minHeight: '600px' }}
+          style={{ minHeight: '600px', minWidth: '800px' }}
           sandbox="allow-scripts allow-same-origin"
           title="HTML Preview"
         />
