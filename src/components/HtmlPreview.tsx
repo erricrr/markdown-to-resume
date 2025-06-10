@@ -47,12 +47,18 @@ export const HtmlPreview = forwardRef<HTMLDivElement, HtmlPreviewProps>(
         width: 100%;
         height: auto;
         overflow-x: hidden;
+        max-width: 100%;
       }
       * {
         box-sizing: border-box;
         -webkit-print-color-adjust: exact !important;
         color-adjust: exact !important;
         print-color-adjust: exact !important;
+      }
+      /* Ensure content fits within iframe */
+      .resume, body > div {
+        max-width: 100% !important;
+        overflow-x: hidden !important;
       }
       @media print {
         body {
@@ -95,12 +101,18 @@ ${html}
         width: 100%;
         height: auto;
         overflow-x: hidden;
+        max-width: 100%;
       }
       * {
         box-sizing: border-box;
         -webkit-print-color-adjust: exact !important;
         color-adjust: exact !important;
         print-color-adjust: exact !important;
+      }
+      /* Ensure content fits within iframe */
+      .resume, body > div {
+        max-width: 100% !important;
+        overflow-x: hidden !important;
       }
       @media print {
         body {
@@ -173,6 +185,12 @@ ${html}
                   iframeDoc.documentElement.offsetHeight
                 );
                 iframe.style.height = Math.max(height, 400) + 'px';
+
+                // Ensure document width is limited to iframe width
+                if (iframeDoc.body.firstChild && (iframeDoc.body.firstChild as HTMLElement).style) {
+                  (iframeDoc.body.firstChild as HTMLElement).style.maxWidth = '100%';
+                  (iframeDoc.body.firstChild as HTMLElement).style.overflowX = 'hidden';
+                }
               }, 50);
             }
           };
@@ -218,7 +236,12 @@ ${html}
         <iframe
           ref={iframeRef}
           className="w-full border-0 bg-white rounded-lg shadow-sm"
-          style={{ height: '100%', minWidth: '800px' }}
+          style={{
+            height: '100%',
+            width: '100%',
+            maxWidth: '100%',
+            overflowX: 'hidden'
+          }}
           sandbox="allow-scripts allow-same-origin"
           title="HTML Preview"
         />

@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Code, Eye, Printer, ArrowLeft, FileText } from "lucide-react";
 import { HtmlPreview } from "@/components/HtmlPreview";
 import { HtmlPrintPreview } from "@/components/HtmlPrintPreview";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 
 const defaultHtml = `<!DOCTYPE html>
 <html lang="en">
@@ -415,6 +416,20 @@ const HtmlEditor = () => {
   const [activeTab, setActiveTab] = useState("editor");
   const previewRef = useRef<HTMLDivElement>(null);
 
+  // State for panel sizes
+  const [leftPanelSize, setLeftPanelSize] = useState(() => {
+    // Try to get from localStorage, default to 50
+    const savedSize = localStorage.getItem("html-editor-left-panel-size");
+    return savedSize ? parseInt(savedSize, 10) : 50;
+  });
+
+  // Handle panel resizing
+  const handlePanelResize = (sizes: number[]) => {
+    const newLeftPanelSize = sizes[0];
+    setLeftPanelSize(newLeftPanelSize);
+    localStorage.setItem("html-editor-left-panel-size", newLeftPanelSize.toString());
+  };
+
   const handlePrintPDF = () => {
     window.print();
   };
@@ -465,52 +480,62 @@ const HtmlEditor = () => {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-auto lg:h-[calc(100vh-200px)]">
+        <ResizablePanelGroup
+          direction="horizontal"
+          className="h-auto lg:h-[calc(100vh-200px)]"
+          onLayout={handlePanelResize}
+        >
           {/* Left Panel - HTML Editor */}
-          <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col">
-            <div className="p-6 border-b">
-              <div className="flex items-center gap-2">
-                <Code className="h-5 w-5 text-primary" />
-                <h2 className="text-lg font-semibold text-foreground">
-                  HTML Editor
-                </h2>
-                <Badge variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200">
-                  CSS & JS Support
-                </Badge>
+          <ResizablePanel defaultSize={leftPanelSize} minSize={30}>
+            <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col h-full">
+              <div className="p-6 border-b">
+                <div className="flex items-center gap-2">
+                  <Code className="h-5 w-5 text-primary" />
+                  <h2 className="text-lg font-semibold text-foreground">
+                    HTML Editor
+                  </h2>
+                  <Badge variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200">
+                    CSS & JS Support
+                  </Badge>
+                </div>
               </div>
-            </div>
-            <div className="flex-1 p-6 pt-0 overflow-hidden">
-              <Textarea
-                value={html}
-                onChange={(e) => setHtml(e.target.value)}
-                className="h-full w-full font-mono text-sm resize-none overflow-auto"
-                placeholder="Enter your HTML content with embedded CSS and JavaScript..."
-              />
-            </div>
-          </Card>
+              <div className="flex-1 p-6 pt-0 overflow-hidden">
+                <Textarea
+                  value={html}
+                  onChange={(e) => setHtml(e.target.value)}
+                  className="h-full w-full font-mono text-sm resize-none overflow-auto"
+                  placeholder="Enter your HTML content with embedded CSS and JavaScript..."
+                />
+              </div>
+            </Card>
+          </ResizablePanel>
+
+          <ResizableHandle withHandle />
 
           {/* Right Panel - Preview */}
-          <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col">
-            <div className="p-6 border-b">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <Eye className="h-5 w-5 text-primary" />
-                  <h2 className="text-lg font-semibold text-foreground">
-                    Live Preview
-                  </h2>
+          <ResizablePanel minSize={30}>
+            <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col h-full">
+              <div className="p-6 border-b">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Eye className="h-5 w-5 text-primary" />
+                    <h2 className="text-lg font-semibold text-foreground">
+                      Live Preview
+                    </h2>
+                  </div>
+                  <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                    Interactive & PDF-ready
+                  </Badge>
                 </div>
-                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
-                  Interactive & PDF-ready
-                </Badge>
               </div>
-            </div>
-            <div className="flex-1 overflow-auto p-4 bg-gray-50">
-              <div className="w-full h-full">
-                <HtmlPreview ref={previewRef} html={html} key={html.length} />
+              <div className="flex-1 overflow-auto p-4 bg-gray-50">
+                <div className="w-full h-full flex items-start justify-center">
+                  <HtmlPreview ref={previewRef} html={html} key={html.length} />
+                </div>
               </div>
-            </div>
-          </Card>
-        </div>
+            </Card>
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </div>
     </div>
   );

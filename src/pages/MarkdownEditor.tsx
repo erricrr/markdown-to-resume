@@ -12,6 +12,7 @@ import { PrintPreview } from "@/components/PrintPreview";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { CSSEditor } from "@/components/CSSEditor";
 import { useDynamicCSS } from "@/hooks/useDynamicCSS";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 
 const defaultMarkdown = `# John Doe
 **Software Engineer** | john.doe@email.com | (555) 123-4567 | linkedin.com/in/johndoe
@@ -143,6 +144,20 @@ const MarkdownEditor = () => {
   const previewRef = useRef<HTMLDivElement>(null);
   const { addTemplateCSS, debugCSS } = useDynamicCSS();
 
+  // State for panel sizes
+  const [leftPanelSize, setLeftPanelSize] = useState(() => {
+    // Try to get from localStorage, default to 50
+    const savedSize = localStorage.getItem("markdown-editor-left-panel-size");
+    return savedSize ? parseInt(savedSize, 10) : 50;
+  });
+
+  // Handle panel resizing
+  const handlePanelResize = (sizes: number[]) => {
+    const newLeftPanelSize = sizes[0];
+    setLeftPanelSize(newLeftPanelSize);
+    localStorage.setItem("markdown-editor-left-panel-size", newLeftPanelSize.toString());
+  };
+
   // Log when the selected template changes
   useEffect(() => {
     console.log('🔄 Selected template changed to:', selectedTemplate);
@@ -173,7 +188,7 @@ const MarkdownEditor = () => {
 
     if (inputMode === "twoPage") {
       return (
-        <div className="grid grid-cols-1 gap-6 h-full overflow-auto">
+        <div className="grid grid-cols-1 gap-6 h-full overflow-auto pr-1">
           <Card className="shadow-xl border-0 bg-white overflow-hidden">
             <div className="p-6 border-b">
               <div className="flex items-center gap-2">
@@ -216,7 +231,7 @@ const MarkdownEditor = () => {
 
     if (inputMode === "twoColumn") {
       return (
-        <div className="grid grid-cols-1 gap-6 h-full overflow-auto">
+        <div className="grid grid-cols-1 gap-6 h-full overflow-auto pr-1">
           {/* Header and Summary in single row on all screens */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card className="shadow-xl border-0 bg-white overflow-hidden">
@@ -395,76 +410,86 @@ const MarkdownEditor = () => {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-auto lg:h-[calc(100vh-200px)]">
+        <ResizablePanelGroup
+          direction="horizontal"
+          className="h-auto lg:h-[calc(100vh-200px)]"
+          onLayout={handlePanelResize}
+        >
           {/* Left Panel - Tabs for Editor and CSS */}
-          <div className="flex flex-col h-full">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
-              <TabsList className="flex w-full mb-4 gap-1 p-1 bg-muted rounded-lg">
-                <TabsTrigger
-                  value="editor"
-                  className="flex-1 flex items-center justify-center gap-1 text-xs sm:text-sm py-1.5 px-2 rounded-md h-8 data-[state=active]:bg-white data-[state=active]:shadow-sm"
-                >
-                  <FileText className="h-3 w-3 sm:h-4 sm:w-4 mr-1 shrink-0" />
-                  <span className="truncate">Content Editor</span>
-                </TabsTrigger>
-                <TabsTrigger
-                  value="css"
-                  className="flex-1 flex items-center justify-center gap-1 text-xs sm:text-sm py-1.5 px-2 rounded-md h-8 data-[state=active]:bg-white data-[state=active]:shadow-sm"
-                >
-                  <Code className="h-3 w-3 sm:h-4 sm:w-4 mr-1 shrink-0" />
-                  <span className="truncate">CSS Editor</span>
-                </TabsTrigger>
-              </TabsList>
+          <ResizablePanel defaultSize={leftPanelSize} minSize={30}>
+            <div className="flex flex-col h-full">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
+                <TabsList className="flex w-full mb-4 gap-1 p-1 bg-muted rounded-lg">
+                  <TabsTrigger
+                    value="editor"
+                    className="flex-1 flex items-center justify-center gap-1 text-xs sm:text-sm py-1.5 px-2 rounded-md h-8 data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                  >
+                    <FileText className="h-3 w-3 sm:h-4 sm:w-4 mr-1 shrink-0" />
+                    <span className="truncate">Content Editor</span>
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="css"
+                    className="flex-1 flex items-center justify-center gap-1 text-xs sm:text-sm py-1.5 px-2 rounded-md h-8 data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                  >
+                    <Code className="h-3 w-3 sm:h-4 sm:w-4 mr-1 shrink-0" />
+                    <span className="truncate">CSS Editor</span>
+                  </TabsTrigger>
+                </TabsList>
 
-              <TabsContent value="editor" className="flex-1 overflow-auto">
-                {renderInputSection()}
-              </TabsContent>
+                <TabsContent value="editor" className="flex-1 overflow-auto">
+                  {renderInputSection()}
+                </TabsContent>
 
-              <TabsContent value="css" className="flex-1 overflow-hidden">
-                <CSSEditor
-                  selectedTemplate={selectedTemplate}
-                  onTemplateChange={setSelectedTemplate}
-                  onCSSChange={handleCSSChange}
-                  debugCSS={debugCSS}
-                />
-              </TabsContent>
-            </Tabs>
-          </div>
+                <TabsContent value="css" className="flex-1 overflow-hidden">
+                  <CSSEditor
+                    selectedTemplate={selectedTemplate}
+                    onTemplateChange={setSelectedTemplate}
+                    onCSSChange={handleCSSChange}
+                    debugCSS={debugCSS}
+                  />
+                </TabsContent>
+              </Tabs>
+            </div>
+          </ResizablePanel>
+
+          <ResizableHandle withHandle />
 
           {/* Right Panel - Preview */}
-          <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col h-full">
-            <div className="p-6 border-b">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <Eye className="h-5 w-5 text-primary" />
-                  <h2 className="text-lg font-semibold text-foreground">
-                    Live Preview
-                  </h2>
+          <ResizablePanel minSize={30}>
+            <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col h-full">
+              <div className="p-6 border-b">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Eye className="h-5 w-5 text-primary" />
+                    <h2 className="text-lg font-semibold text-foreground">
+                      Live Preview
+                    </h2>
+                  </div>
+                  <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                    PDF-accurate preview
+                  </Badge>
                 </div>
-                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
-                  PDF-accurate preview
-                </Badge>
               </div>
-            </div>
-            <div className="flex-1 overflow-auto p-4 bg-gray-50">
-              <div className="w-full h-full flex items-start justify-center">
-                <ResumePreview
-                  ref={previewRef}
-                  markdown={isTwoColumn || isTwoPage ? "" : markdown}
-                  leftColumn={isTwoColumn ? leftColumn : ""}
-                  rightColumn={isTwoColumn ? rightColumn : ""}
-                  header={isTwoColumn ? header : ""}
-                  summary={isTwoColumn ? summary : ""}
-                  firstPage={firstPage}
-                  secondPage={secondPage}
-                  template={selectedTemplate}
-                  isTwoColumn={isTwoColumn}
-                  isTwoPage={isTwoPage}
-                />
+              <div className="flex-1 overflow-auto p-4 bg-gray-50">
+                <div className="w-full h-full flex items-start justify-center">
+                  <ResumePreview
+                    ref={previewRef}
+                    markdown={isTwoColumn || isTwoPage ? "" : markdown}
+                    leftColumn={isTwoColumn ? leftColumn : ""}
+                    rightColumn={isTwoColumn ? rightColumn : ""}
+                    header={isTwoColumn ? header : ""}
+                    summary={isTwoColumn ? summary : ""}
+                    firstPage={firstPage}
+                    secondPage={secondPage}
+                    template={selectedTemplate}
+                    isTwoColumn={isTwoColumn}
+                    isTwoPage={isTwoPage}
+                  />
+                </div>
               </div>
-            </div>
-          </Card>
-        </div>
+            </Card>
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </div>
     </div>
   );
