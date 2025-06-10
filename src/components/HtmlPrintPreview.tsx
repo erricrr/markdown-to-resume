@@ -12,9 +12,11 @@ import { Printer } from "lucide-react";
 
 interface HtmlPrintPreviewProps {
   html: string;
+  paperSize?: 'A4' | 'US_LETTER';
+  uploadedFileUrl?: string;
 }
 
-export const HtmlPrintPreview = ({ html }: HtmlPrintPreviewProps) => {
+export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '' }: HtmlPrintPreviewProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
         const handlePrint = () => {
@@ -27,11 +29,26 @@ export const HtmlPrintPreview = ({ html }: HtmlPrintPreviewProps) => {
       console.log('Found .section CSS rule:', sectionMatch ? sectionMatch[0] : 'Not found');
     }
 
-    // Create a new window for printing
+          // Create a new window for printing
     const printWindow = window.open("", "_blank");
     if (printWindow) {
+      // Add uploaded file to the HTML if available
+      let processedHtml = html;
+      if (uploadedFileUrl) {
+        const uploadedFileHtml = `
+<div style="margin-top: 20px; margin-bottom: 20px;">
+  <img src="${uploadedFileUrl}" alt="Uploaded file" style="max-width: 100%; max-height: 300px; display: block; margin: 0 auto;">
+</div>`;
+
+        if (processedHtml.indexOf('</body>') !== -1) {
+          processedHtml = processedHtml.replace('</body>', `${uploadedFileHtml}</body>`);
+        } else {
+          processedHtml = processedHtml + uploadedFileHtml;
+        }
+      }
+
       // Aggressive approach - force background colors to work in print
-      let enhancedHtml = html;
+      let enhancedHtml = processedHtml;
 
             // Don't modify the HTML - just rely on CSS overrides to preserve colors
 
@@ -86,7 +103,7 @@ export const HtmlPrintPreview = ({ html }: HtmlPrintPreviewProps) => {
         <style>
           @page {
             margin: 0;
-            size: A4;
+            size: ${paperSize === 'A4' ? 'A4' : 'letter'};
           }
 
                     /* Force colors OUTSIDE of print media query */

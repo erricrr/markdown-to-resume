@@ -15,6 +15,8 @@ interface ResumeData {
   template: string;
   isTwoColumn?: boolean;
   isTwoPage?: boolean;
+  paperSize?: 'A4' | 'US_LETTER';
+  uploadedFileUrl?: string;
 }
 
 export const exportToPDF = async (resumeData: ResumeData) => {
@@ -73,7 +75,7 @@ export const exportToPDF = async (resumeData: ResumeData) => {
   };
 
   const getHtmlContent = () => {
-    const { markdown, leftColumn = '', rightColumn = '', header = '', summary = '', firstPage = '', secondPage = '', isTwoColumn = false, isTwoPage = false } = resumeData;
+    const { markdown, leftColumn = '', rightColumn = '', header = '', summary = '', firstPage = '', secondPage = '', isTwoColumn = false, isTwoPage = false, uploadedFileUrl = '' } = resumeData;
 
     if (isTwoPage && isTwoColumn) {
       // Combined mode: Two pages with two columns each
@@ -147,12 +149,19 @@ export const exportToPDF = async (resumeData: ResumeData) => {
         </div>
       `;
     } else {
-      return parseMarkdown(markdown);
+          let content = parseMarkdown(markdown);
+
+    // Add uploaded file if available
+    if (uploadedFileUrl) {
+      content += `<div class="resume-uploaded-file"><img src="${uploadedFileUrl}" alt="Uploaded file" style="max-width: 100%; max-height: 300px; display: block; margin: 0.5rem 0;" /></div>`;
     }
-  };
+
+    return content;
+  }
+};
 
   const getTemplateClasses = () => {
-    const { template, isTwoColumn = false, isTwoPage = false } = resumeData;
+    const { template, isTwoColumn = false, isTwoPage = false, paperSize = 'A4' } = resumeData;
     let baseClass = '';
     if (isTwoPage && isTwoColumn) {
       baseClass = 'resume-two-page-layout resume-two-column-layout';
@@ -160,6 +169,12 @@ export const exportToPDF = async (resumeData: ResumeData) => {
       baseClass = 'resume-two-page-layout';
     } else if (isTwoColumn) {
       baseClass = 'resume-two-column-layout';
+    }
+
+    // Add paper size class
+    const paperSizeClass = paperSize === 'A4' ? 'a4-paper' : '';
+    if (paperSizeClass) {
+      baseClass = baseClass ? `${baseClass} ${paperSizeClass}` : paperSizeClass;
     }
 
     switch (template) {
@@ -240,13 +255,18 @@ export const exportToPDF = async (resumeData: ResumeData) => {
   console.log('- Two Page:', resumeData.isTwoPage);
   console.log('- Total captured CSS length:', allLivePreviewCSS.length);
 
+    // Get the page size from the resumeData or default to A4
+  const { paperSize = 'A4' } = resumeData;
+
+  console.log(`PDF Export: Using paper size ${paperSize}`);
+
   const cssContent = `
 /* FONT IMPORTS FOR PDF CONSISTENCY */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lato:wght@300;400;700&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;600&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&family=Source+Sans+Pro:wght@300;400;600&display=swap');
 
 /* Page settings for PDF - MATCH LIVE PREVIEW MARGINS */
 @page {
-  size: A4;
+  size: ${paperSize === 'A4' ? 'A4' : 'letter'};
   margin: 0;
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
@@ -280,12 +300,18 @@ html body .resume-template {
   margin: 0 !important;
   box-shadow: none !important;
   background: white !important;
-  width: 8.5in !important;
-  min-height: 11in !important;
+  width: ${paperSize === 'A4' ? '8.27in' : '8.5in'} !important;
+  min-height: ${paperSize === 'A4' ? '11.69in' : '11in'} !important;
   box-sizing: border-box !important;
   font-family: var(--resume-font-family) !important;
   font-size: var(--resume-font-size) !important;
   line-height: var(--resume-line-height) !important;
+}
+
+/* Paper size specific overrides */
+html body .resume-template.a4-paper {
+  width: 8.27in !important;
+  min-height: 11.69in !important;
 }
 
 /* Force exact font rendering to match preview */
@@ -391,7 +417,7 @@ html body .resume-template .resume-heading-2 ~ *:last-child {
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Resume</title>
+      <title>Resume - ${paperSize === 'A4' ? 'A4' : 'US Letter'} Format</title>
       <style>
         /* ========================================
            COMPLETE CSS FROM SINGLE SOURCE OF TRUTH
@@ -400,12 +426,20 @@ html body .resume-template .resume-heading-2 ~ *:last-child {
       </style>
     </head>
     <body>
-      <div class="resume-template ${templateClasses}">
+      <div class="resume-template ${templateClasses}" data-paper-size="${paperSize}">
         ${htmlContent}
       </div>
       <script>
         // Auto-open print dialog after page loads
         window.onload = function() {
+          console.log("PDF document loaded with paper size: ${paperSize}");
+          document.title = "Resume - ${paperSize === 'A4' ? 'A4' : 'US Letter'} Format";
+
+          // Force paper size in print dialog
+          const style = document.createElement('style');
+          style.textContent = '@page { size: ${paperSize === 'A4' ? 'A4' : 'letter'}; margin: 0; }';
+          document.head.appendChild(style);
+
           setTimeout(function() {
             window.print();
           }, 500);

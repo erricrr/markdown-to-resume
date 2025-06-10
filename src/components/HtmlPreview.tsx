@@ -2,10 +2,12 @@ import { forwardRef, useEffect, useRef, useState } from "react";
 
 interface HtmlPreviewProps {
   html: string;
+  paperSize?: 'A4' | 'US_LETTER';
+  uploadedFileUrl?: string;
 }
 
 export const HtmlPreview = forwardRef<HTMLDivElement, HtmlPreviewProps>(
-  ({ html }, ref) => {
+  ({ html, paperSize = 'A4', uploadedFileUrl = '' }, ref) => {
     const iframeRef = useRef<HTMLIFrameElement>(null);
     const [isInitialRender, setIsInitialRender] = useState(true);
     const previousHtmlRef = useRef(html);
@@ -65,8 +67,23 @@ export const HtmlPreview = forwardRef<HTMLDivElement, HtmlPreviewProps>(
           iframeDoc.open();
 
           // If the HTML doesn't include DOCTYPE, add it along with proper meta tags
-          let htmlContent = renderedHtml;
-          if (!renderedHtml.trim().toLowerCase().startsWith('<!doctype')) {
+          // Add uploaded file if available
+          let htmlWithUploadedFile = renderedHtml;
+          if (uploadedFileUrl) {
+            const uploadedFileHtml = `
+<div style="margin-top: 20px; margin-bottom: 20px;">
+  <img src="${uploadedFileUrl}" alt="Uploaded file" style="max-width: 100%; max-height: 300px; display: block; margin: 0 auto;">
+</div>`;
+
+            if (htmlWithUploadedFile.indexOf('</body>') !== -1) {
+              htmlWithUploadedFile = htmlWithUploadedFile.replace('</body>', `${uploadedFileHtml}</body>`);
+            } else {
+              htmlWithUploadedFile = htmlWithUploadedFile + uploadedFileHtml;
+            }
+          }
+
+          let htmlContent = htmlWithUploadedFile;
+          if (!htmlWithUploadedFile.trim().toLowerCase().startsWith('<!doctype')) {
             htmlContent = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -110,6 +127,10 @@ export const HtmlPreview = forwardRef<HTMLDivElement, HtmlPreviewProps>(
         }
       }
       @media print {
+        @page {
+          size: ${paperSize === 'A4' ? 'A4' : 'letter'};
+          margin: 0.5in;
+        }
         body {
           margin: 0 !important;
           padding: 20px !important;
@@ -135,7 +156,7 @@ export const HtmlPreview = forwardRef<HTMLDivElement, HtmlPreviewProps>(
     </style>
 </head>
 <body>
-${renderedHtml}
+${htmlWithUploadedFile}
 </body>
 </html>`;
           } else {

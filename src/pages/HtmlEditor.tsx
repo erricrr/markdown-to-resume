@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Code, Eye, Printer, ArrowLeft, FileText } from "lucide-react";
 import { HtmlPreview } from "@/components/HtmlPreview";
 import { HtmlPrintPreview } from "@/components/HtmlPrintPreview";
+import { FileUpload } from "@/components/FileUpload";
+import { PaperSizeSelector } from "@/components/PaperSizeSelector";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 
 const defaultHtml = `<!DOCTYPE html>
@@ -414,6 +416,9 @@ const HtmlEditor = () => {
   const navigate = useNavigate();
   const [html, setHtml] = useState(defaultHtml);
   const [activeTab, setActiveTab] = useState("editor");
+  const [paperSize, setPaperSize] = useState<'A4' | 'US_LETTER'>('A4');
+  const [uploadedFileUrl, setUploadedFileUrl] = useState('');
+  const [uploadedFileName, setUploadedFileName] = useState('');
   const previewRef = useRef<HTMLDivElement>(null);
 
   // State for panel sizes
@@ -432,6 +437,15 @@ const HtmlEditor = () => {
 
   const handlePrintPDF = () => {
     window.print();
+  };
+
+  const handleFileUploaded = (fileUrl: string, fileName: string) => {
+    setUploadedFileUrl(fileUrl);
+    setUploadedFileName(fileName);
+  };
+
+  const handlePaperSizeChange = (size: 'A4' | 'US_LETTER') => {
+    setPaperSize(size);
   };
 
   return (
@@ -472,7 +486,15 @@ const HtmlEditor = () => {
                 <FileText className="h-4 w-4" />
                 Switch to Markdown
               </Button>
-              <HtmlPrintPreview html={html} />
+              <PaperSizeSelector
+                selectedPaperSize={paperSize}
+                onPaperSizeChange={handlePaperSizeChange}
+              />
+              <HtmlPrintPreview
+                html={html}
+                paperSize={paperSize}
+                uploadedFileUrl={uploadedFileUrl}
+              />
             </div>
           </div>
         </div>
@@ -486,7 +508,7 @@ const HtmlEditor = () => {
           onLayout={handlePanelResize}
         >
           {/* Left Panel - HTML Editor */}
-          <ResizablePanel defaultSize={leftPanelSize} minSize={30}>
+          <ResizablePanel defaultSize={28} minSize={15}>
             <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col h-full max-h-full">
               <div className="p-6 border-b shrink-0">
                 <div className="flex items-center gap-2">
@@ -499,11 +521,20 @@ const HtmlEditor = () => {
                   </Badge>
                 </div>
               </div>
-              <div className="flex-1 p-6 pt-0 overflow-hidden">
+              <div className="flex-1 p-6 pt-0 overflow-hidden flex flex-col">
+                <div className="mb-4">
+                  <h3 className="text-sm font-medium mb-2">Add File to Resume</h3>
+                  <FileUpload onFileUploaded={handleFileUploaded} />
+                  {uploadedFileName && (
+                    <p className="text-xs text-muted-foreground mt-2">
+                      File will be shown at the end of your resume
+                    </p>
+                  )}
+                </div>
                 <Textarea
                   value={html}
                   onChange={(e) => setHtml(e.target.value)}
-                  className="h-full w-full font-mono text-sm resize-none overflow-auto"
+                  className="flex-1 w-full font-mono text-sm resize-none overflow-auto"
                   placeholder="Enter your HTML content with embedded CSS and JavaScript..."
                 />
               </div>
@@ -513,7 +544,7 @@ const HtmlEditor = () => {
           <ResizableHandle withHandle />
 
           {/* Right Panel - Preview */}
-          <ResizablePanel minSize={30}>
+          <ResizablePanel defaultSize={72} minSize={30}>
             <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col h-full max-h-full">
               <div className="p-6 border-b shrink-0">
                 <div className="flex items-center justify-between gap-2">
@@ -530,7 +561,12 @@ const HtmlEditor = () => {
               </div>
               <div className="flex-1 overflow-auto p-4 bg-gray-50">
                 <div className="w-full h-full flex items-start justify-center">
-                  <HtmlPreview ref={previewRef} html={html} />
+                  <HtmlPreview
+                    ref={previewRef}
+                    html={html}
+                    paperSize={paperSize}
+                    uploadedFileUrl={uploadedFileUrl}
+                  />
                 </div>
               </div>
             </Card>

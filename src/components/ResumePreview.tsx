@@ -14,6 +14,8 @@ interface ResumePreviewProps {
   template: string;
   isTwoColumn?: boolean;
   isTwoPage?: boolean;
+  paperSize?: 'A4' | 'US_LETTER';
+  uploadedFileUrl?: string;
 }
 
 // List of valid template IDs
@@ -22,7 +24,7 @@ const validTemplates = ['professional', 'modern', 'minimalist', 'creative', 'exe
 type TemplateType = typeof validTemplates[number];
 
 export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
-  ({ markdown, leftColumn = '', rightColumn = '', header = '', summary = '', firstPage = '', secondPage = '', template: propTemplate, isTwoColumn = false, isTwoPage = false }, ref) => {
+  ({ markdown, leftColumn = '', rightColumn = '', header = '', summary = '', firstPage = '', secondPage = '', template: propTemplate, isTwoColumn = false, isTwoPage = false, paperSize = 'A4', uploadedFileUrl = '' }, ref) => {
     // Ensure we always have a valid template
     const template: TemplateType = validTemplates.includes(propTemplate as TemplateType)
       ? propTemplate as TemplateType
@@ -195,15 +197,24 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
 
     const htmlContent = getHtmlContent();
 
+    // Add uploaded file image if available
+    const contentWithUploadedFile = uploadedFileUrl && htmlContent ?
+      htmlContent + `<div class="resume-uploaded-file"><img src="${uploadedFileUrl}" alt="Uploaded file" style="max-width: 100%; max-height: 300px; display: block; margin: 0.5rem 0;" /></div>` :
+      htmlContent;
+
+    // Log paper size to debug
+    console.log(`ResumePreview rendering with paper size: ${paperSize}`);
+
     return (
-      <div ref={resolvedRef} className="resume-container" style={{ width: '100%' }}>
+      <div ref={resolvedRef} className="resume-container" style={{ width: '100%' }} data-paper-size={paperSize}>
         <ResumeTemplates
-          htmlContent={htmlContent}
+          htmlContent={contentWithUploadedFile}
           template={template}
           isTwoColumn={isTwoColumn}
           isTwoPage={isTwoPage}
           isPreview={true}
           containerWidth={containerWidth}
+          paperSize={paperSize}
         />
       </div>
     );

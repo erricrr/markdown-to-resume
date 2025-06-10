@@ -47,6 +47,7 @@ body {
 
 /* Resume template base */
 .resume-template {
+  /* Default to US Letter (8.5 x 11 inches) */
   width: 8.5in;
   min-height: 11in;
   margin: 0 auto;
@@ -57,6 +58,32 @@ body {
   font-family: var(--resume-font-family);
   font-size: var(--resume-font-size);
   line-height: var(--resume-line-height);
+}
+
+/* A4 paper size */
+.resume-template.a4-paper {
+  /* A4 dimensions: 210 × 297 mm (8.27 × 11.69 inches) */
+  width: 8.27in;
+  min-height: 11.69in;
+}
+
+/* Print-specific styles */
+@media print {
+  @page {
+    margin: 0;
+  }
+
+  /* Force A4 size in print */
+  .resume-template.a4-paper {
+    width: 8.27in !important;
+    height: 11.69in !important;
+  }
+
+  /* Force US Letter size in print */
+  .resume-template:not(.a4-paper) {
+    width: 8.5in !important;
+    height: 11in !important;
+  }
 }
 
 /* Base Typography with Professional Spacing */
@@ -917,8 +944,6 @@ export const printStyles = `
     padding: 0 !important;
     page-break-after: avoid !important;
     break-after: avoid !important;
-    page-break-before: avoid !important;
-    break-before: avoid !important;
   }
 
   /* Force summary to be compact with bottom padding */
@@ -934,8 +959,6 @@ export const printStyles = `
     padding: 0 !important;
     page-break-before: avoid !important;
     break-before: avoid !important;
-    page-break-inside: auto !important;
-    break-inside: auto !important;
   }
 
   /* Enhanced summary spacing control for two-column layouts */

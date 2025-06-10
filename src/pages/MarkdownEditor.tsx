@@ -10,6 +10,8 @@ import { FileText, Printer, Columns2, FileStack, Code, Eye, ArrowLeft } from "lu
 import { ResumePreview } from "@/components/ResumePreview";
 import { PrintPreview } from "@/components/PrintPreview";
 import { TemplateSelector } from "@/components/TemplateSelector";
+import { PaperSizeSelector } from "@/components/PaperSizeSelector";
+import { FileUpload } from "@/components/FileUpload";
 import { CSSEditor } from "@/components/CSSEditor";
 import { useDynamicCSS } from "@/hooks/useDynamicCSS";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
@@ -140,6 +142,9 @@ const MarkdownEditor = () => {
   });
   const [isTwoColumn, setIsTwoColumn] = useState(false);
   const [isTwoPage, setIsTwoPage] = useState(false);
+  const [paperSize, setPaperSize] = useState<'A4' | 'US_LETTER'>('A4');
+  const [uploadedFileUrl, setUploadedFileUrl] = useState('');
+  const [uploadedFileName, setUploadedFileName] = useState('');
   const [activeTab, setActiveTab] = useState("editor");
   const previewRef = useRef<HTMLDivElement>(null);
   const { addTemplateCSS, debugCSS } = useDynamicCSS();
@@ -170,6 +175,15 @@ const MarkdownEditor = () => {
   const handleCSSChange = (template: string, css: string) => {
     console.log(`🎨 Main component: CSS change for ${template}`);
     addTemplateCSS(template, css);
+  };
+
+  const handleFileUploaded = (fileUrl: string, fileName: string) => {
+    setUploadedFileUrl(fileUrl);
+    setUploadedFileName(fileName);
+  };
+
+  const handlePaperSizeChange = (size: 'A4' | 'US_LETTER') => {
+    setPaperSize(size);
   };
 
   // Force re-render when template changes to ensure CSS is applied
@@ -391,6 +405,10 @@ const MarkdownEditor = () => {
                 selectedTemplate={selectedTemplate}
                 onTemplateChange={setSelectedTemplate}
               />
+              <PaperSizeSelector
+                selectedPaperSize={paperSize}
+                onPaperSizeChange={handlePaperSizeChange}
+              />
               <PrintPreview
                 markdown={markdown}
                 leftColumn={leftColumn}
@@ -402,6 +420,8 @@ const MarkdownEditor = () => {
                 template={selectedTemplate}
                 isTwoColumn={isTwoColumn}
                 isTwoPage={isTwoPage}
+                paperSize={paperSize}
+                uploadedFileUrl={uploadedFileUrl}
               />
             </div>
           </div>
@@ -437,6 +457,15 @@ const MarkdownEditor = () => {
                 </TabsList>
 
                 <TabsContent value="editor" className="flex-1 overflow-auto">
+                  <div className="mb-4 p-4 bg-white rounded-lg shadow-sm border">
+                    <h3 className="text-sm font-medium mb-2">Add File to Resume</h3>
+                    <FileUpload onFileUploaded={handleFileUploaded} />
+                    {uploadedFileName && (
+                      <p className="text-xs text-muted-foreground mt-2">
+                        File will be shown at the end of your resume
+                      </p>
+                    )}
+                  </div>
                   {renderInputSection()}
                 </TabsContent>
 
@@ -484,6 +513,8 @@ const MarkdownEditor = () => {
                     template={selectedTemplate}
                     isTwoColumn={isTwoColumn}
                     isTwoPage={isTwoPage}
+                    paperSize={paperSize}
+                    uploadedFileUrl={uploadedFileUrl}
                   />
                 </div>
               </div>
