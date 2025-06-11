@@ -369,6 +369,7 @@ const defaultHtml = `<!DOCTYPE html>
                 });
             } else {
                 text.style.backgroundColor = 'yellow';
+                text.style.color = '#333333';
                 text.style.padding = '10px';
                 text.style.borderRadius = '5px';
                 text.textContent = 'JavaScript is working! Skills are now highlighted and animated.';
