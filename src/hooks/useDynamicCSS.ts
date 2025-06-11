@@ -80,7 +80,7 @@ export const useDynamicCSS = () => {
     allCSS += `
 /* ADDITIONAL CONSISTENCY CSS FOR PREVIEW AND PDF */
 .resume-template {
-  padding: var(--resume-margin-top) var(--resume-margin-left) var(--resume-margin-bottom) var(--resume-margin-right) !important;
+  padding: var(--resume-margin-top) var(--resume-margin-right) var(--resume-margin-bottom) var(--resume-margin-left) !important;
   width: 8.5in !important;
   min-height: 11in !important;
   box-sizing: border-box !important;
@@ -89,6 +89,12 @@ export const useDynamicCSS = () => {
   font-family: var(--resume-font-family) !important;
   font-size: var(--resume-font-size) !important;
   line-height: var(--resume-line-height) !important;
+
+  /* Default page margins if CSS variables aren't set */
+  --resume-margin-top: 0.5in !important;
+  --resume-margin-right: 0.5in !important;
+  --resume-margin-bottom: 0.5in !important;
+  --resume-margin-left: 0.5in !important;
 }
 
 /* Force exact font rendering to match PDF */
@@ -192,7 +198,7 @@ export const useDynamicCSS = () => {
 .resume-template.template-minimalist,
 .resume-template.template-executive,
 .resume-template.template-creative {
-  padding: var(--resume-margin-top) var(--resume-margin-left) var(--resume-margin-bottom) var(--resume-margin-right) !important;
+  padding: var(--resume-margin-top) var(--resume-margin-right) var(--resume-margin-bottom) var(--resume-margin-left) !important;
 }
 
 /* Force all background colors and images to display/print */
@@ -207,23 +213,27 @@ export const useDynamicCSS = () => {
     // prevent it from unintentionally overriding global application styles.
     const templateCSS = Object.entries(templateCSSRef.current)
       .map(([template, css]) => {
-        // Increase specificity by prefixing with .resume-template
+        console.log(`🔧 Processing CSS for template ${template}:`, css.substring(0, 100));
+
+        // SIMPLE APPROACH: Just increase specificity with a prefix
         let processedCSS = css.replace(
-          /\.template-(\w+)\s+([^\{]*)\{/g,
-          '.resume-template.template-$1 $2{' // e.g., .resume-template.template-professional h1 { ... }
+          /\.template-(\w+)/g,
+          '.resume-template.template-$1'
         );
 
-        // Add !important where missing to maintain template authority inside preview
+        // Also handle .resume-template selectors
         processedCSS = processedCSS.replace(
-          /:\s*([^!][^;]*);/g,
-          ': $1 !important;'
+          /^\.resume-template(?!\\.template-)/gm,
+          '.resume-template'
         );
 
-        return `/* TEMPLATE: ${template.toUpperCase()} (scoped) */\n${processedCSS}\n`;
+        console.log(`✅ Processed CSS for template ${template}:`, processedCSS.substring(0, 100));
+        return `/* TEMPLATE: ${template.toUpperCase()} */\n${processedCSS}\n`;
       })
       .join('\n');
 
-    allCSS += templateCSS;
+    // IMPORTANT: Template CSS comes AFTER base styles for proper cascade
+    allCSS += `\n/* ===== USER TEMPLATE CUSTOMIZATIONS (HIGHEST PRIORITY) ===== */\n${templateCSS}`;
 
     styleElementRef.current.textContent = allCSS;
     console.log(`🎨 Updated dynamic CSS (${allCSS.length} chars):`, allCSS.substring(0, 200) + '...');
@@ -240,12 +250,12 @@ export const useDynamicCSS = () => {
     console.log(`📝 Adding CSS for template: ${template}`);
     // Update the CSS for this template only
     templateCSSRef.current[template] = css;
-    // Clear all other templates to ensure only the current template's CSS is applied
-    Object.keys(templateCSSRef.current).forEach(key => {
-      if (key !== template) {
-        delete templateCSSRef.current[key];
-      }
-    });
+    updateAllCSS();
+  }, [updateAllCSS]);
+
+  const setActiveTemplate = useCallback((template: string) => {
+    console.log(`🎯 Setting active template: ${template}`);
+    // Only apply CSS for the active template to prevent conflicts
     updateAllCSS();
   }, [updateAllCSS]);
 
@@ -282,6 +292,7 @@ export const useDynamicCSS = () => {
 
   return {
     addTemplateCSS,
+    setActiveTemplate,
     removeTemplateCSS,
     clearCSS,
     getTemplateCSS,

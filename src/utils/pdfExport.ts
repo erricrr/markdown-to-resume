@@ -237,12 +237,15 @@ export const exportToPDF = async (resumeData: ResumeData) => {
   const getAllLivePreviewStyles = () => {
     console.log('🔍 Capturing ALL live preview styles for PDF consistency...');
 
+    // Get custom CSS from CSS editor first as it has highest priority
+    const customCSS = getDynamicCSS();
+    let allCSS = customCSS ? `\n/* CUSTOM CSS FROM TEMPLATE EDITOR */\n${customCSS}\n` : '';
+
     // Get all style elements from the page
     const allStyleElements = Array.from(document.querySelectorAll('style'));
-    let allCSS = '';
 
     allStyleElements.forEach((styleEl, index) => {
-      if (styleEl.textContent) {
+      if (styleEl.id !== 'dynamic-template-css' && styleEl.textContent) { // Skip the custom CSS we already captured
         const source = styleEl.id || styleEl.getAttribute('data-source') || `style-${index}`;
         allCSS += `\n/* CAPTURED FROM: ${source} */\n${styleEl.textContent}\n`;
       }
@@ -346,6 +349,12 @@ body::before, body::after {
 
 /* Final override with maximum specificity to ensure PDF matches preview exactly */
 html body .resume-template {
+  /* Default page margins if CSS variables aren't set */
+  --resume-margin-top: 0.5in !important;
+  --resume-margin-right: 0.5in !important;
+  --resume-margin-bottom: 0.5in !important;
+  --resume-margin-left: 0.5in !important;
+
   padding: var(--resume-margin-top) var(--resume-margin-right) var(--resume-margin-bottom) var(--resume-margin-left) !important;
   margin: 0 !important;
   box-shadow: none !important;
@@ -473,6 +482,38 @@ html body .resume-template .resume-heading-2 ~ *:last-child {
            COMPLETE CSS FROM SINGLE SOURCE OF TRUTH
            ======================================== */
         ${cssContent}
+
+        /* CRITICAL FIXES FOR TWO-PAGE LAYOUT */
+        .resume-two-page-layout {
+          overflow: visible !important;
+        }
+
+        .resume-two-page-layout .resume-page-first {
+          page-break-after: always !important;
+          break-after: page !important;
+          min-height: ${paperSize === 'A4' ? '11.69in' : '11in'} !important;
+        }
+
+        .resume-two-page-layout .resume-page-second {
+          page-break-before: always !important;
+          break-before: page !important;
+          min-height: ${paperSize === 'A4' ? '11.69in' : '11in'} !important;
+        }
+
+        /* Ensure page content is visible */
+        .resume-two-page-layout .resume-page-first,
+        .resume-two-page-layout .resume-page-second {
+          display: block !important;
+          overflow: visible !important;
+          box-sizing: border-box !important;
+          width: 100% !important;
+        }
+
+        /* Ensure proper PDF page count */
+        @page {
+          size: ${paperSize === 'A4' ? 'A4' : 'letter'};
+          margin: 0;
+        }
       </style>
     </head>
     <body>
@@ -489,6 +530,24 @@ html body .resume-template .resume-heading-2 ~ *:last-child {
           const style = document.createElement('style');
           style.textContent = '@page { size: ${paperSize === 'A4' ? 'A4' : 'letter'}; margin: 0; }';
           document.head.appendChild(style);
+
+          // For two-page layout, ensure the second page is properly displayed
+          const twoPageLayout = document.querySelector('.resume-two-page-layout');
+          if (twoPageLayout) {
+            console.log("Two-page layout detected. Configuring page breaks...");
+            const firstPage = document.querySelector('.resume-page-first');
+            const secondPage = document.querySelector('.resume-page-second');
+
+            if (firstPage && secondPage) {
+              // Force proper page breaks
+              firstPage.style.pageBreakAfter = 'always';
+              firstPage.style.breakAfter = 'page';
+              secondPage.style.pageBreakBefore = 'always';
+              secondPage.style.breakBefore = 'page';
+
+              console.log("Page breaks configured for two-page layout");
+            }
+          }
 
           setTimeout(function() {
             window.print();

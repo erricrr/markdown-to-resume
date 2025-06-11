@@ -90,8 +90,8 @@ const getCustomizationGuide = (template: string) => `/*
 
 .template-${template} {
   /* Change the main text color */
-  color: #2d3748 !important;
-  background: #ffffff !important;
+  color: #2d3748;
+  background: #ffffff;
 }
 
 /*
@@ -100,18 +100,18 @@ const getCustomizationGuide = (template: string) => `/*
 
 .template-${template} .resume-heading-1 {
   /* Customize the main heading (H1) - your name/title */
-  color: #1a202c !important;
-  text-align: center !important;
-  font-size: 32pt !important; /* Override default 28pt - try 24pt, 36pt, 40pt */
-  font-weight: 700 !important; /* Make it bolder */
-  letter-spacing: 1px !important; /* Add spacing between letters */
+  color: #1a202c;
+  text-align: center;
+  font-size: 32pt; /* Override default 28pt - try 24pt, 36pt, 40pt */
+  font-weight: 700; /* Make it bolder */
+  letter-spacing: 1px; /* Add spacing between letters */
 }
 
 .template-${template} .resume-heading-2 {
   /* Customize section headings */
-  color: #2d3748 !important;
-  border-bottom: 1px solid #e2e8f0 !important;
-  padding-bottom: 0.25rem !important;
+  color: #2d3748;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 0.25rem;
 }
 
 /*
@@ -121,30 +121,30 @@ const getCustomizationGuide = (template: string) => `/*
 
 /* Force header to be left-aligned in two-column mode */
 .resume-two-column-layout.template-${template} .resume-header {
-  text-align: left !important;
+  text-align: left;
 }
 
 .resume-two-column-layout.template-${template} .resume-header .resume-heading-1,
 .resume-two-column-layout.template-${template} .resume-header .resume-paragraph {
-  text-align: left !important;
+  text-align: left;
 }
 
 .resume-two-column-layout.template-${template} .resume-contact-info {
-  justify-content: flex-start !important;
+  justify-content: flex-start;
 }
 
 /* OR: Force header to be centered in two-column mode */
 .resume-two-column-layout.template-${template} .resume-header {
-  text-align: center !important;
+  text-align: center;
 }
 
 .resume-two-column-layout.template-${template} .resume-header .resume-heading-1,
 .resume-two-column-layout.template-${template} .resume-header .resume-paragraph {
-  text-align: center !important;
+  text-align: center;
 }
 
 .resume-two-column-layout.template-${template} .resume-contact-info {
-  justify-content: center !important;
+  justify-content: center;
 }
 
 /*
@@ -162,22 +162,39 @@ const getCustomizationGuide = (template: string) => `/*
  */
 
 /* Blue theme */
-.template-${template} .resume-heading-1 { color: #1e40af !important; }
-.template-${template} .resume-heading-2 { color: #1e40af !important; border-bottom-color: #1e40af !important; }
+.template-${template} .resume-heading-1 { color: #1e40af; }
+.template-${template} .resume-heading-2 { color: #1e40af; border-bottom-color: #1e40af; }
 
 /* Green theme */
-.template-${template} .resume-heading-1 { color: #059669 !important; }
-.template-${template} .resume-heading-2 { color: #059669 !important; border-bottom-color: #059669 !important; }
+.template-${template} .resume-heading-1 { color: #059669; }
+.template-${template} .resume-heading-2 { color: #059669; border-bottom-color: #059669; }
 
 /* Purple theme */
-.template-${template} .resume-heading-1 { color: #7c3aed !important; }
-.template-${template} .resume-heading-2 { color: #7c3aed !important; border-bottom-color: #7c3aed !important; }`;
+.template-${template} .resume-heading-1 { color: #7c3aed; }
+.template-${template} .resume-heading-2 { color: #7c3aed; border-bottom-color: #7c3aed; }`;
 
 export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, debugCSS }: CSSEditorProps) => {
-  const [templateCSS, setTemplateCSS] = useState<Record<string, string>>(defaultTemplateCSS);
+  const [templateCSS, setTemplateCSS] = useState<Record<string, string>>(() => {
+    // Try to load from localStorage first, fallback to defaults
+    const savedCSS: Record<string, string> = {};
+    Object.keys(defaultTemplateCSS).forEach(template => {
+      const saved = localStorage.getItem(`css-editor-${template}`);
+      savedCSS[template] = saved || defaultTemplateCSS[template];
+    });
+    return savedCSS;
+  });
   const [activeTab, setActiveTab] = useState(selectedTemplate);
   const [cssEditorMode, setCssEditorMode] = useState<'template' | 'guide'>('template');
   const { toast } = useToast();
+
+  // Auto-save effect for CSS changes
+  useEffect(() => {
+    console.log('💾 Auto-saving CSS changes:', Object.keys(templateCSS));
+    Object.entries(templateCSS).forEach(([template, css]) => {
+      localStorage.setItem(`css-editor-${template}`, css);
+      console.log(`💾 Saved CSS for ${template}:`, css.substring(0, 100));
+    });
+  }, [templateCSS]);
 
   useEffect(() => {
     setActiveTab(selectedTemplate);
@@ -191,28 +208,32 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
 
   // Initialize CSS for all templates on mount - ONLY ONCE
   useEffect(() => {
-    console.log('🚀 Initializing CSS for all templates...');
-
-    // Apply default CSS for all templates
-    Object.entries(defaultTemplateCSS).forEach(([template, css]) => {
-      setTemplateCSS(prev => ({
-        ...prev,
-        [template]: css
-      }));
-    });
+    console.log('🚀 Component mounted, templateCSS keys:', Object.keys(templateCSS));
 
     // Apply the selected template's CSS to the live preview
-    onCSSChange(selectedTemplate, defaultTemplateCSS[selectedTemplate]);
+    const selectedCSS = templateCSS[selectedTemplate];
+    if (selectedCSS) {
+      console.log('🔄 Applying CSS for template:', selectedTemplate, selectedCSS.substring(0, 100));
+      onCSSChange(selectedTemplate, selectedCSS);
+    } else {
+      console.log('⚠️ No CSS found for template, using default:', selectedTemplate);
+      onCSSChange(selectedTemplate, defaultTemplateCSS[selectedTemplate]);
+    }
   }, []); // Empty dependency array - only run once on mount
 
   const handleCSSChange = (template: string, css: string) => {
-    console.log(`✏️ CSS changed for ${template}`);
-    setTemplateCSS(prev => ({
-      ...prev,
-      [template]: css
-    }));
+    console.log(`✏️ CSS changed for ${template}:`, css.substring(0, 100));
+    setTemplateCSS(prev => {
+      const newCSS = {
+        ...prev,
+        [template]: css
+      };
+      console.log(`📝 Setting new CSS state for ${template}`);
+      return newCSS;
+    });
     // Only apply CSS changes for the currently selected template to the live preview
     if (template === selectedTemplate) {
+      console.log(`🎯 Applying CSS changes to live preview for ${template}`);
       onCSSChange(template, css);
     }
   };
@@ -261,6 +282,13 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
     if (debugCSS) {
       debugCSS();
     }
+
+    // Also check localStorage CSS
+    console.log('💾 LOCALSTORAGE CSS:');
+    Object.keys(defaultTemplateCSS).forEach(template => {
+      const saved = localStorage.getItem(`css-editor-${template}`);
+      console.log(`Template ${template}:`, saved ? saved.substring(0, 100) : 'Not found');
+    });
 
     // Also check if dynamic CSS element exists and log its content
     const dynamicStyleElement = document.getElementById('dynamic-template-css') as HTMLStyleElement;
@@ -314,7 +342,7 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
 
     toast({
       title: "Debug Info",
-      description: "Check the browser console for detailed CSS debug information."
+      description: "Check the browser console for detailed CSS debug information. If CSS isn't applying, try adding !important to your custom CSS properties."
     });
   };
 
@@ -327,11 +355,21 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
             <h2 className="text-lg font-semibold text-foreground">
               Template CSS Editor
             </h2>
+            <span className="text-xs text-gray-500">Auto-saved</span>
           </div>
           <div className="flex items-center gap-2">
             <Badge variant="secondary" className="text-xs">
               Live Preview
             </Badge>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDebug}
+              className="flex items-center gap-1"
+            >
+              <Bug className="h-3 w-3" />
+              Debug
+            </Button>
           </div>
         </div>
       </div>
@@ -415,6 +453,8 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
                         <p>💡 <strong>Template CSS:</strong> Edit the CSS for this template here. Changes apply immediately to the preview.</p>
                         <p>📖 <strong>Need examples?</strong> Switch to the "Customization Guide" tab for copy-paste examples.</p>
                         <p>⚙️ <strong>CSS Variables:</strong> Use --resume-font-family, --resume-font-size, --resume-h1-font-size, --resume-margin-* for easy customization.</p>
+                        <p>🎨 <strong>Color Changes:</strong> If your CSS isn't applying, add !important to override base styles. For example: <code>.template-professional {'{'} color: #333333 !important; {'}'}</code></p>
+                        <p>📐 <strong>Default Margins:</strong> The default margin is 0.5in on all sides. You can change it using the CSS variables above.</p>
                       </div>
                     </TabsContent>
 

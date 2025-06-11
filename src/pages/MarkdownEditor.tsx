@@ -238,7 +238,36 @@ const MarkdownEditor = () => {
   // Force re-render when template changes to ensure CSS is applied
   useEffect(() => {
     console.log(`📋 Template changed to: ${selectedTemplate}`);
-  }, [selectedTemplate]);
+    // Re-apply the CSS from localStorage when template changes
+    const savedCSS = localStorage.getItem(`css-editor-${selectedTemplate}`);
+    if (savedCSS) {
+      console.log('🎨 Re-applying saved CSS after template change:', selectedTemplate);
+      addTemplateCSS(selectedTemplate, savedCSS);
+    }
+  }, [selectedTemplate, addTemplateCSS]);
+
+  // Re-apply CSS when component mounts or returns from another editor
+  useEffect(() => {
+    console.log('🔄 MarkdownEditor mounted, re-applying current template CSS');
+    // Get the current template's CSS from localStorage and re-apply it
+    const savedCSS = localStorage.getItem(`css-editor-${selectedTemplate}`);
+    if (savedCSS) {
+      console.log('🎨 Re-applying saved CSS for template:', selectedTemplate);
+      addTemplateCSS(selectedTemplate, savedCSS);
+    }
+  }, []); // Run only on mount
+
+  // Re-apply CSS when switching back to the Content Editor tab
+  useEffect(() => {
+    if (activeTab === "editor") {
+      console.log('🔄 Switched to Content Editor tab, re-applying CSS');
+      const savedCSS = localStorage.getItem(`css-editor-${selectedTemplate}`);
+      if (savedCSS) {
+        console.log('🎨 Re-applying saved CSS for Content Editor tab:', selectedTemplate);
+        addTemplateCSS(selectedTemplate, savedCSS);
+      }
+    }
+  }, [activeTab, selectedTemplate, addTemplateCSS]);
 
   const getInputMode = () => {
     if (isTwoPage) return "twoPage";

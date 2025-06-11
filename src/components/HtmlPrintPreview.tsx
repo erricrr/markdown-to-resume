@@ -202,6 +202,47 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
               grid-template-columns: 350px 1fr !important;
             }
 
+            /* Fix for two-column layouts in print */
+            .content {
+              display: grid !important;
+              grid-template-columns: 1fr 2fr !important;
+              gap: 20px !important;
+              width: 100% !important;
+            }
+
+            .left-column, .right-column {
+              width: 100% !important;
+              overflow: hidden !important;
+            }
+
+            /* Support for flex-based column layouts */
+            [class*="column-layout"],
+            [class*="two-column"],
+            [class*="columns"],
+            [class*="col-layout"] {
+              display: grid !important;
+              grid-template-columns: 1fr 2fr !important;
+              gap: 20px !important;
+              width: 100% !important;
+            }
+
+            /* Ensure all column elements have proper display */
+            [class*="column-left"],
+            [class*="left-col"],
+            [class*="sidebar"],
+            [class*="col-1"] {
+              width: 100% !important;
+              overflow: hidden !important;
+            }
+
+            [class*="column-right"],
+            [class*="right-col"],
+            [class*="main-content"],
+            [class*="col-2"] {
+              width: 100% !important;
+              overflow: hidden !important;
+            }
+
             /* Preserve inline grid styles */
             *[style*="display: grid"],
             *[style*="display:grid"] {
