@@ -121,17 +121,60 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
           '<td$1><p$2><span class="resume-table-bullet-item">$3</span></p></td>'
         );
 
-        return DOMPurify.sanitize(processedHtml);
+        // Allow inline style attributes so users can add custom spacing or sizing (e.g. padding on images)
+        // The additional attributes are strictly sanitized by DOMPurify, so only safe CSS values are kept.
+        // @ts-ignore – ADD_ATTR may not exist on older DOMPurify typings but is supported at runtime.
+        return DOMPurify.sanitize(processedHtml, { ADD_ATTR: ['style'] });
       } catch (error) {
         console.error('Error parsing markdown:', error);
         return '<p>Error parsing markdown content</p>';
       }
     };
 
+    // ====================
+    // Header post-processing
+    // ====================
+    /**
+     * Converts the raw header markdown into structured HTML so we can style
+     * the individual contact items (role, email, phone, etc.) more elegantly.
+     *
+     * Expected author input (but not strictly required):
+     *   # John Doe             ← name (H1)
+     *   **Software Engineer** | john@email.com | (+1) 555-555-5555
+     *
+     * The first line becomes the H1. Everything after the first line is split
+     * by the pipe character (|) and wrapped in <span class="resume-contact-item">.
+     * Separators receive <span class="resume-contact-separator"> for styling.
+     */
+    const processHeaderMarkdown = (headerMd: string) => {
+      if (!headerMd) return '';
+
+      const lines = headerMd.trim().split('\n');
+      const titleLine = lines[0] || '';
+      const remaining = lines.slice(1).join(' ').trim();
+
+      // Convert title (usually "# Name") to HTML
+      const titleHtml = parseMarkdown(titleLine);
+
+      let contactInfoHtml = '';
+      if (remaining) {
+        const items = remaining.split('|').map((it) => it.trim()).filter(Boolean);
+        if (items.length) {
+          const itemsHtml = items
+            .map((it) => `<span class="resume-contact-item">${parseMarkdown(it)}</span>`)
+            .join('<span class="resume-contact-separator">|</span>');
+
+          contactInfoHtml = `<div class="resume-contact-info">${itemsHtml}</div>`;
+        }
+      }
+
+      return `${titleHtml}${contactInfoHtml}`;
+    };
+
     const getHtmlContent = () => {
       if (isTwoPage && isTwoColumn) {
         // Combined mode: Two pages with two columns each
-        const headerHtml = header ? parseMarkdown(header) : '';
+        const headerHtml = header ? processHeaderMarkdown(header) : '';
         const summaryHtml = summary ? `<p class="resume-paragraph resume-summary">${summary}</p>` : '';
         const leftHtml = parseMarkdown(leftColumn);
         const rightHtml = parseMarkdown(rightColumn);
@@ -182,7 +225,7 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
           </div>
         `;
       } else if (isTwoColumn) {
-        const headerHtml = header ? parseMarkdown(header) : '';
+        const headerHtml = header ? processHeaderMarkdown(header) : '';
         const summaryHtml = summary ? `<p class="resume-paragraph resume-summary">${summary}</p>` : '';
         const leftHtml = parseMarkdown(leftColumn);
         const rightHtml = parseMarkdown(rightColumn);
@@ -201,6 +244,7 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
           </div>
         `;
       } else {
+        // Single-column, single-page mode
         return parseMarkdown(markdown);
       }
     };
@@ -242,7 +286,7 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
     console.log(`ResumePreview rendering with paper size: ${paperSize}`);
 
     return (
-      <div ref={resolvedRef} className="resume-container" style={{ width: '100%' }} data-paper-size={paperSize}>
+      <div ref={resolvedRef as MutableRefObject<HTMLDivElement>} className="resume-container" style={{ width: '100%' }} data-paper-size={paperSize}>
         <ResumeTemplates
           htmlContent={contentWithUploadedFile}
           template={template}

@@ -75,11 +75,37 @@ export const exportToPDF = async (resumeData: ResumeData) => {
         '<td$1><p$2><span class="resume-table-bullet-item">$3</span></p></td>'
       );
 
-      return DOMPurify.sanitize(processedHtml);
+      // Allow inline style attributes so the generated PDF matches the live preview when users add custom styles.
+      // @ts-ignore – ADD_ATTR may not exist on older DOMPurify typings but is supported at runtime.
+      return DOMPurify.sanitize(processedHtml, { ADD_ATTR: ['style'] });
     } catch (error) {
       console.error('Error parsing markdown:', error);
       return '<p>Error parsing markdown content</p>';
     }
+  };
+
+  // Helper to build a structured header with contact items (relies on parseMarkdown above)
+  const processHeaderMarkdown = (headerMd: string): string => {
+    if (!headerMd) return '';
+
+    const lines = headerMd.trim().split('\n');
+    const titleLine = lines[0] || '';
+    const remaining = lines.slice(1).join(' ').trim();
+
+    const titleHtml = parseMarkdown(titleLine);
+
+    let contactInfoHtml = '';
+    if (remaining) {
+      const items = remaining.split('|').map((it) => it.trim()).filter(Boolean);
+      if (items.length) {
+        const itemsHtml = items
+          .map((it) => `<span class="resume-contact-item">${parseMarkdown(it)}</span>`)
+          .join('<span class="resume-contact-separator">|</span>');
+        contactInfoHtml = `<div class="resume-contact-info">${itemsHtml}</div>`;
+      }
+    }
+
+    return `${titleHtml}${contactInfoHtml}`;
   };
 
   const getHtmlContent = () => {
@@ -87,7 +113,7 @@ export const exportToPDF = async (resumeData: ResumeData) => {
 
     if (isTwoPage && isTwoColumn) {
       // Combined mode: Two pages with two columns each
-      const headerHtml = header ? parseMarkdown(header) : '';
+      const headerHtml = header ? processHeaderMarkdown(header) : '';
       const summaryHtml = summary ? `<p class="resume-paragraph resume-summary">${summary}</p>` : '';
       const leftHtml = parseMarkdown(leftColumn);
       const rightHtml = parseMarkdown(rightColumn);
@@ -138,7 +164,7 @@ export const exportToPDF = async (resumeData: ResumeData) => {
         </div>
       `;
     } else if (isTwoColumn) {
-      const headerHtml = header ? parseMarkdown(header) : '';
+      const headerHtml = header ? processHeaderMarkdown(header) : '';
       const summaryHtml = summary ? `<p class="resume-paragraph resume-summary">${summary}</p>` : '';
       const leftHtml = parseMarkdown(leftColumn);
       const rightHtml = parseMarkdown(rightColumn);
