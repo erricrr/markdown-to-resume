@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Code, Eye, Printer, Sticker, FileText } from "lucide-react";
+import { Code, Eye, Printer, Sticker, FileText, Home } from "lucide-react";
 import { HtmlPreview } from "@/components/HtmlPreview";
 import { HtmlPrintPreview } from "@/components/HtmlPrintPreview";
 import { FileUpload } from "@/components/FileUpload";
@@ -530,15 +530,32 @@ const HtmlEditor = () => {
                 <TooltipTrigger asChild>
                   <Button
                     variant="outline"
+                    size="sm"
+                    aria-label="Home"
+                    onClick={() => navigate("/")}
+                    className="bg-white hover:bg-gray-50 hidden sm:flex items-center gap-2"
+                  >
+                    <Home className="h-4 w-4" />
+                    <span>Home</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Go to Home</TooltipContent>
+              </Tooltip>
+
+              {/* Mobile Home Button */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
                     size="icon"
                     aria-label="Home"
                     onClick={() => navigate("/")}
-                    className="bg-white hover:bg-gray-50"
+                    className="bg-white hover:bg-gray-50 sm:hidden"
                   >
-                    <Sticker className="h-4 w-4" />
+                    <Home className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>Home</TooltipContent>
+                <TooltipContent>Go to Home</TooltipContent>
               </Tooltip>
 
               {/* Switch to Markdown Button */}
@@ -546,15 +563,32 @@ const HtmlEditor = () => {
                 <TooltipTrigger asChild>
                   <Button
                     variant="outline"
+                    size="sm"
+                    aria-label="Switch to Markdown"
+                    onClick={() => navigate("/markdown")}
+                    className="bg-white hover:bg-gray-50 hidden sm:flex items-center gap-2"
+                  >
+                    <FileText className="h-4 w-4" />
+                    <span>Markdown Editor</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Switch to Markdown Editor</TooltipContent>
+              </Tooltip>
+
+              {/* Mobile Markdown Button */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
                     size="icon"
                     aria-label="Switch to Markdown"
                     onClick={() => navigate("/markdown")}
-                    className="bg-white hover:bg-gray-50"
+                    className="bg-white hover:bg-gray-50 sm:hidden"
                   >
                     <FileText className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>Markdown Editor</TooltipContent>
+                <TooltipContent>Switch to Markdown Editor</TooltipContent>
               </Tooltip>
               <PaperSizeSelector
                 selectedPaperSize={paperSize}
