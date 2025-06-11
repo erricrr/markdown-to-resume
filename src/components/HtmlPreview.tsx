@@ -275,72 +275,158 @@ ${htmlWithUploadedFile}
             }
           }, 100);
 
-          // Handle iframe resizing to fit content with proper delay for CSS to load
-          const resizeIframe = () => {
-            if (iframeDoc.body) {
-              // Wait for any CSS layouts to be calculated
-              setTimeout(() => {
-                // Get the content size
+
+
+                    // Set a generous initial height to prevent content from being cut off during load
+          iframe.style.height = '800px';
+          iframe.style.opacity = '0';
+
+                    // Wait for content to be fully rendered before showing
+          const finalizeIframe = () => {
+            // Quick measurement with fallback
+            let attempts = 0;
+            const maxAttempts = 3; // Reduced from 5
+
+            const measureAndResize = () => {
+              attempts++;
+
+              if (iframeDoc.body) {
+                // Force a reflow to ensure accurate measurements
+                iframeDoc.body.offsetHeight;
+
+                // Get the most accurate content size
                 const height = Math.max(
                   iframeDoc.body.scrollHeight,
                   iframeDoc.body.offsetHeight,
-                  iframeDoc.documentElement.clientHeight,
                   iframeDoc.documentElement.scrollHeight,
                   iframeDoc.documentElement.offsetHeight
                 );
 
-                // Set height with max-height to prevent overflow
-                iframe.style.height = Math.max(height, 400) + 'px';
+                // More lenient criteria for showing content quickly
+                if (height > 50 && height < 10000) {
+                  const finalHeight = Math.max(height + 20, 400); // Add small buffer
+                  iframe.style.height = finalHeight + 'px';
 
-                // Scale content if needed
-                if (iframeDoc.body.firstChild) {
-                  const container = iframeDoc.body.firstChild as HTMLElement;
-                  if (container.style) {
-                    container.style.maxWidth = '100%';
-                    container.style.overflowX = 'hidden';
-                    container.style.margin = '0 auto';
+                  // Scale content if needed
+                  if (iframeDoc.body.firstChild) {
+                    const container = iframeDoc.body.firstChild as HTMLElement;
+                    if (container.style) {
+                      container.style.maxWidth = '100%';
+                      container.style.overflowX = 'hidden';
+                      container.style.margin = '0 auto';
 
-                    // Apply additional scaling for smaller viewports
-                    const parentWidth = iframe.parentElement?.clientWidth || 0;
-                    if (container.offsetWidth > parentWidth && parentWidth > 0) {
-                      const scale = Math.min(1, parentWidth / container.offsetWidth);
-                      container.style.transform = `scale(${scale})`;
-                      container.style.transformOrigin = 'top left';
+                      // Apply additional scaling for smaller viewports
+                      const parentWidth = iframe.parentElement?.clientWidth || 0;
+                      if (container.offsetWidth > parentWidth && parentWidth > 0) {
+                        const scale = Math.min(1, parentWidth / container.offsetWidth);
+                        container.style.transform = `scale(${scale})`;
+                        container.style.transformOrigin = 'top left';
+                      }
                     }
                   }
+
+                  // Show iframe with faster transition and hide loader
+                  iframe.style.opacity = '1';
+                  iframe.style.transition = 'opacity 0.15s ease-in-out';
+
+                  // Hide loading indicator
+                  const loader = document.getElementById('html-preview-loader');
+                  if (loader) {
+                    loader.style.opacity = '0';
+                    setTimeout(() => {
+                      loader.style.display = 'none';
+                    }, 150);
+                  }
+                  return;
                 }
-              }, 50);
+              }
+
+              // Retry if measurements aren't ready yet, but with shorter intervals
+              if (attempts < maxAttempts) {
+                setTimeout(measureAndResize, 75); // Reduced from 150ms
+              } else {
+                // Fallback: show iframe even if we couldn't get perfect measurements
+                iframe.style.opacity = '1';
+                iframe.style.transition = 'opacity 0.15s ease-in-out';
+
+                // Hide loading indicator
+                const loader = document.getElementById('html-preview-loader');
+                if (loader) {
+                  loader.style.opacity = '0';
+                  setTimeout(() => {
+                    loader.style.display = 'none';
+                  }, 150);
+                }
+              }
+            };
+
+            // Start measuring immediately, no delay
+            measureAndResize();
+          };
+
+                    // Use multiple methods to detect when content is ready
+          let isFinalized = false;
+          const finalize = () => {
+            if (!isFinalized) {
+              isFinalized = true;
+              finalizeIframe();
             }
           };
 
-          // Resize after content loads and CSS is applied - longer delay for color rendering
-          setTimeout(resizeIframe, 400);
-
-          // Set up mutation observer to handle dynamic content changes
-          const observer = new MutationObserver(() => {
-            // Debounce resize calls
-            clearTimeout(iframe.dataset.resizeTimeout as any);
-            iframe.dataset.resizeTimeout = setTimeout(resizeIframe, 100) as any;
+          // Method 1: Listen for iframe load event (faster response)
+          iframe.addEventListener('load', () => {
+            setTimeout(finalize, 50); // Reduced from 100ms
           });
 
-          if (iframeDoc.body) {
-            observer.observe(iframeDoc.body, {
-              childList: true,
-              subtree: true,
-              attributes: true,
-              characterData: true
-            });
-          }
+          // Method 2: Fallback timeout (much faster)
+          setTimeout(finalize, 400); // Reduced from 800ms
 
-          // Handle window resize
+
+
+          // Simplified resize handler for window resize only
           const handleResize = () => {
-            setTimeout(resizeIframe, 100);
+            // Only handle scaling for window resize, not full iframe resize
+            if (iframeDoc.body && iframeDoc.body.firstChild) {
+              const container = iframeDoc.body.firstChild as HTMLElement;
+              if (container.style) {
+                const parentWidth = iframe.parentElement?.clientWidth || 0;
+                if (container.offsetWidth > parentWidth && parentWidth > 0) {
+                  const scale = Math.min(1, parentWidth / container.offsetWidth);
+                  container.style.transform = `scale(${scale})`;
+                  container.style.transformOrigin = 'top left';
+                }
+              }
+            }
           };
           window.addEventListener('resize', handleResize);
 
+          // Store observer reference for cleanup
+          let observerRef: MutationObserver | null = null;
+
+          // Set up mutation observer for dynamic content changes (but only after initial load)
+          // This will only handle minor content updates, not major resizing
+          setTimeout(() => {
+            observerRef = new MutationObserver(() => {
+              // Only handle scaling adjustments for dynamic content
+              clearTimeout(iframe.dataset.resizeTimeout as any);
+              iframe.dataset.resizeTimeout = setTimeout(handleResize, 100) as any;
+            });
+
+            if (iframeDoc.body && observerRef) {
+              observerRef.observe(iframeDoc.body, {
+                childList: true,
+                subtree: true,
+                attributes: true,
+                characterData: true
+              });
+            }
+          }, 1000); // Delayed even more to avoid initial load conflicts
+
           // Cleanup function
           return () => {
-            observer.disconnect();
+            if (observerRef) {
+              observerRef.disconnect();
+            }
             window.removeEventListener('resize', handleResize);
             clearTimeout(iframe.dataset.resizeTimeout as any);
           };
@@ -349,7 +435,7 @@ ${htmlWithUploadedFile}
     };
 
     return (
-      <div ref={ref} className="w-full h-full">
+      <div ref={ref} className="w-full h-full relative">
         <iframe
           ref={iframeRef}
           className="w-full border-0 bg-white rounded-lg shadow-sm"
@@ -362,6 +448,21 @@ ${htmlWithUploadedFile}
           sandbox="allow-scripts allow-same-origin"
           title="HTML Preview"
         />
+        {/* Loading indicator that will be hidden when iframe becomes visible */}
+        <div
+          className="absolute inset-0 flex items-center justify-center bg-gray-50 rounded-lg"
+          style={{
+            opacity: '1',
+            transition: 'opacity 0.15s ease-in-out',
+            pointerEvents: 'none'
+          }}
+          id="html-preview-loader"
+        >
+          <div className="flex items-center gap-2 text-gray-500">
+            <div className="w-4 h-4 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+            <span className="text-sm">Loading preview...</span>
+          </div>
+        </div>
       </div>
     );
   }
