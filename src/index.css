@@ -678,3 +678,44 @@ i {
 html, body {
   overscroll-behavior-x: none;
 }
+
+[data-panel] {
+  min-width: 0 !important;
+  overflow: hidden;
+}
+
+/* Make resume content responsive to container width */
+.resume-container {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.resume-template {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+/* Override fixed paper dimensions for preview */
+.resume-preview-container {
+  width: 100% !important;
+  min-height: auto !important;
+  transform: none !important;
+  margin: 0 !important;
+  padding: 1rem !important;
+  box-sizing: border-box !important;
+}
+
+/* Responsive typography that scales with container */
+@media (max-width: 768px) {
+  .resume-template {
+    font-size: 0.8rem;
+  }
+
+  .resume-heading-1 {
+    font-size: 1.2rem !important;
+  }
+
+  .resume-heading-2 {
+    font-size: 1rem !important;
+  }
+}

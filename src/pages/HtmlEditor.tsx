@@ -516,27 +516,27 @@ const HtmlEditor = () => {
       </header>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-hidden">
         <ResizablePanelGroup
           direction="horizontal"
-          className="h-auto lg:h-[calc(100vh-200px)] max-h-[calc(100vh-200px)]"
+          className="h-auto lg:h-[calc(100vh-200px)] max-h-[calc(100vh-200px)] w-full"
           onLayout={handlePanelResize}
         >
           {/* Left Panel - HTML Editor */}
-          <ResizablePanel defaultSize={28} minSize={15}>
+          <ResizablePanel defaultSize={40} minSize={25} maxSize={60}>
             <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col h-full max-h-full">
-              <div className="p-6 border-b shrink-0">
+              <div className="p-4 sm:p-6 border-b shrink-0">
                 <div className="flex items-center gap-2">
-                  <Code className="h-5 w-5 text-primary" />
-                  <h2 className="text-lg font-semibold text-foreground">
+                  <Code className="h-5 w-5 text-primary shrink-0" />
+                  <h2 className="text-lg font-semibold text-foreground truncate">
                     HTML Editor
                   </h2>
-                  <Badge variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200">
+                  <Badge variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200 shrink-0">
                     CSS & JS Support
                   </Badge>
                 </div>
               </div>
-              <div className="flex-1 p-6 pt-0 overflow-hidden flex flex-col">
+              <div className="flex-1 p-4 sm:p-6 pt-0 overflow-hidden flex flex-col">
                 <div className="mb-4">
                   <h3 className="text-sm font-medium my-2">Add Image</h3>
                   <FileUpload onFileUploaded={handleFileUploaded} />
@@ -559,22 +559,22 @@ const HtmlEditor = () => {
           <ResizableHandle withHandle />
 
           {/* Right Panel - Preview */}
-          <ResizablePanel defaultSize={72} minSize={30}>
+          <ResizablePanel defaultSize={60} minSize={40}>
             <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col h-full max-h-full">
-              <div className="p-6 border-b shrink-0">
+              <div className="p-4 sm:p-6 border-b shrink-0">
                 <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <Eye className="h-5 w-5 text-primary" />
-                    <h2 className="text-lg font-semibold text-foreground">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <Eye className="h-5 w-5 text-primary shrink-0" />
+                    <h2 className="text-lg font-semibold text-foreground truncate">
                       Live Preview
                     </h2>
                   </div>
-                  <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                  <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200 shrink-0">
                     Interactive & PDF-ready
                   </Badge>
                 </div>
               </div>
-              <div className="flex-1 overflow-auto p-4 bg-gray-50">
+              <div className="flex-1 overflow-auto p-2 sm:p-4 bg-gray-50">
                 <div className="w-full h-full flex items-start justify-center">
                   <HtmlPreview
                     ref={previewRef}
