@@ -524,7 +524,7 @@ const HtmlEditor = () => {
         >
           {/* Left Panel - HTML Editor */}
           <ResizablePanel defaultSize={40} minSize={25} maxSize={60}>
-            <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col h-full max-h-full">
+            <Card className="border-0 bg-white overflow-hidden flex flex-col h-full max-h-full">
               <div className="p-4 sm:p-6 border-b shrink-0">
                 <div className="flex items-center gap-2">
                   <Code className="h-5 w-5 text-primary shrink-0" />
@@ -560,7 +560,7 @@ const HtmlEditor = () => {
 
           {/* Right Panel - Preview */}
           <ResizablePanel defaultSize={60} minSize={40}>
-            <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col h-full max-h-full">
+            <Card className="border-0 bg-white overflow-hidden flex flex-col h-full max-h-full">
               <div className="p-4 sm:p-6 border-b shrink-0">
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2 min-w-0">

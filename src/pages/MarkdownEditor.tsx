@@ -266,8 +266,8 @@ const MarkdownEditor = () => {
             )}
           </div>
           {/* Header and Summary in single row on all screens */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="shadow-xl border-0 bg-white overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <Card className="border-0 bg-white overflow-hidden">
               <div className="p-6 border-b">
                 <div className="flex items-center gap-2">
                   <FileText className="h-5 w-5 text-primary" />
@@ -285,7 +285,7 @@ const MarkdownEditor = () => {
                 />
               </div>
             </Card>
-            <Card className="shadow-xl border-0 bg-white overflow-hidden">
+            <Card className="border-0 bg-white overflow-hidden">
               <div className="p-6 border-b">
                 <div className="flex items-center gap-2">
                   <FileText className="h-5 w-5 text-primary" />
@@ -306,10 +306,10 @@ const MarkdownEditor = () => {
           </div>
 
           {/* Left and Right Columns */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="shadow-xl border-0 bg-white overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <Card className="border-0 bg-white overflow-hidden">
               <div className="p-6 border-b">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   <FileText className="h-5 w-5 text-primary" />
                   <h2 className="text-lg font-semibold text-foreground">
                     Left Column
@@ -325,7 +325,7 @@ const MarkdownEditor = () => {
                 />
               </div>
             </Card>
-            <Card className="shadow-xl border-0 bg-white overflow-hidden">
+            <Card className="border-0 bg-white overflow-hidden">
               <div className="p-6 border-b">
                 <div className="flex items-center gap-2">
                   <FileText className="h-5 w-5 text-primary" />
