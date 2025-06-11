@@ -651,6 +651,7 @@ i {
   font-weight: 700 !important; /* Bold */
   font-size: 1.25rem !important; /* text-xl */
   line-height: 1.75rem !important; /* Tailwind leading-relaxed for xl */
+  margin-bottom: 0 !important; /* Remove extra bottom margin from resume CSS */
 }
 
 @media (min-width: 640px) {
@@ -663,6 +664,7 @@ i {
 .app-header p {
   font-size: 0.75rem !important; /* text-xs */
   line-height: 1rem !important;
+  margin-top: 0 !important; /* Ensure no top margin */
 }
 
 @media (min-width: 640px) {
@@ -670,4 +672,9 @@ i {
     font-size: 0.875rem !important; /* text-sm */
     line-height: 1.25rem !important;
   }
+}
+
+/* Prevent any horizontal scroll or drag movement */
+html, body {
+  overscroll-behavior-x: none;
 }
