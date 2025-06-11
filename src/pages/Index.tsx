@@ -18,7 +18,7 @@ const Index = () => {
               </div>
               <div>
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-                VivaPDF
+                PastePrint
                 </h1>
                 <p className="text-xs sm:text-sm text-gray-600">
                   Create professional resumes with Markdown or HTML
@@ -32,11 +32,11 @@ const Index = () => {
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Choose Your Editor
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Select the editor that fits your workflow&mdash;whether AI gives you a resume in Markdown or HTML, you can now render it, export it, and print a polished PDF.
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          Choose Your Editor
+        </h2>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          Got a resume from AI in Markdown or HTML? Paste it, tweak it, and export a polished PDF — no fuss, no formatting headaches.
         </p>
         </div>
 
