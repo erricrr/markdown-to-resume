@@ -418,7 +418,11 @@ const defaultHtml = `<!DOCTYPE html>
 
 const HtmlEditor = () => {
   const navigate = useNavigate();
-  const [html, setHtml] = useState(defaultHtml);
+  const [html, setHtml] = useState(() => {
+    // Try to load from localStorage first, fallback to default
+    const saved = localStorage.getItem('html-editor-content');
+    return saved || defaultHtml;
+  });
   const [activeTab, setActiveTab] = useState("editor");
   const [paperSize, setPaperSize] = useState<'A4' | 'US_LETTER'>('A4');
   const previewRef = useRef<HTMLDivElement>(null);
@@ -443,7 +447,10 @@ const HtmlEditor = () => {
     window.print();
   };
 
-
+  // Auto-save effect
+  useEffect(() => {
+    localStorage.setItem('html-editor-content', html);
+  }, [html]);
 
   const handlePaperSizeChange = (size: 'A4' | 'US_LETTER') => {
     setPaperSize(size);
@@ -464,7 +471,10 @@ const HtmlEditor = () => {
       </div>
       <div className="flex-1 p-4 sm:p-6 pt-0 overflow-hidden flex flex-col">
         <div className="mb-4">
-          <h3 className="font-semibold mb-2 -mt-3.5">Add Image</h3>
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold mb-2 -mt-3.5">Add Image</h3>
+            <span className="text-xs text-gray-500">Auto-saved</span>
+          </div>
           <FileUpload />
         </div>
         <Textarea

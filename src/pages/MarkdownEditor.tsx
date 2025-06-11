@@ -108,12 +108,30 @@ const defaultRightColumn = `## Experience
 
 const MarkdownEditor = () => {
   const navigate = useNavigate();
-  const [markdown, setMarkdown] = useState(defaultMarkdown);
-  const [header, setHeader] = useState(defaultHeader);
-  const [summary, setSummary] = useState(defaultSummary);
-  const [leftColumn, setLeftColumn] = useState(defaultLeftColumn);
-  const [rightColumn, setRightColumn] = useState(defaultRightColumn);
-  const [firstPage, setFirstPage] = useState(`## Certifications
+  const [markdown, setMarkdown] = useState(() => {
+    // Try to load from localStorage first, fallback to default
+    const saved = localStorage.getItem('markdown-editor-content');
+    return saved || defaultMarkdown;
+  });
+  const [header, setHeader] = useState(() => {
+    const saved = localStorage.getItem('markdown-editor-header');
+    return saved || defaultHeader;
+  });
+  const [summary, setSummary] = useState(() => {
+    const saved = localStorage.getItem('markdown-editor-summary');
+    return saved || defaultSummary;
+  });
+  const [leftColumn, setLeftColumn] = useState(() => {
+    const saved = localStorage.getItem('markdown-editor-left-column');
+    return saved || defaultLeftColumn;
+  });
+  const [rightColumn, setRightColumn] = useState(() => {
+    const saved = localStorage.getItem('markdown-editor-right-column');
+    return saved || defaultRightColumn;
+  });
+  const [firstPage, setFirstPage] = useState(() => {
+    const saved = localStorage.getItem('markdown-editor-first-page');
+    return saved || `## Certifications
 - AWS Certified Solutions Architect
 - Google Cloud Professional Developer
 - Certified Kubernetes Administrator
@@ -121,8 +139,11 @@ const MarkdownEditor = () => {
 ## Languages
 - English (Native)
 - Spanish (Conversational)
-- French (Basic)`);
-  const [secondPage, setSecondPage] = useState(`## Additional Projects
+- French (Basic)`;
+  });
+  const [secondPage, setSecondPage] = useState(() => {
+    const saved = localStorage.getItem('markdown-editor-second-page');
+    return saved || `## Additional Projects
 
 ### E-commerce Platform
 - Built full-stack e-commerce solution with payment integration
@@ -137,7 +158,8 @@ const MarkdownEditor = () => {
 ### Open Source Contributions
 - Contributor to popular React libraries
 - Maintained documentation for 5+ projects
-- Active in developer community discussions`);
+- Active in developer community discussions`;
+  });
   const [selectedTemplate, setSelectedTemplate] = useState<string>(() => {
     // Ensure we always start with 'professional' as the default template
     console.log('🔵 Initializing selectedTemplate with default value: professional');
@@ -171,6 +193,35 @@ const MarkdownEditor = () => {
     console.log('🔄 Selected template changed to:', selectedTemplate);
   }, [selectedTemplate]);
 
+  // Auto-save effects
+  useEffect(() => {
+    localStorage.setItem('markdown-editor-content', markdown);
+  }, [markdown]);
+
+  useEffect(() => {
+    localStorage.setItem('markdown-editor-header', header);
+  }, [header]);
+
+  useEffect(() => {
+    localStorage.setItem('markdown-editor-summary', summary);
+  }, [summary]);
+
+  useEffect(() => {
+    localStorage.setItem('markdown-editor-left-column', leftColumn);
+  }, [leftColumn]);
+
+  useEffect(() => {
+    localStorage.setItem('markdown-editor-right-column', rightColumn);
+  }, [rightColumn]);
+
+  useEffect(() => {
+    localStorage.setItem('markdown-editor-first-page', firstPage);
+  }, [firstPage]);
+
+  useEffect(() => {
+    localStorage.setItem('markdown-editor-second-page', secondPage);
+  }, [secondPage]);
+
   const handlePrintPDF = () => {
     window.print();
   };
@@ -179,8 +230,6 @@ const MarkdownEditor = () => {
     console.log(`🎨 Main component: CSS change for ${template}`);
     addTemplateCSS(template, css);
   };
-
-
 
   const handlePaperSizeChange = (size: 'A4' | 'US_LETTER') => {
     setPaperSize(size);
@@ -200,7 +249,10 @@ const MarkdownEditor = () => {
   // Shared FileUpload component for all modes
   const renderSharedFileUpload = () => (
     <div className="mb-4">
-      <h3 className="my-2">Add Image</h3>
+      <div className="flex items-center justify-between">
+        <h3 className="my-2">Add Image</h3>
+        <span className="text-xs text-gray-500">Auto-saved</span>
+      </div>
       <FileUpload />
     </div>
   );
