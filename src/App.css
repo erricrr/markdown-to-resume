@@ -40,3 +40,9 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Prevent horizontal scrolling anywhere in the app */
+html, body, #root, div {
+  max-width: 100%;
+  overflow-x: hidden;
+}

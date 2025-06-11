@@ -5,12 +5,13 @@ import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Code, Eye, Printer, ArrowLeft, FileText } from "lucide-react";
+import { Code, Eye, Printer, Sticker, FileText } from "lucide-react";
 import { HtmlPreview } from "@/components/HtmlPreview";
 import { HtmlPrintPreview } from "@/components/HtmlPrintPreview";
 import { FileUpload } from "@/components/FileUpload";
 import { PaperSizeSelector } from "@/components/PaperSizeSelector";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 const defaultHtml = `<!DOCTYPE html>
 <html lang="en">
@@ -468,24 +469,37 @@ const HtmlEditor = () => {
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate("/")}
-                className="gap-2 bg-white hover:bg-gray-50"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back to Home
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate("/markdown")}
-                className="gap-2 bg-white hover:bg-gray-50"
-              >
-                <FileText className="h-4 w-4" />
-                Switch to Markdown
-              </Button>
+              {/* Home Button */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    aria-label="Home"
+                    onClick={() => navigate("/")}
+                    className="bg-white hover:bg-gray-50"
+                  >
+                    <Sticker className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Home</TooltipContent>
+              </Tooltip>
+
+              {/* Switch to Markdown Button */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    aria-label="Switch to Markdown"
+                    onClick={() => navigate("/markdown")}
+                    className="bg-white hover:bg-gray-50"
+                  >
+                    <FileText className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Markdown Editor</TooltipContent>
+              </Tooltip>
               <PaperSizeSelector
                 selectedPaperSize={paperSize}
                 onPaperSizeChange={handlePaperSizeChange}

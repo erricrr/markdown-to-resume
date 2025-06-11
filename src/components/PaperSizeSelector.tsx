@@ -1,4 +1,4 @@
-import { Check, FileText } from 'lucide-react';
+import { Check, Ruler } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -30,7 +30,7 @@ export const PaperSizeSelector = ({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" className="gap-2 bg-white hover:bg-gray-50">
-          <FileText className="h-4 w-4" />
+          <Ruler className="h-4 w-4" />
           {getSelectedPaperSizeName()}
         </Button>
       </DropdownMenuTrigger>

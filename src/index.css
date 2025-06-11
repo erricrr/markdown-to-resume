@@ -80,6 +80,12 @@
         --sidebar-border: 240 3.7% 15.9%;
         --sidebar-ring: 217.2 91.2% 59.8%;
     }
+
+    /* Prevent horizontal scrolling app-wide */
+    html, body, #root, .app {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
 }
 
 @layer base {
@@ -501,4 +507,138 @@ i {
         padding: 0 !important;
         background: white !important;
     }
+
+    header, nav, footer, button {
+        display: none !important;
+    }
+
+    .print-only {
+        display: block !important;
+    }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+}
+
+/* CSS for resume styles */
+.resume-container {
+    --resume-font: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family: var(--resume-font);
+}
+
+/* Professional Template */
+.resume-professional {
+    --resume-primary: #2D3748;
+    --resume-accent: #4A5568;
+    --resume-border: #E2E8F0;
+    --resume-link: #3182CE;
+    --resume-bg-light: #F7FAFC;
+    --resume-bg-medium: #EDF2F7;
+}
+
+/* Modern Template */
+.resume-modern {
+    --resume-primary: #1A202C;
+    --resume-accent: #4299E1;
+    --resume-border: #E2E8F0;
+    --resume-link: #4299E1;
+    --resume-bg-light: #F7FAFC;
+    --resume-bg-medium: #EDF2F7;
+}
+
+/* Minimal Template */
+.resume-minimal {
+    --resume-primary: #1A202C;
+    --resume-accent: #718096;
+    --resume-border: #E2E8F0;
+    --resume-link: #4A5568;
+    --resume-bg-light: #FFFFFF;
+    --resume-bg-medium: #F7FAFC;
+}
+
+/* Creative Template */
+.resume-creative {
+    --resume-primary: #2B6CB0;
+    --resume-accent: #3182CE;
+    --resume-border: #BEE3F8;
+    --resume-link: #3182CE;
+    --resume-bg-light: #EBF8FF;
+    --resume-bg-medium: #BEE3F8;
+}
+
+/* Academic Template */
+.resume-academic {
+    --resume-primary: #1A365D;
+    --resume-accent: #2A4365;
+    --resume-border: #E2E8F0;
+    --resume-link: #2B6CB0;
+    --resume-bg-light: #F7FAFC;
+    --resume-bg-medium: #EDF2F7;
+}
+
+/* Tech Template */
+.resume-tech {
+    --resume-primary: #2D3748;
+    --resume-accent: #0BC5EA;
+    --resume-border: #E2E8F0;
+    --resume-link: #00B5D8;
+    --resume-bg-light: #F7FAFC;
+    --resume-bg-medium: #E6FFFA;
+}
+
+/* Friendly Template */
+.resume-friendly {
+    --resume-primary: #2F855A;
+    --resume-accent: #38A169;
+    --resume-border: #C6F6D5;
+    --resume-link: #38A169;
+    --resume-bg-light: #F0FFF4;
+    --resume-bg-medium: #C6F6D5;
+}
+
+/* Bold Template */
+.resume-bold {
+    --resume-primary: #000000;
+    --resume-accent: #DD6B20;
+    --resume-border: #FEEBC8;
+    --resume-link: #DD6B20;
+    --resume-bg-light: #FFFAF0;
+    --resume-bg-medium: #FEEBC8;
+}
+
+/* Elegant Template */
+.resume-elegant {
+    --resume-primary: #4A5568;
+    --resume-accent: #718096;
+    --resume-border: #E2E8F0;
+    --resume-link: #4A5568;
+    --resume-bg-light: #F7FAFC;
+    --resume-bg-medium: #EDF2F7;
+}
+
+/* Executive Template */
+.resume-executive {
+    --resume-primary: #1A202C;
+    --resume-accent: #6B46C1;
+    --resume-border: #E9D8FD;
+    --resume-link: #6B46C1;
+    --resume-bg-light: #FAF5FF;
+    --resume-bg-medium: #E9D8FD;
 }

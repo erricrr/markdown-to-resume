@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Printer } from "lucide-react";
+import { Printer, Download } from "lucide-react";
 
 interface HtmlPrintPreviewProps {
   html: string;
@@ -19,9 +19,11 @@ interface HtmlPrintPreviewProps {
 
 export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '', uploadedFileName = '' }: HtmlPrintPreviewProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
-        const handlePrint = () => {
-                  console.log('Print function called with HTML length:', html.length);
+  const handlePrint = () => {
+    setIsExporting(true);
+    console.log('Print function called with HTML length:', html.length);
     console.log('HTML preview (first 200 chars):', html.substring(0, 200));
 
     // Debug: Check if Contact section spacing is being modified
@@ -30,7 +32,7 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
       console.log('Found .section CSS rule:', sectionMatch ? sectionMatch[0] : 'Not found');
     }
 
-          // Create a new window for printing
+    // Create a new window for printing
     const printWindow = window.open("", "_blank");
     if (printWindow) {
       // Add uploaded file to the HTML if available
@@ -67,7 +69,7 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
       // Aggressive approach - force background colors to work in print
       let enhancedHtml = processedHtml;
 
-            // Don't modify the HTML - just rely on CSS overrides to preserve colors
+      // Don't modify the HTML - just rely on CSS overrides to preserve colors
 
       // Debug: Log what CSS we're working with
       console.log('HTML contains background styles:', html.includes('background'));
@@ -123,7 +125,7 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
             size: ${paperSize === 'A4' ? 'A4' : 'letter'};
           }
 
-                    /* Force colors OUTSIDE of print media query */
+          /* Force colors OUTSIDE of print media query */
           html, body, * {
             -webkit-print-color-adjust: exact !important;
             color-adjust: exact !important;
@@ -251,22 +253,24 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
 
       printWindow.document.write(enhancedHtml);
       printWindow.document.close();
+
+      // Add timeout to reset the button state
+      setTimeout(() => {
+        setIsExporting(false);
+      }, 2000);
     }
   };
-
-
 
   return (
     <>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
           <Button
-            variant="outline"
-            size="sm"
-            className="gap-2 bg-white hover:bg-gray-50"
+            disabled={isExporting}
+            className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
           >
-            <Printer className="h-4 w-4" />
-            Print PDF
+            <Download className="h-3 w-3 sm:h-4 sm:w-4" />
+            {isExporting ? 'Generating...' : 'PDF'}
           </Button>
         </DialogTrigger>
         <DialogContent className="max-w-md">

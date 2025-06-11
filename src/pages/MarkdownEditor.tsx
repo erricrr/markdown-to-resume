@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Printer, Columns2, FileStack, Code, Eye, ArrowLeft } from "lucide-react";
+import { FileText, Printer, Columns2, FileStack, Code, Eye, Sticker } from "lucide-react";
 import { ResumePreview } from "@/components/ResumePreview";
 import { PrintPreview } from "@/components/PrintPreview";
 import { TemplateSelector } from "@/components/TemplateSelector";
@@ -15,6 +15,7 @@ import { FileUpload } from "@/components/FileUpload";
 import { CSSEditor } from "@/components/CSSEditor";
 import { useDynamicCSS } from "@/hooks/useDynamicCSS";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 const defaultMarkdown = `# John Doe
 **Software Engineer** | john.doe@email.com | (555) 123-4567 | linkedin.com/in/johndoe
@@ -358,12 +359,12 @@ const MarkdownEditor = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 sm:py-6 gap-4">
             <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-teal-600 rounded-lg flex items-center justify-center">
-                  <FileText className="h-6 w-6 text-white" />
-                </div>
+              <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-600 rounded-lg flex items-center justify-center">
+                <FileText className="h-6 w-6 text-white" />
+              </div>
               <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-                Markdown Resume Editor
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+                  Markdown Resume Editor
                 </h1>
                 <p className="text-xs sm:text-sm text-gray-600">
                   Transform markdown into professional resumes
@@ -371,24 +372,37 @@ const MarkdownEditor = () => {
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate("/")}
-                className="gap-2 bg-white hover:bg-gray-50"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back to Home
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate("/html")}
-                className="gap-2 bg-white hover:bg-gray-50"
-              >
-                <Code className="h-4 w-4" />
-                Switch to HTML
-              </Button>
+              {/* Home Button */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    aria-label="Home"
+                    onClick={() => navigate("/")}
+                    className="bg-white hover:bg-gray-50"
+                  >
+                    <Sticker className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Home</TooltipContent>
+              </Tooltip>
+
+              {/* Switch to HTML Button */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    aria-label="Switch to HTML"
+                    onClick={() => navigate("/html")}
+                    className="bg-white hover:bg-gray-50"
+                  >
+                    <Code className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>HTML Editor</TooltipContent>
+              </Tooltip>
               <div className="flex items-center gap-2">
                 <Columns2 className="h-4 w-4" />
                 <span className="text-xs sm:text-sm">Two Column</span>
