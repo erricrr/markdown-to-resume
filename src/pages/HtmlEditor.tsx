@@ -465,11 +465,6 @@ const HtmlEditor = () => {
         <div className="mb-4">
           <h3 className="text-sm font-medium my-2">Add Image</h3>
           <FileUpload />
-          {uploadedFileName && (
-            <p className="text-xs text-muted-foreground mt-2">
-              File will be shown at the end of your resume
-            </p>
-          )}
         </div>
         <Textarea
           value={html}

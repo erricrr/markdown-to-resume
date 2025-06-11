@@ -206,11 +206,6 @@ const MarkdownEditor = () => {
           <div className="mb-4">
             <h3 className="text-sm font-medium my-2">Add Image</h3>
             <FileUpload />
-            {uploadedFileName && (
-              <p className="text-xs text-muted-foreground mt-2">
-                File will be shown at the end of your resume
-              </p>
-            )}
           </div>
           <Card className="border-0 bg-white overflow-hidden">
             <div className="p-6 border-b">
@@ -258,11 +253,6 @@ const MarkdownEditor = () => {
           <div className="mb-4">
             <h3 className="text-sm font-medium my-2">Add Image</h3>
             <FileUpload />
-            {uploadedFileName && (
-              <p className="text-xs text-muted-foreground mt-2">
-                File will be shown at the end of your resume
-              </p>
-            )}
           </div>
           {/* Header and Summary in single row on all screens */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -361,11 +351,6 @@ const MarkdownEditor = () => {
           <div className="mb-4">
             <h3 className="text-sm font-medium my-2">Add Image</h3>
             <FileUpload />
-            {uploadedFileName && (
-              <p className="text-xs text-muted-foreground mt-2">
-                File will be shown at the end of your resume
-              </p>
-            )}
           </div>
           <Textarea
             value={markdown}
