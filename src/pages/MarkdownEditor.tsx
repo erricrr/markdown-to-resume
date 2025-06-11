@@ -212,7 +212,7 @@ const MarkdownEditor = () => {
               </p>
             )}
           </div>
-          <Card className="shadow-xl border-0 bg-white overflow-hidden">
+          <Card className="border-0 bg-white overflow-hidden">
             <div className="p-6 border-b">
               <div className="flex items-center gap-2">
                 <FileText className="h-5 w-5 text-primary" />
@@ -230,7 +230,7 @@ const MarkdownEditor = () => {
               />
             </div>
           </Card>
-          <Card className="shadow-xl border-0 bg-white overflow-hidden">
+          <Card className="border-0 bg-white overflow-hidden">
             <div className="p-6 border-b">
               <div className="flex items-center gap-2">
                 <FileText className="h-5 w-5 text-primary" />
@@ -348,7 +348,7 @@ const MarkdownEditor = () => {
     }
 
     return (
-      <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col h-full">
+      <Card className="border-0 bg-white overflow-hidden flex flex-col h-full">
         <div className="p-6 border-b">
           <div className="flex items-center gap-2">
             <FileText className="h-5 w-5 text-primary" />
@@ -511,7 +511,7 @@ const MarkdownEditor = () => {
 
             {/* Preview Section - Small Screen */}
             <div className="w-full">
-              <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col h-[500px] max-h-[500px]">
+              <Card className="border-0 bg-white overflow-hidden flex flex-col h-[500px] max-h-[500px]">
                 <div className="p-6 border-b shrink-0">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
@@ -610,7 +610,7 @@ const MarkdownEditor = () => {
 
             {/* Right Panel - Preview */}
             <ResizablePanel minSize={30}>
-              <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col h-full max-h-full">
+              <Card className="border-0 bg-white overflow-hidden flex flex-col h-full max-h-full">
                 <div className="p-6 border-b shrink-0">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
