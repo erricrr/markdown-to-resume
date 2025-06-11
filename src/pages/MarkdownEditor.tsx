@@ -198,11 +198,11 @@ const MarkdownEditor = () => {
   };
 
   // Shared FileUpload component for all modes
-  const renderFileUploadSection = () => (
+  const renderSharedFileUpload = () => (
     <div className="mb-4">
-    <h3 className="text-sm font-medium mb-2">Add Image</h3>
-    <FileUpload />
-  </div>
+      <h3 className="text-sm font-medium mb-2">Add Image</h3>
+      <FileUpload />
+    </div>
   );
 
   const renderInputSection = () => {
@@ -348,6 +348,7 @@ const MarkdownEditor = () => {
           </div>
         </div>
         <div className="flex-1 p-6 pt-0 overflow-hidden flex flex-col">
+          {renderSharedFileUpload()}
           <Textarea
             value={markdown}
             onChange={(e) => setMarkdown(e.target.value)}
@@ -475,9 +476,6 @@ const MarkdownEditor = () => {
                   </TabsList>
 
                   <TabsContent value="editor" className="flex-1 overflow-auto">
-                    <div className="p-4 pb-0">
-                      {renderFileUploadSection()}
-                    </div>
                     {renderInputSection()}
                   </TabsContent>
 
@@ -575,9 +573,6 @@ const MarkdownEditor = () => {
                   </TabsList>
 
                   <TabsContent value="editor" className="flex-1 overflow-auto">
-                    <div className="p-4 pb-0">
-                      {renderFileUploadSection()}
-                    </div>
                     {renderInputSection()}
                   </TabsContent>
 
