@@ -200,9 +200,9 @@ const MarkdownEditor = () => {
   // Shared FileUpload component for all modes
   const renderFileUploadSection = () => (
     <div className="mb-4">
-      <h3 className="text-sm font-medium my-2">Add Image</h3>
-      <FileUpload />
-    </div>
+    <h3 className="text-sm font-medium mb-2">Add Image</h3>
+    <FileUpload />
+  </div>
   );
 
   const renderInputSection = () => {
