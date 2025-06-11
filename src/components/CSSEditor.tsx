@@ -319,7 +319,7 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange, deb
   };
 
   return (
-    <Card className="shadow-xl border-0 bg-white overflow-hidden flex flex-col h-full">
+    <Card className="border-0 bg-white overflow-hidden flex flex-col h-full">
       <div className="p-6 border-b">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
