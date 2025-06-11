@@ -355,7 +355,7 @@ const MarkdownEditor = () => {
           <Textarea
             value={markdown}
             onChange={(e) => setMarkdown(e.target.value)}
-            className="flex-1 w-full resize-none overflow-auto"
+            className="flex-1 w-full resize-none overflow-auto min-h-[500px]"
             placeholder="Enter your resume in Markdown format..."
           />
         </div>

@@ -681,7 +681,6 @@ html, body {
 
 [data-panel] {
   min-width: 0 !important;
-  overflow: hidden;
 }
 
 /* Make resume content responsive to container width */
