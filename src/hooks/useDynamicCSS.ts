@@ -203,23 +203,23 @@ export const useDynamicCSS = () => {
 }
 `;
 
-    // Process and add all template CSS with high specificity
+    // Build template CSS but only include the high-specificity (scoped) version to
+    // prevent it from unintentionally overriding global application styles.
     const templateCSS = Object.entries(templateCSSRef.current)
       .map(([template, css]) => {
-        // Process CSS to ensure high specificity
-        // 1. Increase specificity for template selectors
+        // Increase specificity by prefixing with .resume-template
         let processedCSS = css.replace(
-          /\.template-(\w+)\s+([^{]*){/g,
-          '.resume-template.template-$1 $2{'
+          /\.template-(\w+)\s+([^\{]*)\{/g,
+          '.resume-template.template-$1 $2{' // e.g., .resume-template.template-professional h1 { ... }
         );
 
-        // 2. Add !important to properties that don't already have it
+        // Add !important where missing to maintain template authority inside preview
         processedCSS = processedCSS.replace(
           /:\s*([^!][^;]*);/g,
           ': $1 !important;'
         );
 
-        return `/* DYNAMIC ${template.toUpperCase()} TEMPLATE */\n${css}\n\n/* HIGH SPECIFICITY VERSION */\n${processedCSS}\n`;
+        return `/* TEMPLATE: ${template.toUpperCase()} (scoped) */\n${processedCSS}\n`;
       })
       .join('\n');
 

@@ -642,3 +642,32 @@ i {
     --resume-bg-light: #FAF5FF;
     --resume-bg-medium: #E9D8FD;
 }
+
+/* ------------------------------------------------------------------ */
+/* Application header typography overrides to prevent resume styles from
+   altering app UI. These rules use !important for precedence and are
+   scoped via .app-header so they do not affect resume preview. */
+.app-header h1 {
+  font-weight: 700 !important; /* Bold */
+  font-size: 1.25rem !important; /* text-xl */
+  line-height: 1.75rem !important; /* Tailwind leading-relaxed for xl */
+}
+
+@media (min-width: 640px) {
+  .app-header h1 {
+    font-size: 1.5rem !important; /* text-2xl */
+    line-height: 2rem !important;
+  }
+}
+
+.app-header p {
+  font-size: 0.75rem !important; /* text-xs */
+  line-height: 1rem !important;
+}
+
+@media (min-width: 640px) {
+  .app-header p {
+    font-size: 0.875rem !important; /* text-sm */
+    line-height: 1.25rem !important;
+  }
+}

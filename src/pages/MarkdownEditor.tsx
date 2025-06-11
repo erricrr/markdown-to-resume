@@ -382,7 +382,7 @@ const MarkdownEditor = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white shadow-sm border-b app-header">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 sm:py-6 gap-4">
             <div className="flex items-center gap-3">
