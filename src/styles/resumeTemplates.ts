@@ -2,9 +2,6 @@
 // This file is used by: Live Preview, PDF Export, and CSS Editor
 
 export const baseResumeStyles = `
-/* Import Google Fonts for customization */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lato:wght@300;400;700&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;600&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&family=Source+Sans+Pro:wght@300;400;600&family=Roboto:wght@300;400;500;700&family=Georgia:wght@400;700&family=Times+New+Roman:wght@400;700&display=swap');
-
 /* CSS Custom Properties for User Customization - Scoped to Resume Template Only */
 .resume-template {
   --resume-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -720,8 +717,6 @@ export const templateStyles = {
 
   creative: `
 /* Creative Template - Modern greyscale design with clean styling */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
 .template-creative {
   background: white;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -1676,7 +1671,6 @@ export const getCompleteCSS = (templateName?: string): string => {
   const fontImports = `
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lato:wght@300;400;700&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;600&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&family=Source+Sans+Pro:wght@300;400;600&display=swap');
   `;
-
   let css = fontImports + baseResumeStyles;
 
   if (templateName) {

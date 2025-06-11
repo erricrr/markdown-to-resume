@@ -107,6 +107,10 @@ export const HtmlPreview = forwardRef<HTMLDivElement, HtmlPreviewProps>(
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resume Preview</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lato:wght@300;400;700&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;600&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
     <style>
       /* Ensure proper CSS rendering and color preservation */
       html, body {
@@ -223,108 +227,112 @@ ${htmlWithUploadedFile}
             let base = htmlWithUploadedFile;
             htmlContent = base.replace(
               /<\/head>/i,
-              `<style>
-      /* Ensure proper CSS rendering and color preservation */
-      html, body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: auto;
-        overflow-x: hidden;
-        max-width: 100%;
-      }
-      * {
-        box-sizing: border-box;
-        -webkit-print-color-adjust: exact !important;
-        color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-      /* Ensure content fits within iframe */
-      .resume, body > div {
-        max-width: 100% !important;
-        overflow-x: hidden !important;
-        width: auto !important;
-        margin: 0 auto !important;
-      }
-
-      /* Fix for two-column layouts */
-      .content {
-        display: grid !important;
-        grid-template-columns: 1fr 2fr !important;
-        gap: 20px !important;
-        width: 100% !important;
-      }
-
-      .left-column, .right-column {
-        width: 100% !important;
-        overflow: hidden !important;
-      }
-
-      /* Support for flex-based column layouts */
-      [class*="column-layout"],
-      [class*="two-column"],
-      [class*="columns"],
-      [class*="col-layout"] {
-        display: grid !important;
-        grid-template-columns: 1fr 2fr !important;
-        gap: 20px !important;
-        width: 100% !important;
-      }
-
-      /* Ensure all column elements have proper display */
-      [class*="column-left"],
-      [class*="left-col"],
-      [class*="sidebar"],
-      [class*="col-1"] {
-        width: 100% !important;
-        overflow: hidden !important;
-      }
-
-      [class*="column-right"],
-      [class*="right-col"],
-      [class*="main-content"],
-      [class*="col-2"] {
-        width: 100% !important;
-        overflow: hidden !important;
-      }
-
-      /* Scale content to fit the available width */
-      @media (max-width: 1000px) {
-        .resume, body > div {
-          transform: scale(0.95);
-          transform-origin: top center;
-        }
-      }
-      @media (max-width: 800px) {
-        .resume, body > div {
-          transform: scale(0.9);
-          transform-origin: top center;
-        }
-      }
-      @media print {
-        body {
-          margin: 0 !important;
-          padding: 20px !important;
-          background: white !important;
+              `<link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lato:wght@300;400;700&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;600&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+      <style>
+        /* Ensure proper CSS rendering and color preservation */
+        html, body {
+          margin: 0;
+          padding: 0;
+          width: 100%;
+          height: auto;
+          overflow-x: hidden;
+          max-width: 100%;
         }
         * {
+          box-sizing: border-box;
           -webkit-print-color-adjust: exact !important;
           color-adjust: exact !important;
+          print-color-adjust: exact !important;
         }
-        .no-print {
-          display: none !important;
+        /* Ensure content fits within iframe */
+        .resume, body > div {
+          max-width: 100% !important;
+          overflow-x: hidden !important;
+          width: auto !important;
+          margin: 0 auto !important;
         }
-        .page-break-before {
-          page-break-before: always !important;
+
+        /* Fix for two-column layouts */
+        .content {
+          display: grid !important;
+          grid-template-columns: 1fr 2fr !important;
+          gap: 20px !important;
+          width: 100% !important;
         }
-        .page-break-after {
-          page-break-after: always !important;
+
+        .left-column, .right-column {
+          width: 100% !important;
+          overflow: hidden !important;
         }
-        .page-break-inside-avoid {
-          page-break-inside: avoid !important;
+
+        /* Support for flex-based column layouts */
+        [class*="column-layout"],
+        [class*="two-column"],
+        [class*="columns"],
+        [class*="col-layout"] {
+          display: grid !important;
+          grid-template-columns: 1fr 2fr !important;
+          gap: 20px !important;
+          width: 100% !important;
         }
-      }
-    </style>
+
+        /* Ensure all column elements have proper display */
+        [class*="column-left"],
+        [class*="left-col"],
+        [class*="sidebar"],
+        [class*="col-1"] {
+          width: 100% !important;
+          overflow: hidden !important;
+        }
+
+        [class*="column-right"],
+        [class*="right-col"],
+        [class*="main-content"],
+        [class*="col-2"] {
+          width: 100% !important;
+          overflow: hidden !important;
+        }
+
+        /* Scale content to fit the available width */
+        @media (max-width: 1000px) {
+          .resume, body > div {
+            transform: scale(0.95);
+            transform-origin: top center;
+          }
+        }
+        @media (max-width: 800px) {
+          .resume, body > div {
+            transform: scale(0.9);
+            transform-origin: top center;
+          }
+        }
+        @media print {
+          body {
+            margin: 0 !important;
+            padding: 20px !important;
+            background: white !important;
+          }
+          * {
+            -webkit-print-color-adjust: exact !important;
+            color-adjust: exact !important;
+          }
+          .no-print {
+            display: none !important;
+          }
+          .page-break-before {
+            page-break-before: always !important;
+          }
+          .page-break-after {
+            page-break-after: always !important;
+          }
+          .page-break-inside-avoid {
+            page-break-inside: avoid !important;
+          }
+        }
+      </style>
 </head>`
             );
           }
