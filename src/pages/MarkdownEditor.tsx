@@ -197,16 +197,20 @@ const MarkdownEditor = () => {
     return "single";
   };
 
+  // Shared FileUpload component for all modes
+  const renderFileUploadSection = () => (
+    <div className="mb-4">
+      <h3 className="text-sm font-medium my-2">Add Image</h3>
+      <FileUpload />
+    </div>
+  );
+
   const renderInputSection = () => {
     const inputMode = getInputMode();
 
     if (inputMode === "twoPage") {
       return (
         <div className="grid grid-cols-1 gap-6 h-full overflow-auto pr-1">
-          <div className="mb-4">
-            <h3 className="text-sm font-medium my-2">Add Image</h3>
-            <FileUpload />
-          </div>
           <Card className="border-0 bg-white overflow-hidden">
             <div className="p-6 border-b">
               <div className="flex items-center gap-2">
@@ -250,10 +254,6 @@ const MarkdownEditor = () => {
     if (inputMode === "twoColumn") {
       return (
         <div className="grid grid-cols-1 gap-6 h-full overflow-auto pr-1">
-          <div className="mb-4">
-            <h3 className="text-sm font-medium my-2">Add Image</h3>
-            <FileUpload />
-          </div>
           {/* Header and Summary in single row on all screens */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <Card className="border-0 bg-white overflow-hidden">
@@ -348,10 +348,6 @@ const MarkdownEditor = () => {
           </div>
         </div>
         <div className="flex-1 p-6 pt-0 overflow-hidden flex flex-col">
-          <div className="mb-4">
-            <h3 className="text-sm font-medium my-2">Add Image</h3>
-            <FileUpload />
-          </div>
           <Textarea
             value={markdown}
             onChange={(e) => setMarkdown(e.target.value)}
@@ -442,7 +438,7 @@ const MarkdownEditor = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {isSmallScreen ? (
           <div className="flex flex-col gap-6">
-            {/* Editor Section - Small Screen */}
+                            {/* Editor Section - Small Screen */}
             <div className="w-full">
               <div className="flex flex-col h-[400px] max-h-[400px] overflow-hidden">
                 {/* Control Bar */}
@@ -479,6 +475,9 @@ const MarkdownEditor = () => {
                   </TabsList>
 
                   <TabsContent value="editor" className="flex-1 overflow-auto">
+                    <div className="p-4 pb-0">
+                      {renderFileUploadSection()}
+                    </div>
                     {renderInputSection()}
                   </TabsContent>
 
@@ -576,6 +575,9 @@ const MarkdownEditor = () => {
                   </TabsList>
 
                   <TabsContent value="editor" className="flex-1 overflow-auto">
+                    <div className="p-4 pb-0">
+                      {renderFileUploadSection()}
+                    </div>
                     {renderInputSection()}
                   </TabsContent>
 
