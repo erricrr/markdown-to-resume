@@ -204,6 +204,15 @@ const MarkdownEditor = () => {
     if (inputMode === "twoPage") {
       return (
         <div className="grid grid-cols-1 gap-6 h-full overflow-auto pr-1">
+          <div className="mb-4">
+            <h3 className="text-sm font-medium my-2">Add Image</h3>
+            <FileUpload onFileUploaded={handleFileUploaded} />
+            {uploadedFileName && (
+              <p className="text-xs text-muted-foreground mt-2">
+                File will be shown at the end of your resume
+              </p>
+            )}
+          </div>
           <Card className="shadow-xl border-0 bg-white overflow-hidden">
             <div className="p-6 border-b">
               <div className="flex items-center gap-2">
@@ -247,6 +256,15 @@ const MarkdownEditor = () => {
     if (inputMode === "twoColumn") {
       return (
         <div className="grid grid-cols-1 gap-6 h-full overflow-auto pr-1">
+          <div className="mb-4">
+            <h3 className="text-sm font-medium my-2">Add Image</h3>
+            <FileUpload onFileUploaded={handleFileUploaded} />
+            {uploadedFileName && (
+              <p className="text-xs text-muted-foreground mt-2">
+                File will be shown at the end of your resume
+              </p>
+            )}
+          </div>
           {/* Header and Summary in single row on all screens */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card className="shadow-xl border-0 bg-white overflow-hidden">
@@ -336,15 +354,24 @@ const MarkdownEditor = () => {
           <div className="flex items-center gap-2">
             <FileText className="h-5 w-5 text-primary" />
             <h2 className="text-lg font-semibold text-foreground">
-              Markdown Input
+              Markdown Editor
             </h2>
           </div>
         </div>
-        <div className="flex-1 p-6 pt-0 overflow-hidden">
+        <div className="flex-1 p-6 pt-0 overflow-hidden flex flex-col">
+          <div className="mb-4">
+            <h3 className="text-sm font-medium my-2">Add Image</h3>
+            <FileUpload onFileUploaded={handleFileUploaded} />
+            {uploadedFileName && (
+              <p className="text-xs text-muted-foreground mt-2">
+                File will be shown at the end of your resume
+              </p>
+            )}
+          </div>
           <Textarea
             value={markdown}
             onChange={(e) => setMarkdown(e.target.value)}
-            className="h-full w-full resize-none overflow-y-auto"
+            className="flex-1 w-full resize-none overflow-auto"
             placeholder="Enter your resume in Markdown format..."
           />
         </div>
@@ -403,18 +430,6 @@ const MarkdownEditor = () => {
                 </TooltipTrigger>
                 <TooltipContent>HTML Editor</TooltipContent>
               </Tooltip>
-              <div className="flex items-center gap-2">
-                <Columns2 className="h-4 w-4" />
-                <span className="text-xs sm:text-sm">Two Column</span>
-                <Switch
-                  checked={isTwoColumn}
-                  onCheckedChange={setIsTwoColumn}
-                />
-              </div>
-              <TemplateSelector
-                selectedTemplate={selectedTemplate}
-                onTemplateChange={setSelectedTemplate}
-              />
               <PaperSizeSelector
                 selectedPaperSize={paperSize}
                 onPaperSizeChange={handlePaperSizeChange}
@@ -449,6 +464,21 @@ const MarkdownEditor = () => {
           {/* Left Panel - Tabs for Editor and CSS */}
           <ResizablePanel defaultSize={leftPanelSize} minSize={30}>
             <div className="flex flex-col h-full max-h-full overflow-hidden">
+              {/* Control Bar: moved from header */}
+              <div className="flex flex-wrap items-center justify-center gap-4 w-full mb-4 py-1">
+                <div className="flex items-center gap-2">
+                  <Columns2 className="h-4 w-4" />
+                  <span className="text-xs sm:text-sm">Two Column</span>
+                  <Switch
+                    checked={isTwoColumn}
+                    onCheckedChange={setIsTwoColumn}
+                  />
+                </div>
+                <TemplateSelector
+                  selectedTemplate={selectedTemplate}
+                  onTemplateChange={setSelectedTemplate}
+                />
+              </div>
               <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col overflow-hidden">
                 <TabsList className="flex w-full mb-4 gap-1 p-1 bg-muted rounded-lg shrink-0">
                   <TabsTrigger
@@ -468,15 +498,6 @@ const MarkdownEditor = () => {
                 </TabsList>
 
                 <TabsContent value="editor" className="flex-1 overflow-auto">
-                  <div className="mb-4 p-4 bg-white rounded-lg shadow-sm border">
-                    <h3 className="text-sm font-medium mb-2">Add File to Resume</h3>
-                    <FileUpload onFileUploaded={handleFileUploaded} />
-                    {uploadedFileName && (
-                      <p className="text-xs text-muted-foreground mt-2">
-                        File will be shown at the end of your resume
-                      </p>
-                    )}
-                  </div>
                   {renderInputSection()}
                 </TabsContent>
 

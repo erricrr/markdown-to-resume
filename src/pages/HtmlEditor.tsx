@@ -538,7 +538,7 @@ const HtmlEditor = () => {
               </div>
               <div className="flex-1 p-6 pt-0 overflow-hidden flex flex-col">
                 <div className="mb-4">
-                  <h3 className="text-sm font-medium mb-2">Add File to Resume</h3>
+                  <h3 className="text-sm font-medium my-2">Add Image</h3>
                   <FileUpload onFileUploaded={handleFileUploaded} />
                   {uploadedFileName && (
                     <p className="text-xs text-muted-foreground mt-2">

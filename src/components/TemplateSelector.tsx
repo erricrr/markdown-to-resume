@@ -53,7 +53,7 @@ export const TemplateSelector = ({ selectedTemplate, onTemplateChange }: Templat
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="flex items-center gap-2 text-xs sm:text-sm">
+        <Button variant="outline" className="flex items-center gap-2 text-xs sm:text-sm h-9 px-4">
           {/* <div className={`w-3 h-3 rounded-full ${currentTemplate.color}`} /> */}
           <span>{currentTemplate.name}</span>
           <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4" />
