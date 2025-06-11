@@ -463,7 +463,7 @@ const HtmlEditor = () => {
       </div>
       <div className="flex-1 p-4 sm:p-6 pt-0 overflow-hidden flex flex-col">
         <div className="mb-4">
-          <h3 className="text-sm font-medium mb-2">Add Image</h3>
+          <h3 className="font-semibold mb-2 -mt-3.5">Add Image</h3>
           <FileUpload />
         </div>
         <Textarea
