@@ -17,6 +17,7 @@ import { useDynamicCSS } from "@/hooks/useDynamicCSS";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useFileUpload } from '@/contexts/FileUploadContext';
 
 const defaultMarkdown = `# Jane Doe
 **Software Engineer** | jane.doe@email.com | (555) 123-4567 | linkedin.com/in/janedoe
@@ -145,12 +146,11 @@ const MarkdownEditor = () => {
   const [isTwoColumn, setIsTwoColumn] = useState(false);
   const [isTwoPage, setIsTwoPage] = useState(false);
   const [paperSize, setPaperSize] = useState<'A4' | 'US_LETTER'>('A4');
-  const [uploadedFileUrl, setUploadedFileUrl] = useState('');
-  const [uploadedFileName, setUploadedFileName] = useState('');
   const [activeTab, setActiveTab] = useState("editor");
   const previewRef = useRef<HTMLDivElement>(null);
   const { addTemplateCSS, debugCSS } = useDynamicCSS();
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
+  const { uploadedFileUrl, uploadedFileName } = useFileUpload();
 
   // State for panel sizes
   const [leftPanelSize, setLeftPanelSize] = useState(() => {
@@ -180,10 +180,7 @@ const MarkdownEditor = () => {
     addTemplateCSS(template, css);
   };
 
-  const handleFileUploaded = (fileUrl: string, fileName: string) => {
-    setUploadedFileUrl(fileUrl);
-    setUploadedFileName(fileName);
-  };
+
 
   const handlePaperSizeChange = (size: 'A4' | 'US_LETTER') => {
     setPaperSize(size);
@@ -208,7 +205,7 @@ const MarkdownEditor = () => {
         <div className="grid grid-cols-1 gap-6 h-full overflow-auto pr-1">
           <div className="mb-4">
             <h3 className="text-sm font-medium my-2">Add Image</h3>
-            <FileUpload onFileUploaded={handleFileUploaded} />
+            <FileUpload />
             {uploadedFileName && (
               <p className="text-xs text-muted-foreground mt-2">
                 File will be shown at the end of your resume
@@ -260,7 +257,7 @@ const MarkdownEditor = () => {
         <div className="grid grid-cols-1 gap-6 h-full overflow-auto pr-1">
           <div className="mb-4">
             <h3 className="text-sm font-medium my-2">Add Image</h3>
-            <FileUpload onFileUploaded={handleFileUploaded} />
+            <FileUpload />
             {uploadedFileName && (
               <p className="text-xs text-muted-foreground mt-2">
                 File will be shown at the end of your resume
@@ -363,7 +360,7 @@ const MarkdownEditor = () => {
         <div className="flex-1 p-6 pt-0 overflow-hidden flex flex-col">
           <div className="mb-4">
             <h3 className="text-sm font-medium my-2">Add Image</h3>
-            <FileUpload onFileUploaded={handleFileUploaded} />
+            <FileUpload />
             {uploadedFileName && (
               <p className="text-xs text-muted-foreground mt-2">
                 File will be shown at the end of your resume

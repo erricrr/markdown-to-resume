@@ -1,19 +1,31 @@
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Upload, File as FileIcon, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { useFileUpload } from '@/contexts/FileUploadContext';
 
 interface FileUploadProps {
-  onFileUploaded: (fileUrl: string, fileName: string) => void;
+  onFileUploaded?: (fileUrl: string, fileName: string) => void;
 }
 
 export const FileUpload = ({ onFileUploaded }: FileUploadProps) => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [fileUrl, setFileUrl] = useState<string | null>(null);
   const { toast } = useToast();
+  const { uploadedFileUrl, uploadedFileName, uploadedFileSize, setFileData, clearFileData } = useFileUpload();
+
+  // Sync the uploadedFile state with the context data on mount
+  useEffect(() => {
+    if (uploadedFileName && !uploadedFile) {
+      // Create a minimal file object for display purposes (we only need the name)
+      const dummyFile = new File([''], uploadedFileName, { type: 'application/octet-stream' });
+      setUploadedFile(dummyFile);
+    } else if (!uploadedFileName && uploadedFile) {
+      setUploadedFile(null);
+    }
+  }, [uploadedFileName, uploadedFile]);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -34,8 +46,13 @@ export const FileUpload = ({ onFileUploaded }: FileUploadProps) => {
 
     // Create a local URL for the file (will be temporary until page reload)
     const url = URL.createObjectURL(file);
-    setFileUrl(url);
-    onFileUploaded(url, file.name);
+
+        // Store in shared context
+    setFileData(url, file.name, file.size);
+
+    // Also call the optional callback for backward compatibility
+    onFileUploaded?.(url, file.name);
+
     setIsUploading(false);
 
     toast({
@@ -45,12 +62,11 @@ export const FileUpload = ({ onFileUploaded }: FileUploadProps) => {
   };
 
   const handleRemoveFile = () => {
-    if (fileUrl) {
-      URL.revokeObjectURL(fileUrl);
-    }
     setUploadedFile(null);
-    setFileUrl(null);
-    onFileUploaded('', '');
+    clearFileData();
+
+    // Also call the optional callback for backward compatibility
+    onFileUploaded?.('', '');
 
     toast({
       title: 'File removed',
@@ -60,7 +76,7 @@ export const FileUpload = ({ onFileUploaded }: FileUploadProps) => {
 
   return (
     <div className="flex flex-col gap-3 w-full">
-      {!uploadedFile ? (
+      {!uploadedFileName ? (
         <div className="flex items-center gap-2">
           <Input
             type="file"
@@ -85,9 +101,9 @@ export const FileUpload = ({ onFileUploaded }: FileUploadProps) => {
       ) : (
         <div className="flex items-center gap-2 bg-muted/30 rounded-md p-2">
           <FileIcon className="h-4 w-4 text-primary" />
-          <div className="flex-1 truncate text-xs">{uploadedFile.name}</div>
+          <div className="flex-1 truncate text-xs">{uploadedFileName}</div>
           <Badge variant="outline" className="text-xs flex items-center gap-1">
-            {(uploadedFile.size / 1024).toFixed(0)} KB
+            {uploadedFileSize > 0 ? (uploadedFileSize / 1024).toFixed(0) + ' KB' : 'File'}
           </Badge>
           <Button
             variant="ghost"

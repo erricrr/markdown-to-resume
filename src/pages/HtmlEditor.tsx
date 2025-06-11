@@ -13,6 +13,7 @@ import { PaperSizeSelector } from "@/components/PaperSizeSelector";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useFileUpload } from '@/contexts/FileUploadContext';
 
 const defaultHtml = `<!DOCTYPE html>
 <html lang="en">
@@ -419,10 +420,9 @@ const HtmlEditor = () => {
   const [html, setHtml] = useState(defaultHtml);
   const [activeTab, setActiveTab] = useState("editor");
   const [paperSize, setPaperSize] = useState<'A4' | 'US_LETTER'>('A4');
-  const [uploadedFileUrl, setUploadedFileUrl] = useState('');
-  const [uploadedFileName, setUploadedFileName] = useState('');
   const previewRef = useRef<HTMLDivElement>(null);
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
+  const { uploadedFileUrl, uploadedFileName } = useFileUpload();
 
   // State for panel sizes
   const [leftPanelSize, setLeftPanelSize] = useState(() => {
@@ -442,10 +442,7 @@ const HtmlEditor = () => {
     window.print();
   };
 
-  const handleFileUploaded = (fileUrl: string, fileName: string) => {
-    setUploadedFileUrl(fileUrl);
-    setUploadedFileName(fileName);
-  };
+
 
   const handlePaperSizeChange = (size: 'A4' | 'US_LETTER') => {
     setPaperSize(size);
@@ -467,7 +464,7 @@ const HtmlEditor = () => {
       <div className="flex-1 p-4 sm:p-6 pt-0 overflow-hidden flex flex-col">
         <div className="mb-4">
           <h3 className="text-sm font-medium my-2">Add Image</h3>
-          <FileUpload onFileUploaded={handleFileUploaded} />
+          <FileUpload />
           {uploadedFileName && (
             <p className="text-xs text-muted-foreground mt-2">
               File will be shown at the end of your resume
