@@ -16,6 +16,7 @@ interface ResumePreviewProps {
   isTwoPage?: boolean;
   paperSize?: 'A4' | 'US_LETTER';
   uploadedFileUrl?: string;
+  uploadedFileName?: string;
 }
 
 // List of valid template IDs
@@ -24,7 +25,7 @@ const validTemplates = ['professional', 'modern', 'minimalist', 'creative', 'exe
 type TemplateType = typeof validTemplates[number];
 
 export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
-  ({ markdown, leftColumn = '', rightColumn = '', header = '', summary = '', firstPage = '', secondPage = '', template: propTemplate, isTwoColumn = false, isTwoPage = false, paperSize = 'A4', uploadedFileUrl = '' }, ref) => {
+  ({ markdown, leftColumn = '', rightColumn = '', header = '', summary = '', firstPage = '', secondPage = '', template: propTemplate, isTwoColumn = false, isTwoPage = false, paperSize = 'A4', uploadedFileUrl = '', uploadedFileName = '' }, ref) => {
     // Ensure we always have a valid template
     const template: TemplateType = validTemplates.includes(propTemplate as TemplateType)
       ? propTemplate as TemplateType
@@ -97,7 +98,16 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
           .replace(/<a([^>]*)>/g, '<a$1 class="resume-link">')
           .replace(/<code([^>]*)>/g, '<code$1 class="resume-code">')
           .replace(/<pre([^>]*)>/g, '<pre$1 class="resume-code-block">')
-          .replace(/<br([^>]*)>/g, '<br$1 class="resume-br">');
+          .replace(/<br([^>]*)>/g, '<br$1 class="resume-br">')
+          // If an <img> tag has a relative src (does not start with http, https, data:, or /),
+          // rewrite it so it points to the public root. This prevents broken images when the
+          // app is served from a nested route such as /markdown or /html.
+          .replace(/<img([^>]*)src="([^\"]+)"([^>]*)>/g, (match, before, src, after) => {
+            if (/^(https?:|data:|\/)/.test(src)) {
+              return match; // already absolute or external
+            }
+            return `<img${before}src="/${src}"${after}>`;
+          });
 
         // Handle bullet points in table cells (content starting with "- " at the beginning)
         processedHtml = processedHtml.replace(
@@ -197,10 +207,36 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
 
     const htmlContent = getHtmlContent();
 
-    // Add uploaded file image if available
-    const contentWithUploadedFile = uploadedFileUrl && htmlContent ?
-      htmlContent + `<div class="resume-uploaded-file"><img src="${uploadedFileUrl}" alt="Uploaded file" style="max-width: 100%; max-height: 300px; display: block; margin: 0.5rem 0;" /></div>` :
-      htmlContent;
+    /*
+     * Smarter handling for uploaded files:
+     *   • If the uploaded asset is an image (jpg / jpeg / png / gif / webp), treat it as a profile picture / avatar.
+     *     – If the user already embedded this exact URL manually, do nothing (avoids duplicates).
+     *     – Otherwise try to place it right after the opening header container so it appears in the expected spot.
+     *   • For any other kind of file (pdf, docx, etc.) keep the old behaviour and append it to the end.
+     */
+    const imageRegex = /\.(jpe?g|png|gif|webp)$/i;
+    const isImageFile = (!!uploadedFileUrl && imageRegex.test(uploadedFileUrl)) || (!!uploadedFileName && imageRegex.test(uploadedFileName));
+
+    let contentWithUploadedFile = htmlContent;
+
+    if (uploadedFileUrl && uploadedFileName) {
+      const escapedName = uploadedFileName.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+      const regex = new RegExp(`src=([\"\'])([^\"\']*${escapedName})\\1`, 'g');
+      contentWithUploadedFile = contentWithUploadedFile.replace(regex, (_m: string, quote: string) => {
+        return `src=${quote}${uploadedFileUrl}${quote}`;
+      });
+    }
+
+    if (uploadedFileUrl && contentWithUploadedFile) {
+      // Skip if the blob url already exists in markup (prevents duplicates)
+      const alreadyInserted = contentWithUploadedFile.includes(uploadedFileUrl);
+
+      // For non-image files we still want the attachment at the end once.
+      if (!alreadyInserted && !isImageFile) {
+        contentWithUploadedFile += `\n<div class="resume-uploaded-file"><img src="${uploadedFileUrl}" alt="Uploaded file" style="max-width: 100%; max-height: 300px; display: block; margin: 0.5rem 0;" /></div>`;
+      }
+      // For image files we do NOTHING here – user must reference it explicitly in Markdown/HTML.
+    }
 
     // Log paper size to debug
     console.log(`ResumePreview rendering with paper size: ${paperSize}`);

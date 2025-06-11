@@ -4,10 +4,11 @@ interface HtmlPreviewProps {
   html: string;
   paperSize?: 'A4' | 'US_LETTER';
   uploadedFileUrl?: string;
+  uploadedFileName?: string;
 }
 
 export const HtmlPreview = forwardRef<HTMLDivElement, HtmlPreviewProps>(
-  ({ html, paperSize = 'A4', uploadedFileUrl = '' }, ref) => {
+  ({ html, paperSize = 'A4', uploadedFileUrl = '', uploadedFileName = '' }, ref) => {
     const iframeRef = useRef<HTMLIFrameElement>(null);
     const [isInitialRender, setIsInitialRender] = useState(true);
     const previousHtmlRef = useRef(html);
@@ -69,7 +70,10 @@ export const HtmlPreview = forwardRef<HTMLDivElement, HtmlPreviewProps>(
           // If the HTML doesn't include DOCTYPE, add it along with proper meta tags
           // Add uploaded file if available
           let htmlWithUploadedFile = renderedHtml;
-          if (uploadedFileUrl) {
+          const imageRegex = /\.(jpe?g|png|gif|webp)$/i;
+          const isImageFile = (!!uploadedFileUrl && imageRegex.test(uploadedFileUrl)) || (!!uploadedFileName && imageRegex.test(uploadedFileName));
+
+          if (uploadedFileUrl && !isImageFile && !htmlWithUploadedFile.includes(uploadedFileUrl)) {
             const uploadedFileHtml = `
 <div style="margin-top: 20px; margin-bottom: 20px;">
   <img src="${uploadedFileUrl}" alt="Uploaded file" style="max-width: 100%; max-height: 300px; display: block; margin: 0 auto;">
@@ -81,6 +85,19 @@ export const HtmlPreview = forwardRef<HTMLDivElement, HtmlPreviewProps>(
               htmlWithUploadedFile = htmlWithUploadedFile + uploadedFileHtml;
             }
           }
+
+          // Replace occurrences of the uploaded file name so inline <img> tags show the blob URL
+          if (uploadedFileUrl && uploadedFileName) {
+            const escapedName = uploadedFileName.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
+            const regex = new RegExp(`src=([\"\'])([^\"\']*${escapedName})\\1`, 'g');
+            htmlWithUploadedFile = htmlWithUploadedFile.replace(regex, (_m: string, quote: string) => `src=${quote}${uploadedFileUrl}${quote}`);
+          }
+
+          // Ensure relative image URLs load from public root
+          htmlWithUploadedFile = htmlWithUploadedFile.replace(/<img([^>]*)src="([^\"\']+)"([^>]*)>/g, (match: string, before: string, src: string, after: string) => {
+            if (/^(https?:|data:|blob:|\/)/i.test(src)) return match;
+            return `<img${before}src="/${src}"${after}>`;
+          });
 
           let htmlContent = htmlWithUploadedFile;
           if (!htmlWithUploadedFile.trim().toLowerCase().startsWith('<!doctype')) {
@@ -160,8 +177,9 @@ ${htmlWithUploadedFile}
 </body>
 </html>`;
           } else {
-            // If HTML already has DOCTYPE, just ensure it has proper print styles
-            htmlContent = renderedHtml.replace(
+            // If HTML already has DOCTYPE, inject our replacements and ensure it has proper print styles
+            let base = htmlWithUploadedFile;
+            htmlContent = base.replace(
               /<\/head>/i,
               `<style>
       /* Ensure proper CSS rendering and color preservation */

@@ -17,6 +17,7 @@ interface ResumeData {
   isTwoPage?: boolean;
   paperSize?: 'A4' | 'US_LETTER';
   uploadedFileUrl?: string;
+  uploadedFileName?: string;
 }
 
 export const exportToPDF = async (resumeData: ResumeData) => {
@@ -53,7 +54,14 @@ export const exportToPDF = async (resumeData: ResumeData) => {
         .replace(/<a([^>]*)>/g, '<a$1 class="resume-link">')
         .replace(/<code([^>]*)>/g, '<code$1 class="resume-code">')
         .replace(/<pre([^>]*)>/g, '<pre$1 class="resume-code-block">')
-        .replace(/<br([^>]*)>/g, '<br$1 class="resume-br">');
+        .replace(/<br([^>]*)>/g, '<br$1 class="resume-br">')
+        // Same fix: ensure relative image paths resolve from public root.
+        .replace(/<img([^>]*)src="([^\"]+)"([^>]*)>/g, (match, before, src, after) => {
+          if (/^(https?:|data:|\/)/.test(src)) {
+            return match;
+          }
+          return `<img${before}src="/${src}"${after}>`;
+        });
 
       // Handle bullet points in table cells (content starting with "- " at the beginning)
       processedHtml = processedHtml.replace(
@@ -75,7 +83,7 @@ export const exportToPDF = async (resumeData: ResumeData) => {
   };
 
   const getHtmlContent = () => {
-    const { markdown, leftColumn = '', rightColumn = '', header = '', summary = '', firstPage = '', secondPage = '', isTwoColumn = false, isTwoPage = false, uploadedFileUrl = '' } = resumeData;
+    const { markdown, leftColumn = '', rightColumn = '', header = '', summary = '', firstPage = '', secondPage = '', isTwoColumn = false, isTwoPage = false, uploadedFileUrl = '', uploadedFileName = '' } = resumeData;
 
     if (isTwoPage && isTwoColumn) {
       // Combined mode: Two pages with two columns each
@@ -149,16 +157,10 @@ export const exportToPDF = async (resumeData: ResumeData) => {
         </div>
       `;
     } else {
-          let content = parseMarkdown(markdown);
-
-    // Add uploaded file if available
-    if (uploadedFileUrl) {
-      content += `<div class="resume-uploaded-file"><img src="${uploadedFileUrl}" alt="Uploaded file" style="max-width: 100%; max-height: 300px; display: block; margin: 0.5rem 0;" /></div>`;
+      const parsed = parseMarkdown(markdown);
+      return parsed; // no bottom injection here; handled later
     }
-
-    return content;
-  }
-};
+  };
 
   const getTemplateClasses = () => {
     const { template, isTwoColumn = false, isTwoPage = false, paperSize = 'A4' } = resumeData;
@@ -245,6 +247,28 @@ export const exportToPDF = async (resumeData: ResumeData) => {
   };
 
   const htmlContent = getHtmlContent();
+
+  /*
+   * Similar logic to ResumePreview: intelligently insert uploaded images near the header
+   * while leaving other file types untouched (still appended at bottom if single column).
+   */
+  const { uploadedFileUrl = '', uploadedFileName = '' } = resumeData;
+  const imageRegex = /\.(jpe?g|png|gif|webp)$/i;
+  const isImageFile = (!!uploadedFileUrl && imageRegex.test(uploadedFileUrl)) || (!!uploadedFileName && imageRegex.test(uploadedFileName));
+
+  let finalHtmlContent = htmlContent;
+
+  if (uploadedFileUrl && uploadedFileName) {
+    const escapedName = uploadedFileName.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
+    const regex = new RegExp(`src=([\"\'])([^\"\']*${escapedName})\\1`, 'g');
+    finalHtmlContent = finalHtmlContent.replace(regex, (_m: string, quote: string) => `src=${quote}${uploadedFileUrl}${quote}`);
+  }
+
+  // Only append at bottom for non-image assets and avoid duplicates
+  if (uploadedFileUrl && !isImageFile && !finalHtmlContent.includes(uploadedFileUrl)) {
+    finalHtmlContent += `\n<div class="resume-uploaded-file"><img src="${uploadedFileUrl}" alt="Uploaded file" style="max-width: 100%; max-height: 300px; display: block; margin: 0.5rem 0;" /></div>`;
+  }
+
   const templateClasses = getTemplateClasses();
   const allLivePreviewCSS = getAllLivePreviewStyles();
 
@@ -427,7 +451,7 @@ html body .resume-template .resume-heading-2 ~ *:last-child {
     </head>
     <body>
       <div class="resume-template ${templateClasses}" data-paper-size="${paperSize}">
-        ${htmlContent}
+        ${finalHtmlContent}
       </div>
       <script>
         // Auto-open print dialog after page loads

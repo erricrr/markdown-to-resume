@@ -14,9 +14,10 @@ interface HtmlPrintPreviewProps {
   html: string;
   paperSize?: 'A4' | 'US_LETTER';
   uploadedFileUrl?: string;
+  uploadedFileName?: string;
 }
 
-export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '' }: HtmlPrintPreviewProps) => {
+export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '', uploadedFileName = '' }: HtmlPrintPreviewProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
         const handlePrint = () => {
@@ -34,7 +35,10 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '' 
     if (printWindow) {
       // Add uploaded file to the HTML if available
       let processedHtml = html;
-      if (uploadedFileUrl) {
+      const imageRegex = /\.(jpe?g|png|gif|webp)$/i;
+      const isImageFile = (!!uploadedFileUrl && imageRegex.test(uploadedFileUrl)) || (!!uploadedFileName && imageRegex.test(uploadedFileName));
+
+      if (uploadedFileUrl && !isImageFile && !processedHtml.includes(uploadedFileUrl)) {
         const uploadedFileHtml = `
 <div style="margin-top: 20px; margin-bottom: 20px;">
   <img src="${uploadedFileUrl}" alt="Uploaded file" style="max-width: 100%; max-height: 300px; display: block; margin: 0 auto;">
@@ -46,6 +50,19 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '' 
           processedHtml = processedHtml + uploadedFileHtml;
         }
       }
+
+      // Swap filename references to blob URL for inline images
+      if (uploadedFileUrl && uploadedFileName) {
+        const escapedName = uploadedFileName.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
+        const regex = new RegExp(`src=([\"\'])([^\"\']*${escapedName})\\1`, 'g');
+        processedHtml = processedHtml.replace(regex, (_m: string, quote: string) => `src=${quote}${uploadedFileUrl}${quote}`);
+      }
+
+      // Ensure relative image sources work
+      processedHtml = processedHtml.replace(/<img([^>]*)src="([^\"\']+)"([^>]*)>/g, (match: string, before: string, src: string, after: string) => {
+        if (/^(https?:|data:|blob:|\/)/i.test(src)) return match;
+        return `<img${before}src="/${src}"${after}>`;
+      });
 
       // Aggressive approach - force background colors to work in print
       let enhancedHtml = processedHtml;

@@ -494,6 +494,7 @@ const HtmlEditor = () => {
                 html={html}
                 paperSize={paperSize}
                 uploadedFileUrl={uploadedFileUrl}
+                uploadedFileName={uploadedFileName}
               />
             </div>
           </div>
@@ -566,6 +567,7 @@ const HtmlEditor = () => {
                     html={html}
                     paperSize={paperSize}
                     uploadedFileUrl={uploadedFileUrl}
+                    uploadedFileName={uploadedFileName}
                   />
                 </div>
               </div>

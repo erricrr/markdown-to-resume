@@ -17,6 +17,7 @@ interface PrintPreviewProps {
   isTwoPage?: boolean;
   paperSize?: 'A4' | 'US_LETTER';
   uploadedFileUrl?: string;
+  uploadedFileName?: string;
 }
 
 export const PrintPreview = ({
@@ -31,7 +32,8 @@ export const PrintPreview = ({
   isTwoColumn = false,
   isTwoPage = false,
   paperSize = 'A4',
-  uploadedFileUrl = ''
+  uploadedFileUrl = '',
+  uploadedFileName = ''
 }: PrintPreviewProps) => {
   const [isExporting, setIsExporting] = useState(false);
   const { toast } = useToast();
@@ -52,7 +54,8 @@ export const PrintPreview = ({
         isTwoColumn,
         isTwoPage,
         paperSize,
-        uploadedFileUrl
+        uploadedFileUrl,
+        uploadedFileName
       });
       toast({ title: 'PDF Generated', description: 'Your resume PDF has opened in a new tab.' });
     } catch (error) {

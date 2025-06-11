@@ -358,16 +358,12 @@ const MarkdownEditor = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 sm:py-6 gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-600 rounded-lg flex items-center justify-center overflow-hidden">
-                <img
-                  src="/markdown.png"
-                  alt="Markdown to resume icon"
-                  className="h-6 w-6 object-cover"
-                />
-              </div>
+            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-teal-600 rounded-lg flex items-center justify-center">
+                  <FileText className="h-6 w-6 text-white" />
+                </div>
               <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-                  Markdown Resume Editor
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+                Markdown Resume Editor
                 </h1>
                 <p className="text-xs sm:text-sm text-gray-600">
                   Transform markdown into professional resumes
@@ -422,6 +418,7 @@ const MarkdownEditor = () => {
                 isTwoPage={isTwoPage}
                 paperSize={paperSize}
                 uploadedFileUrl={uploadedFileUrl}
+                uploadedFileName={uploadedFileName}
               />
             </div>
           </div>
@@ -515,6 +512,7 @@ const MarkdownEditor = () => {
                     isTwoPage={isTwoPage}
                     paperSize={paperSize}
                     uploadedFileUrl={uploadedFileUrl}
+                    uploadedFileName={uploadedFileName}
                   />
                 </div>
               </div>
