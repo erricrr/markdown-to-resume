@@ -17,8 +17,8 @@ import { useDynamicCSS } from "@/hooks/useDynamicCSS";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
-const defaultMarkdown = `# John Doe
-**Software Engineer** | john.doe@email.com | (555) 123-4567 | linkedin.com/in/johndoe
+const defaultMarkdown = `# Jane Doe
+**Software Engineer** | jane.doe@email.com | (555) 123-4567 | linkedin.com/in/janedoe
 
 ## Experience
 
@@ -57,15 +57,15 @@ const defaultMarkdown = `# John Doe
 - Developed collaborative task management application
 - Technologies: Vue.js, Firebase, PWA`;
 
-const defaultHeader = `# John Doe
-**Software Engineer** | john.doe@email.com | (555) 123-4567 | linkedin.com/in/johndoe`;
+const defaultHeader = `# Jane Doe
+**Software Engineer** | jane.doe@email.com | (555) 123-4567 | linkedin.com/in/janedoe`;
 
 const defaultSummary = `Experienced software engineer with 5+ years developing scalable web applications. Passionate about clean code, user experience, and mentoring junior developers.`;
 
 const defaultLeftColumn = `## Contact
-- **Email:** john.doe@email.com
+- **Email:** jane.doe@email.com
 - **Phone:** (555) 123-4567
-- **LinkedIn:** linkedin.com/in/johndoe
+- **LinkedIn:** linkedin.com/in/janedoe
 - **Location:** San Francisco, CA
 
 ## Skills

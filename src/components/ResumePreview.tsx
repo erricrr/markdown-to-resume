@@ -139,8 +139,8 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
      * the individual contact items (role, email, phone, etc.) more elegantly.
      *
      * Expected author input (but not strictly required):
-     *   # John Doe             ← name (H1)
-     *   **Software Engineer** | john@email.com | (+1) 555-555-5555
+     *   # Jane Doe             ← name (H1)
+     *   **Software Engineer** | jane@email.com | (+1) 555-555-5555
      *
      * The first line becomes the H1. Everything after the first line is split
      * by the pipe character (|) and wrapped in <span class="resume-contact-item">.

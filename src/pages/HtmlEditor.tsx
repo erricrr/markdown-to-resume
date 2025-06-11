@@ -18,7 +18,7 @@ const defaultHtml = `<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>John Doe - Resume</title>
+    <title>Jane Doe - Resume</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -226,10 +226,10 @@ const defaultHtml = `<!DOCTYPE html>
 <body>
     <div class="resume">
         <div class="header">
-            <h1 class="name">John Doe</h1>
+            <h1 class="name">Jane Doe</h1>
             <div class="title">Senior Software Engineer</div>
             <div class="contact">
-                john.doe@email.com | (555) 123-4567 | linkedin.com/in/johndoe | San Francisco, CA
+                jane.doe@email.com | (555) 123-4567 | linkedin.com/in/janedoe | San Francisco, CA
             </div>
         </div>
 
@@ -239,7 +239,7 @@ const defaultHtml = `<!DOCTYPE html>
                     <h2>Contact</h2>
                     <div class="contact-item">
                         <span class="contact-icon"></span>
-                        <span>john.doe@email.com</span>
+                        <span>jane.doe@email.com</span>
                     </div>
                     <div class="contact-item">
                         <span class="contact-icon"></span>
@@ -251,7 +251,7 @@ const defaultHtml = `<!DOCTYPE html>
                     </div>
                     <div class="contact-item">
                         <span class="contact-icon"></span>
-                        <span>linkedin.com/in/johndoe</span>
+                        <span>linkedin.com/in/janedoe</span>
                     </div>
                 </section>
 
