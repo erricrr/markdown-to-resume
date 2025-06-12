@@ -560,7 +560,7 @@ const HtmlEditor = () => {
                     size="sm"
                     aria-label="Home"
                     onClick={() => navigate("/")}
-                    className="bg-white hover:bg-gray-50 hidden sm:flex items-center gap-2"
+                    className="bg-white hover:bg-gray-50 hover:text-gray-900 hidden sm:flex items-center gap-2 font-medium"
                   >
                     <Home className="h-4 w-4" />
                     <span>Home</span>
@@ -577,7 +577,7 @@ const HtmlEditor = () => {
                     size="icon"
                     aria-label="Home"
                     onClick={() => navigate("/")}
-                    className="bg-white hover:bg-gray-50 sm:hidden"
+                    className="bg-white hover:bg-gray-50 hover:text-gray-900 sm:hidden font-medium"
                   >
                     <Home className="h-4 w-4" />
                   </Button>
@@ -593,7 +593,7 @@ const HtmlEditor = () => {
                     size="sm"
                     aria-label="Switch to Markdown"
                     onClick={() => navigate("/markdown")}
-                    className="bg-white hover:bg-gray-50 hidden sm:flex items-center gap-2"
+                    className="bg-white hover:bg-gray-50 hover:text-gray-900 hidden sm:flex items-center gap-2 font-medium"
                   >
                     <FileText className="h-4 w-4" />
                     <span>Markdown Editor</span>
@@ -610,7 +610,7 @@ const HtmlEditor = () => {
                     size="icon"
                     aria-label="Switch to Markdown"
                     onClick={() => navigate("/markdown")}
-                    className="bg-white hover:bg-gray-50 sm:hidden"
+                    className="bg-white hover:bg-gray-50 hover:text-gray-900 sm:hidden font-medium"
                   >
                     <FileText className="h-4 w-4" />
                   </Button>

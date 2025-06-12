@@ -554,7 +554,7 @@ const MarkdownEditor = () => {
                     size="sm"
                     aria-label="Home"
                     onClick={() => navigate("/")}
-                    className="bg-white hover:bg-gray-50 hidden sm:flex items-center gap-2"
+                    className="bg-white hover:bg-gray-50 hover:text-gray-900 hidden sm:flex items-center gap-2 font-medium"
                   >
                     <Home className="h-4 w-4" />
                     <span>Home</span>
@@ -571,7 +571,7 @@ const MarkdownEditor = () => {
                     size="icon"
                     aria-label="Home"
                     onClick={() => navigate("/")}
-                    className="bg-white hover:bg-gray-50 sm:hidden"
+                    className="bg-white hover:bg-gray-50 hover:text-gray-900 sm:hidden font-medium"
                   >
                     <Home className="h-4 w-4" />
                   </Button>
@@ -587,7 +587,7 @@ const MarkdownEditor = () => {
                     size="sm"
                     aria-label="Switch to HTML"
                     onClick={() => navigate("/html")}
-                    className="bg-white hover:bg-gray-50 hidden sm:flex items-center gap-2"
+                    className="bg-white hover:bg-gray-50 hover:text-gray-900 hidden sm:flex items-center gap-2 font-medium"
                   >
                     <Code className="h-4 w-4" />
                     <span>HTML Editor</span>
@@ -604,7 +604,7 @@ const MarkdownEditor = () => {
                     size="icon"
                     aria-label="Switch to HTML"
                     onClick={() => navigate("/html")}
-                    className="bg-white hover:bg-gray-50 sm:hidden"
+                    className="bg-white hover:bg-gray-50 hover:text-gray-900 sm:hidden font-medium"
                   >
                     <Code className="h-4 w-4" />
                   </Button>
