@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Printer, Columns2, FileStack, Code, Eye, Sticker, Home, Info } from "lucide-react";
+import { FileText, Columns2, Code, Eye, Home, Info } from "lucide-react";
 import { ResumePreview } from "@/components/ResumePreview";
 import { PrintPreview } from "@/components/PrintPreview";
 import { TemplateSelector } from "@/components/TemplateSelector";
