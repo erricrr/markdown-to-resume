@@ -14,10 +14,29 @@ export const baseResumeStyles = `
   --resume-h1-font-size: 28pt;
   --resume-h2-font-size: 14pt;
   --resume-h3-font-size: 12pt;
+  --resume-h4-font-size: 11pt;
   --resume-section-spacing: 8pt;
   --resume-summary-spacing: 0.75rem;
   --resume-header-spacing: 0.125rem;
   --resume-contact-spacing: 0.375rem; /* Increased spacing between H1 and contact info */
+
+  /* UNIFIED SPACING VARIABLES FOR CONSISTENCY */
+  --resume-h1-margin-top: 0.5rem;
+  --resume-h1-margin-bottom: 0.5rem;
+  --resume-h2-margin-top: 1rem;
+  --resume-h2-margin-bottom: 0.5rem;
+  --resume-h3-margin-top: 0.75rem;
+  --resume-h3-margin-bottom: 0.375rem;
+  --resume-h4-margin-top: 0.5rem;
+  --resume-h4-margin-bottom: 0.25rem;
+  --resume-p-margin-top: 0;
+  --resume-p-margin-bottom: 0.5rem;
+  --resume-ul-margin-top: 0.5rem;
+  --resume-ul-margin-bottom: 0.5rem;
+
+  /* UNIFIED SUMMARY SECTION SPACING FOR TWO-COLUMN LAYOUTS */
+  --resume-summary-margin-top: 0.75rem;
+  --resume-summary-margin-bottom: 0.75rem;
 }
 
 /* Reset and base styles */
@@ -129,38 +148,160 @@ body {
   }
 }
 
-/* Base Typography with Professional Spacing */
-.resume-heading-1 {
+/* UNIFIED TYPOGRAPHY WITH CONSISTENT SPACING - DRY APPROACH */
+/* These rules apply to ALL templates and override template-specific inconsistencies */
+
+.resume-heading-1,
+.resume-template h1 {
   font-size: var(--resume-h1-font-size);
   font-weight: bold;
   color: #000;
-  margin-top: 0.5rem;
-  margin-bottom: 0.25rem;
+  margin-top: var(--resume-h1-margin-top) !important;
+  margin-bottom: var(--resume-h1-margin-bottom) !important;
   font-family: var(--resume-font-family);
   line-height: 1.1;
 }
-.resume-heading-2 {
+
+.resume-heading-2,
+.resume-template h2 {
   font-size: var(--resume-h2-font-size);
   font-weight: 600;
   color: #000;
-  margin-top: 0.5rem;
-  margin-bottom: var(--resume-section-spacing);
+  margin-top: var(--resume-h2-margin-top) !important;
+  margin-bottom: var(--resume-h2-margin-bottom) !important;
   font-family: var(--resume-font-family);
 }
-.resume-heading-3 {
+
+.resume-heading-3,
+.resume-template h3 {
   font-size: var(--resume-h3-font-size);
   font-weight: 500;
   color: #374151;
-  margin-top: 0.75rem;
-  margin-bottom: 0.375rem;
+  margin-top: var(--resume-h3-margin-top) !important;
+  margin-bottom: var(--resume-h3-margin-bottom) !important;
   font-family: var(--resume-font-family);
   line-height: 1.3;
 }
-.resume-paragraph {
-  margin-bottom: 0.5rem;
+
+.resume-heading-4,
+.resume-template h4 {
+  font-size: var(--resume-h4-font-size);
+  font-weight: 500;
+  color: #374151;
+  margin-top: var(--resume-h4-margin-top) !important;
+  margin-bottom: var(--resume-h4-margin-bottom) !important;
+  font-family: var(--resume-font-family);
+  line-height: 1.3;
+}
+
+.resume-paragraph,
+.resume-template p {
+  margin-top: var(--resume-p-margin-top) !important;
+  margin-bottom: var(--resume-p-margin-bottom) !important;
   line-height: var(--resume-line-height);
   color: #374151;
+  font-family: var(--resume-font-family);
 }
+
+.resume-list,
+.resume-template ul,
+.resume-template ol {
+  list-style: none;
+  padding-left: 1.0rem;
+  margin-top: var(--resume-ul-margin-top) !important;
+  margin-bottom: var(--resume-ul-margin-bottom) !important;
+}
+
+.resume-list-item,
+.resume-template li {
+  position: relative;
+  padding-left: 0;
+  margin-bottom: 0.5rem;
+  line-height: var(--resume-line-height);
+  display: block;
+  font-family: var(--resume-font-family);
+}
+
+.resume-list-item::before,
+.resume-template li::before {
+  content: "•";
+  position: absolute;
+  left: -1.0rem;
+  font-size: 1.0em;
+  font-weight: normal;
+  color: inherit;
+  line-height: 1.0;
+  top: 0.1em;
+}
+
+/* EXCEPTION: Header H1 elements need special spacing for contact info */
+.resume-header .resume-heading-1,
+.resume-header h1 {
+  margin-bottom: var(--resume-header-spacing) !important;
+}
+
+/* EXCEPTION: Two-column layout H2 elements need adjusted top margin */
+.resume-two-column-layout .resume-column-left > .resume-heading-2:first-child,
+.resume-two-column-layout .resume-column-right > .resume-heading-2:first-child,
+.resume-two-column-layout .resume-column-left > h2:first-child,
+.resume-two-column-layout .resume-column-right > h2:first-child {
+  margin-top: 0.5rem !important;
+}
+
+/* FIX: Modern, Creative, and Executive templates H2 background elements in two-column layout */
+/* Ensure background elements are not cut off by adding proper top spacing */
+.resume-two-column-layout .template-modern .resume-heading-2,
+.resume-two-column-layout .template-modern h2,
+.resume-two-column-layout .template-creative .resume-heading-2,
+.resume-two-column-layout .template-creative h2,
+.resume-two-column-layout .template-executive .resume-heading-2,
+.resume-two-column-layout .template-executive h2 {
+  margin-top: 1rem !important;
+  overflow: visible !important;
+  /* Ensure background extends fully */
+  display: block !important;
+  width: 100% !important;
+}
+
+/* Specific fixes for first H2 elements in columns */
+.resume-two-column-layout .resume-column-left > .template-modern.resume-heading-2:first-child,
+.resume-two-column-layout .resume-column-right > .template-modern.resume-heading-2:first-child,
+.resume-two-column-layout .resume-column-left > .template-creative.resume-heading-2:first-child,
+.resume-two-column-layout .resume-column-right > .template-creative.resume-heading-2:first-child,
+.resume-two-column-layout .resume-column-left > .template-executive.resume-heading-2:first-child,
+.resume-two-column-layout .resume-column-right > .template-executive.resume-heading-2:first-child,
+.resume-two-column-layout.template-modern .resume-column-left > h2:first-child,
+.resume-two-column-layout.template-modern .resume-column-right > h2:first-child,
+.resume-two-column-layout.template-creative .resume-column-left > h2:first-child,
+.resume-two-column-layout.template-creative .resume-column-right > h2:first-child,
+.resume-two-column-layout.template-executive .resume-column-left > h2:first-child,
+.resume-two-column-layout.template-executive .resume-column-right > h2:first-child {
+  margin-top: 0.75rem !important;
+  padding-top: 0.5rem !important;
+}
+
+/* UNIFIED SUMMARY SECTION SPACING - DRY SOLUTION FOR ALL TEMPLATES */
+/* This single rule replaces all scattered summary-related spacing rules */
+.resume-two-column-layout .resume-summary-section {
+  margin-top: var(--resume-summary-margin-top) !important;
+  margin-bottom: var(--resume-summary-margin-bottom) !important;
+  padding: 0 !important;
+  line-height: 1.2 !important;
+  text-align: left !important;
+  page-break-after: avoid !important;
+  break-after: avoid !important;
+}
+
+/* Reset all summary content to use unified spacing */
+.resume-two-column-layout .resume-summary-section *,
+.resume-two-column-layout .resume-summary-section p,
+.resume-two-column-layout .resume-summary-section div,
+.resume-two-column-layout .resume-summary-section span {
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+
 .resume-strong { font-weight: 600; color: #000; }
 .resume-emphasis { font-style: italic; color: #374151; text-align: left; }
 .resume-link { color: #374151; text-decoration: underline; }
@@ -205,32 +346,6 @@ body {
 .resume-template {
   word-spacing: normal !important;
   letter-spacing: normal !important;
-}
-
-/* CLEAN BULLET SYSTEM - Medium sized, single bullet per item */
-.resume-list {
-  list-style: none;
-  padding-left: 1.0rem;
-  margin: 0.5rem 0;
-}
-
-.resume-list-item {
-  position: relative;
-  padding-left: 0;
-  margin-bottom: 0.5rem;
-  line-height: var(--resume-line-height);
-  display: block;
-}
-
-.resume-list-item::before {
-  content: "•";
-  position: absolute;
-  left: -1.0rem;
-  font-size: 1.0em;
-  font-weight: normal;
-  color: inherit;
-  line-height: 1.0;
-  top: 0.1em;
 }
 
 /* Tables - minimal spacing for hidden table layouts */
@@ -327,33 +442,7 @@ body {
   /* Remove forced centering - let templates decide */
 }
 
-/* DRY APPROACH: AGGRESSIVE summary spacing fixes for ALL two-column layouts */
-.resume-two-column-layout .resume-summary-section,
-.resume-two-column-layout .resume-summary-section *,
-.resume-two-column-layout .resume-heading-summary,
-.resume-two-column-layout [class*="summary"],
-.resume-two-column-layout .resume-columns > *:first-child,
-.resume-two-column-layout .resume-column-left > *:first-child {
-  margin: 0;
-  padding: 0;
-}
-
-/* Uniform summary spacing for two-column layouts */
-.resume-two-column-layout .resume-summary-section {
-  margin-top: var(--resume-summary-spacing);
-  margin-bottom: 0.125rem; /* REDUCED spacing before columns */
-  padding: 0;
-  line-height: 1.2;
-  text-align: left; /* ALWAYS left-align summary text */
-  page-break-after: avoid;
-  break-after: avoid;
-}
-
-/* Ensure all summary content is left-aligned */
-.resume-two-column-layout .resume-summary-section *,
-.resume-two-column-layout .resume-summary-section p {
-  text-align: left;
-}
+/* Note: Summary spacing now handled by unified rule above */
 
 /* Remove all spacing around columns container */
 .resume-two-column-layout .resume-columns {
@@ -397,35 +486,7 @@ body {
   border-bottom: 2px solid #888888;
 }
 
-/* Professional template: Match Creative template summary spacing exactly */
-.resume-two-column-layout.template-professional .resume-summary-section {
-  margin-top: var(--resume-summary-spacing);
-  margin-bottom: 0.125rem;
-}
-
-.resume-two-column-layout.template-professional .resume-summary-section p {
-  margin: 0;
-  padding: 0;
-}
-
-/* Minimalist template: Match Creative template summary spacing exactly */
-.resume-two-column-layout.template-minimalist .resume-summary-section {
-  margin-top: var(--resume-summary-spacing);
-  margin-bottom: 0.125rem;
-}
-
-.resume-two-column-layout.template-minimalist .resume-summary-section p {
-  margin: 0;
-  padding: 0;
-}
-
-/* Override any index.css conflicts for Professional and Minimalist templates */
-.resume-two-column-layout.template-professional .resume-summary-section,
-.resume-two-column-layout.template-minimalist .resume-summary-section {
-  margin-top: var(--resume-summary-spacing);
-  margin-bottom: 0.125rem;
-  padding-bottom: 0;
-}
+/* Note: Template-specific summary spacing now handled by unified rule */
 
 /* Minimalist & Executive Templates: Left-aligned headers */
 .resume-two-column-layout.template-minimalist .resume-header,
@@ -488,33 +549,31 @@ export const templateStyles = {
   line-height: var(--resume-line-height);
 }
 
-.template-professional .resume-heading-1 {
+/* Professional template styling - spacing handled by unified system */
+.template-professional .resume-heading-1,
+.template-professional h1 {
   font-family: 'Raleway', sans-serif;
-  font-size: var(--resume-h1-font-size);
   font-weight: 600;
   color: #222222;
-  margin: 0 0 var(--resume-header-spacing) 0;
   padding-bottom: var(--resume-header-spacing);
   border-bottom: 2px solid #888888;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  line-height: 1.1;
 }
 
-.template-professional .resume-heading-2 {
+.template-professional .resume-heading-2,
+.template-professional h2 {
   font-family: 'Raleway', sans-serif;
-  font-size: var(--resume-h2-font-size);
   font-weight: 600;
   color: #444444;
-  margin-top: 0.5rem;
-  margin-bottom: var(--resume-section-spacing);
   text-transform: uppercase;
   letter-spacing: 1px;
   position: relative;
   display: inline-block;
 }
 
-.template-professional .resume-heading-2::after {
+.template-professional .resume-heading-2::after,
+.template-professional h2::after {
   content: '';
   position: absolute;
   bottom: -5px;
@@ -522,6 +581,18 @@ export const templateStyles = {
   width: 40px;
   height: 2px;
   background: #888888;
+}
+
+.template-professional .resume-heading-3,
+.template-professional h3 {
+  font-family: 'Raleway', sans-serif;
+  color: #444444;
+}
+
+.template-professional .resume-heading-4,
+.template-professional h4 {
+  font-family: 'Raleway', sans-serif;
+  color: #444444;
 }
 
 .template-professional hr {
@@ -534,10 +605,7 @@ export const templateStyles = {
 .template-professional p,
 .template-professional li {
   color: #4a4a4a;
-  margin: 0.5rem 0;
   font-weight: 400;
-  font-size: var(--resume-font-size);
-  line-height: var(--resume-line-height);
 }
 
 .template-professional a {
@@ -562,19 +630,19 @@ export const templateStyles = {
   position: relative;
 }
 
-.template-modern .resume-heading-1 {
+/* Modern template styling - spacing handled by unified system */
+.template-modern .resume-heading-1,
+.template-modern h1 {
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: var(--resume-h1-font-size);
   font-weight: 600;
   color: #000;
-  margin-bottom: calc(var(--resume-header-spacing) + 0.5rem);
   padding-bottom: 0.25rem;
   letter-spacing: -0.02em;
-  line-height: 1.1;
   position: relative;
 }
 
-.template-modern .resume-heading-1::after {
+.template-modern .resume-heading-1::after,
+.template-modern h1::after {
   content: '';
   position: absolute;
   bottom: -0.25rem;
@@ -587,13 +655,11 @@ export const templateStyles = {
   display: block;
 }
 
-.template-modern .resume-heading-2 {
+.template-modern .resume-heading-2,
+.template-modern h2 {
   font-family: 'Poppins', sans-serif;
-  font-size: var(--resume-h2-font-size);
   font-weight: 700;
   color: #000;
-  margin-top: 0.5rem;
-  margin-bottom: var(--resume-section-spacing);
   text-transform: uppercase;
   letter-spacing: 1.5px;
   position: relative;
@@ -604,9 +670,13 @@ export const templateStyles = {
   border-left: none;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
+  /* Ensure proper spacing in two-column layout */
+  margin-top: var(--resume-h2-margin-top) !important;
+  box-sizing: border-box;
 }
 
-.template-modern .resume-heading-2::before {
+.template-modern .resume-heading-2::before,
+.template-modern h2::before {
   content: '';
   position: absolute;
   left: 0;
@@ -619,13 +689,22 @@ export const templateStyles = {
   display: block;
 }
 
+.template-modern .resume-heading-3,
+.template-modern h3 {
+  font-family: 'Poppins', sans-serif;
+  color: #000;
+}
+
+.template-modern .resume-heading-4,
+.template-modern h4 {
+  font-family: 'Poppins', sans-serif;
+  color: #000;
+}
+
 .template-modern p,
 .template-modern li {
   color: #4a4a4a;
-  margin: 0.5rem 0;
   font-weight: 400;
-  font-size: var(--resume-font-size);
-  line-height: var(--resume-line-height);
 }
 
 .template-modern a {
@@ -647,10 +726,6 @@ export const templateStyles = {
   padding-left: 1.5rem;
 }
 
-.template-modern li {
-  margin-bottom: 0.5rem;
-}
-
 /* Hide HR in modern template */
 .template-modern hr {
   display: none;
@@ -666,27 +741,36 @@ export const templateStyles = {
   line-height: var(--resume-line-height);
 }
 
-.template-minimalist .resume-heading-1 {
+/* Minimalist template styling - spacing handled by unified system */
+.template-minimalist .resume-heading-1,
+.template-minimalist h1 {
   font-family: 'Nunito', sans-serif;
-  font-size: var(--resume-h1-font-size);
   font-weight: 300;
   color: #222222;
-  margin: 0 0 var(--resume-header-spacing) 0;
   padding-bottom: var(--resume-header-spacing);
   border-bottom: 1px solid #e5e5e5;
   letter-spacing: -0.5px;
-  line-height: 1.1;
 }
 
-.template-minimalist .resume-heading-2 {
+.template-minimalist .resume-heading-2,
+.template-minimalist h2 {
   font-family: 'Nunito', sans-serif;
-  font-size: var(--resume-h2-font-size);
   font-weight: 600;
   color: #666666;
-  margin-top: 0.5rem;
-  margin-bottom: var(--resume-section-spacing);
   text-transform: uppercase;
   letter-spacing: 1.5px;
+}
+
+.template-minimalist .resume-heading-3,
+.template-minimalist h3 {
+  font-family: 'Nunito', sans-serif;
+  color: #666666;
+}
+
+.template-minimalist .resume-heading-4,
+.template-minimalist h4 {
+  font-family: 'Nunito', sans-serif;
+  color: #666666;
 }
 
 .template-minimalist hr {
@@ -699,10 +783,7 @@ export const templateStyles = {
 .template-minimalist p,
 .template-minimalist li {
   color: #555555;
-  margin: 0.25rem 0;
   font-weight: 300;
-  font-size: var(--resume-font-size);
-  line-height: var(--resume-line-height);
 }
 
 .template-minimalist a {
@@ -727,36 +808,36 @@ export const templateStyles = {
   print-color-adjust: exact;
 }
 
-/* Modern greyscale header section */
-.template-creative .resume-heading-1 {
+/* Creative template styling - spacing handled by unified system */
+.template-creative .resume-heading-1,
+.template-creative h1 {
   font-family: 'Work Sans', sans-serif;
-  font-size: var(--resume-h1-font-size);
   font-weight: 800;
   color: #1f2937;
-  margin-bottom: var(--resume-contact-spacing);
   padding: var(--resume-header-spacing) 0 calc(var(--resume-header-spacing) + 0.25rem) 0;
   text-align: center;
   letter-spacing: -0.5px;
-  line-height: 1.1;
   position: relative;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
 
 /* Decorative line below H1 - REMOVED for cleaner two-column layout */
-.template-creative .resume-heading-1::after {
+.template-creative .resume-heading-1::after,
+.template-creative h1::after {
   display: none;
 }
 
 /* Two-column mode: Clean layout without decorative lines */
-.resume-two-column-layout.template-creative .resume-heading-1::after {
+.resume-two-column-layout.template-creative .resume-heading-1::after,
+.resume-two-column-layout.template-creative h1::after {
   display: none;
 }
 
 /* Clean spacing in Creative template two-column header */
-.resume-two-column-layout.template-creative .resume-header .resume-heading-1 {
+.resume-two-column-layout.template-creative .resume-header .resume-heading-1,
+.resume-two-column-layout.template-creative .resume-header h1 {
   padding-bottom: var(--resume-header-spacing);
-  margin-bottom: var(--resume-contact-spacing);
   border-bottom: none; /* Remove any inherited borders */
 }
 
@@ -770,13 +851,11 @@ export const templateStyles = {
 }
 
 /* Section headings with modern accent */
-.template-creative .resume-heading-2 {
+.template-creative .resume-heading-2,
+.template-creative h2 {
   font-family: 'Work Sans', sans-serif;
-  font-size: var(--resume-h2-font-size);
   font-weight: 700;
   color: #1f2937;
-  margin-top: 0.5rem;
-  margin-bottom: var(--resume-section-spacing);
   text-transform: uppercase;
   letter-spacing: 1.5px;
   position: relative;
@@ -788,33 +867,36 @@ export const templateStyles = {
   border-left: 4px solid #1f2937;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
+  /* Ensure proper spacing in two-column layout */
+  margin-top: var(--resume-h2-margin-top) !important;
+  box-sizing: border-box;
+}
+
+.template-creative .resume-heading-3,
+.template-creative h3 {
+  font-family: 'Work Sans', sans-serif;
+  color: #1f2937;
+}
+
+.template-creative .resume-heading-4,
+.template-creative h4 {
+  font-family: 'Work Sans', sans-serif;
+  color: #1f2937;
 }
 
 /* Content styling */
 .template-creative p,
 .template-creative li {
   color: #374151;
-  margin: 0.75rem 0;
   font-weight: 400;
-  font-size: var(--resume-font-size);
-  line-height: var(--resume-line-height);
   display: block;
 }
 
 /* Enhanced list styling */
 .template-creative ul,
 .template-creative ol {
-  margin: 1rem 0;
   padding-left: 1.5rem;
 }
-
-.template-creative li {
-  position: relative;
-  padding-left: 0;
-  margin-bottom: 0.5rem;
-}
-
-/* Creative template uses standard bullets for consistency */
 
 /* Links with accent styling */
 .template-creative a {
@@ -834,8 +916,6 @@ export const templateStyles = {
 .template-creative .resume-paragraph:first-of-type {
   text-align: center;
   color: #6b7280;
-  font-size: var(--resume-font-size);
-  margin-bottom: 1rem;
   padding-bottom: 0;
   /* border-bottom removed for cleaner two-column header */
 }
@@ -858,28 +938,25 @@ export const templateStyles = {
   line-height: var(--resume-line-height);
 }
 
-.template-executive .resume-heading-1 {
+/* Executive template styling - spacing handled by unified system */
+.template-executive .resume-heading-1,
+.template-executive h1 {
   font-family: 'Merriweather', serif !important;
-  font-size: var(--resume-h1-font-size);
   font-weight: 700;
   color: #111111;
-  margin: 0 0 var(--resume-header-spacing) 0;
   text-align: left;
   text-transform: uppercase;
   letter-spacing: 1px;
-  line-height: 1.1;
   position: relative;
   padding-bottom: var(--resume-header-spacing);
   border-bottom: 3px solid #333333;
 }
 
-.template-executive .resume-heading-2 {
+.template-executive .resume-heading-2,
+.template-executive h2 {
   font-family: 'Merriweather', serif !important;
-  font-size: var(--resume-h2-font-size);
   font-weight: 600;
   color: #333333;
-  margin-top: 0.5rem;
-  margin-bottom: var(--resume-section-spacing);
   padding: 0.25rem 0 0.25rem 0.5rem;
   border-left: 3px solid #333333;
   border-bottom: 3px solid #333333;
@@ -889,23 +966,29 @@ export const templateStyles = {
   background-color: #f8f9fa !important;
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
+  /* Ensure proper spacing in two-column layout */
+  margin-top: var(--resume-h2-margin-top) !important;
+  box-sizing: border-box;
 }
 
-.template-executive .resume-heading-3 {
+.template-executive .resume-heading-3,
+.template-executive h3 {
   font-family: 'Merriweather', serif !important;
   font-weight: 600;
   color: #444444;
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
+}
+
+.template-executive .resume-heading-4,
+.template-executive h4 {
+  font-family: 'Merriweather', serif !important;
+  font-weight: 600;
+  color: #444444;
 }
 
 .template-executive p,
 .template-executive li {
   color: #555555;
-  margin: 0.5rem 0;
   font-weight: 400;
-  font-size: var(--resume-font-size);
-  line-height: var(--resume-line-height);
   font-family: 'Ubuntu', sans-serif !important;
 }
 
@@ -930,7 +1013,6 @@ export const templateStyles = {
 }
 
 .template-executive li {
-  margin-bottom: 0.5rem;
   font-family: 'Ubuntu', sans-serif !important;
 }
 
@@ -995,22 +1077,24 @@ export const printStyles = `
     line-height: var(--resume-line-height) !important;
   }
 
-  /* AGGRESSIVE SUMMARY SPACING FIXES - Override everything */
-  .resume-two-column-layout .resume-summary-section,
-  .resume-two-column-layout .resume-summary-section *,
-  .resume-two-column-layout .resume-heading-summary,
-  .resume-two-column-layout [class*="summary"] {
-    margin: 0 !important;
+  /* UNIFIED SUMMARY SPACING IN PDF - MATCHES LIVE PREVIEW */
+  .resume-two-column-layout .resume-summary-section {
+    margin-top: var(--resume-summary-margin-top) !important;
+    margin-bottom: var(--resume-summary-margin-bottom) !important;
     padding: 0 !important;
+    line-height: 1.2 !important;
+    text-align: left !important;
     page-break-after: avoid !important;
     break-after: avoid !important;
   }
 
-  /* Force summary to be compact with bottom padding */
-  .resume-two-column-layout .resume-summary-section {
-    margin-bottom: 0.125in !important;
-    padding-bottom: 0.25rem !important;
-    line-height: 1.2 !important;
+  .resume-two-column-layout .resume-summary-section *,
+  .resume-two-column-layout .resume-summary-section p,
+  .resume-two-column-layout .resume-summary-section div,
+  .resume-two-column-layout .resume-summary-section span {
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: left !important;
   }
 
   /* Remove all spacing around columns container */
@@ -1055,43 +1139,7 @@ export const printStyles = `
     align-items: start !important;
   }
 
-  /* ULTRA-AGGRESSIVE FIXES FOR TWO-COLUMN SUMMARY ISSUES */
-  .resume-two-column-layout .resume-summary-section + * {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-  }
-
-  .resume-two-column-layout .resume-summary-section ~ * {
-    page-break-before: avoid !important;
-    break-before: avoid !important;
-  }
-
-  /* Force everything after summary to stay on same page */
-  .resume-two-column-layout .resume-columns,
-  .resume-two-column-layout .resume-column-left,
-  .resume-two-column-layout .resume-column-right {
-    page-break-before: avoid !important;
-    break-before: avoid !important;
-    page-break-inside: auto !important;
-    break-inside: auto !important;
-  }
-
-  /* Specific targeting for summary paragraph element */
-  .resume-two-column-layout .resume-summary-section p,
-  .resume-two-column-layout .resume-summary-section div,
-  .resume-two-column-layout .resume-summary-section span {
-    margin: 0 !important;
-    padding: 0 !important;
-    line-height: 1.2 !important;
-  }
-
-  /* Override any default spacing on summary content */
-  .resume-two-column-layout .resume-summary-section * {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-  }
+  /* Note: Summary spacing now handled by unified rule above */
 
   /* CRITICAL: Reduce header bottom spacing in two-column layout (print styles) */
   .resume-two-column-layout .resume-header {
@@ -1109,26 +1157,7 @@ export const printStyles = `
     padding-bottom: 0 !important;
   }
 
-  /* CRITICAL: Reduce spacing ABOVE summary section */
-  .resume-two-column-layout .resume-summary-section {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-  }
-
-  /* Target any element immediately before summary */
-  .resume-two-column-layout * + .resume-summary-section {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-  }
-
-  /* Target header elements that come before summary */
-  .resume-two-column-layout .resume-heading-1 + .resume-summary-section,
-  .resume-two-column-layout h1 + .resume-summary-section,
-  .resume-two-column-layout .resume-heading-1 + * + .resume-summary-section,
-  .resume-two-column-layout .resume-header + .resume-summary-section {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-  }
+  /* Note: Summary spacing now handled by unified rule */
 
   /* CRITICAL: Reduce header bottom spacing in two-column layout */
   .resume-two-column-layout .resume-header .resume-heading-1 {
@@ -1305,38 +1334,7 @@ export const printStyles = `
     border-top: none;
   }
 
-  /* REDUCED spacing between summary and columns */
-  .resume-two-column-layout .resume-summary-section + .resume-columns {
-    margin-top: -0.25rem; /* Negative margin to reduce gap */
-    padding-top: 0;
-  }
-
-  /* Reduce bottom margin of summary section in two-column layout */
-  .resume-two-column-layout .resume-summary-section {
-    margin-bottom: 0.125rem; /* Reduced from default summary spacing */
-  }
-
-  /* Professional and Minimalist template: Match Creative template summary spacing in print */
-  .resume-two-column-layout.template-professional .resume-summary-section,
-  .resume-two-column-layout.template-minimalist .resume-summary-section {
-    margin-top: var(--resume-summary-spacing);
-    margin-bottom: 0.125rem;
-  }
-
-  /* Remove template-specific paragraph margins from summary sections in print */
-  .resume-two-column-layout.template-professional .resume-summary-section p,
-  .resume-two-column-layout.template-minimalist .resume-summary-section p {
-    margin: 0; /* Remove extra paragraph margins that conflict */
-    padding: 0; /* Also remove any padding conflicts */
-  }
-
-  /* Override any base CSS conflicts for Professional and Minimalist templates in print */
-  .resume-two-column-layout.template-professional .resume-summary-section,
-  .resume-two-column-layout.template-minimalist .resume-summary-section {
-    margin-top: var(--resume-summary-spacing);
-    margin-bottom: 0.125rem;
-    padding-bottom: 0;
-  }
+  /* Note: Summary spacing now handled by unified rule */
 
   /* CRITICAL: Fix for first H2 elements getting cut off at top of columns */
   .resume-two-column-layout .resume-column-left > .resume-heading-2:first-child,
@@ -1588,8 +1586,9 @@ export const printStyles = `
     text-rendering: optimizeLegibility;
   }
 
-  /* Ensure bullet points match Modern template size */
-  .resume-list-item::before {
+  /* Ensure bullet points match template size */
+  .resume-list-item::before,
+  .resume-template li::before {
     font-size: 1.0em;
     font-weight: normal;
     color: inherit;
@@ -1597,47 +1596,84 @@ export const printStyles = `
     print-color-adjust: exact;
   }
 
-  /* Force consistent font sizes across all templates */
+  /* Force consistent font sizes across all templates in PDF */
   .resume-template {
     font-family: var(--resume-font-family);
     font-size: var(--resume-font-size);
     line-height: var(--resume-line-height);
   }
 
-  /* Ensure heading fonts are consistent */
-  .resume-heading-1, h1 {
-    font-size: var(--resume-h1-font-size);
-    font-weight: bold;
-    line-height: 1.2;
-    font-family: var(--resume-font-family);
+  /* UNIFIED SPACING IN PDF - OVERRIDE ANY TEMPLATE INCONSISTENCIES */
+  .resume-heading-1,
+  .resume-template h1 {
+    font-size: var(--resume-h1-font-size) !important;
+    font-weight: bold !important;
+    line-height: 1.1 !important;
+    margin-top: var(--resume-h1-margin-top) !important;
+    margin-bottom: var(--resume-h1-margin-bottom) !important;
   }
 
-  .resume-heading-2, h2 {
-    font-size: var(--resume-h2-font-size);
-    font-weight: bold;
-    line-height: 1.3;
-    font-family: var(--resume-font-family);
+  .resume-heading-2,
+  .resume-template h2 {
+    font-size: var(--resume-h2-font-size) !important;
+    font-weight: 600 !important;
+    line-height: 1.3 !important;
+    margin-top: var(--resume-h2-margin-top) !important;
+    margin-bottom: var(--resume-h2-margin-bottom) !important;
   }
 
-  .resume-heading-3, h3 {
-    font-size: var(--resume-h3-font-size);
-    font-weight: bold;
-    line-height: 1.3;
-    font-family: var(--resume-font-family);
+  .resume-heading-3,
+  .resume-template h3 {
+    font-size: var(--resume-h3-font-size) !important;
+    font-weight: 500 !important;
+    line-height: 1.3 !important;
+    margin-top: var(--resume-h3-margin-top) !important;
+    margin-bottom: var(--resume-h3-margin-bottom) !important;
   }
 
-  /* Force paragraph and list consistency */
-  .resume-paragraph, p {
-    font-size: var(--resume-font-size);
-    line-height: var(--resume-line-height);
-    margin: 0.5rem 0;
-    font-family: var(--resume-font-family);
+  .resume-heading-4,
+  .resume-template h4 {
+    font-size: var(--resume-h4-font-size) !important;
+    font-weight: 500 !important;
+    line-height: 1.3 !important;
+    margin-top: var(--resume-h4-margin-top) !important;
+    margin-bottom: var(--resume-h4-margin-bottom) !important;
   }
 
-  .resume-list-item, li {
-    font-size: var(--resume-font-size);
-    line-height: var(--resume-line-height);
-    font-family: var(--resume-font-family);
+  .resume-paragraph,
+  .resume-template p {
+    font-size: var(--resume-font-size) !important;
+    line-height: var(--resume-line-height) !important;
+    margin-top: var(--resume-p-margin-top) !important;
+    margin-bottom: var(--resume-p-margin-bottom) !important;
+  }
+
+  .resume-list,
+  .resume-template ul,
+  .resume-template ol {
+    margin-top: var(--resume-ul-margin-top) !important;
+    margin-bottom: var(--resume-ul-margin-bottom) !important;
+  }
+
+  .resume-list-item,
+  .resume-template li {
+    font-size: var(--resume-font-size) !important;
+    line-height: var(--resume-line-height) !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* EXCEPTION: Header H1 elements need special spacing for contact info in PDF */
+  .resume-header .resume-heading-1,
+  .resume-header h1 {
+    margin-bottom: var(--resume-header-spacing) !important;
+  }
+
+  /* EXCEPTION: Two-column layout H2 elements need adjusted top margin in PDF */
+  .resume-two-column-layout .resume-column-left > .resume-heading-2:first-child,
+  .resume-two-column-layout .resume-column-right > .resume-heading-2:first-child,
+  .resume-two-column-layout .resume-column-left > h2:first-child,
+  .resume-two-column-layout .resume-column-right > h2:first-child {
+    margin-top: 0.5rem !important;
   }
 
   /* Control spacing for BR and NBSP elements in PDF */
@@ -1653,21 +1689,6 @@ export const printStyles = `
   .resume-template {
     word-spacing: normal;
     letter-spacing: normal;
-  }
-
-  /* Section spacing in PDF - add 8pt breathing room between sections */
-  .resume-heading-2 {
-    margin-bottom: var(--resume-section-spacing);
-  }
-
-  /* Ensure consistent spacing after each main section in PDF */
-  .resume-heading-2 + * {
-    margin-top: 0.5rem;
-  }
-
-  /* Add breathing room after section content in PDF */
-  .resume-heading-2 ~ *:last-child {
-    margin-bottom: var(--resume-section-spacing);
   }
 }
 `;

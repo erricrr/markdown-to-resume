@@ -131,7 +131,7 @@ export const useDynamicCSS = () => {
   content: none !important;
 }
 
-/* Force consistent font sizes that match PDF exactly */
+/* UNIFIED SPACING SYSTEM - CONSISTENT ACROSS ALL TEMPLATES */
 .resume-template {
   font-size: var(--resume-font-size) !important;
   line-height: var(--resume-line-height) !important;
@@ -141,14 +141,18 @@ export const useDynamicCSS = () => {
 .resume-template h1 {
   font-size: var(--resume-h1-font-size) !important;
   font-weight: bold !important;
-  line-height: 1.2 !important;
+  line-height: 1.1 !important;
+  margin-top: var(--resume-h1-margin-top) !important;
+  margin-bottom: var(--resume-h1-margin-bottom) !important;
 }
 
 .resume-template .resume-heading-2,
 .resume-template h2 {
   font-size: var(--resume-h2-font-size) !important;
-  font-weight: bold !important;
+  font-weight: 600 !important;
   line-height: 1.3 !important;
+  margin-top: var(--resume-h2-margin-top) !important;
+  margin-bottom: var(--resume-h2-margin-bottom) !important;
 }
 
 .resume-template .resume-heading-3,
@@ -156,20 +160,97 @@ export const useDynamicCSS = () => {
   font-size: var(--resume-h3-font-size) !important;
   font-weight: 500 !important;
   line-height: 1.3 !important;
-  margin-top: 0.75rem !important;
-  margin-bottom: 0.375rem !important;
+  margin-top: var(--resume-h3-margin-top) !important;
+  margin-bottom: var(--resume-h3-margin-bottom) !important;
+}
+
+.resume-template .resume-heading-4,
+.resume-template h4 {
+  font-size: var(--resume-h4-font-size) !important;
+  font-weight: 500 !important;
+  line-height: 1.3 !important;
+  margin-top: var(--resume-h4-margin-top) !important;
+  margin-bottom: var(--resume-h4-margin-bottom) !important;
 }
 
 .resume-template .resume-paragraph,
 .resume-template p {
   font-size: var(--resume-font-size) !important;
   line-height: var(--resume-line-height) !important;
+  margin-top: var(--resume-p-margin-top) !important;
+  margin-bottom: var(--resume-p-margin-bottom) !important;
+}
+
+.resume-template .resume-list,
+.resume-template ul,
+.resume-template ol {
+  margin-top: var(--resume-ul-margin-top) !important;
+  margin-bottom: var(--resume-ul-margin-bottom) !important;
 }
 
 .resume-template .resume-list-item,
 .resume-template li {
   font-size: var(--resume-font-size) !important;
   line-height: var(--resume-line-height) !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* EXCEPTION: Header H1 elements need special spacing for contact info */
+.resume-template .resume-header .resume-heading-1,
+.resume-template .resume-header h1 {
+  margin-bottom: var(--resume-header-spacing) !important;
+}
+
+/* EXCEPTION: Two-column layout H2 elements need adjusted top margin */
+.resume-template.resume-two-column-layout .resume-column-left > .resume-heading-2:first-child,
+.resume-template.resume-two-column-layout .resume-column-right > .resume-heading-2:first-child,
+.resume-template.resume-two-column-layout .resume-column-left > h2:first-child,
+.resume-template.resume-two-column-layout .resume-column-right > h2:first-child {
+  margin-top: 0.5rem !important;
+}
+
+/* FIX: Modern, Creative, and Executive templates H2 background elements in two-column layout */
+/* Ensure background elements are not cut off by adding proper top spacing */
+.resume-template.resume-two-column-layout.template-modern .resume-heading-2,
+.resume-template.resume-two-column-layout.template-modern h2,
+.resume-template.resume-two-column-layout.template-creative .resume-heading-2,
+.resume-template.resume-two-column-layout.template-creative h2,
+.resume-template.resume-two-column-layout.template-executive .resume-heading-2,
+.resume-template.resume-two-column-layout.template-executive h2 {
+  margin-top: 1rem !important;
+  overflow: visible !important;
+  /* Ensure background extends fully */
+  display: block !important;
+  width: 100% !important;
+}
+
+/* Specific fixes for first H2 elements in columns */
+.resume-template.resume-two-column-layout.template-modern .resume-column-left > h2:first-child,
+.resume-template.resume-two-column-layout.template-modern .resume-column-right > h2:first-child,
+.resume-template.resume-two-column-layout.template-creative .resume-column-left > h2:first-child,
+.resume-template.resume-two-column-layout.template-creative .resume-column-right > h2:first-child,
+.resume-template.resume-two-column-layout.template-executive .resume-column-left > h2:first-child,
+.resume-template.resume-two-column-layout.template-executive .resume-column-right > h2:first-child {
+  margin-top: 0.75rem !important;
+  padding-top: 0.5rem !important;
+}
+
+/* UNIFIED SUMMARY SECTION SPACING FOR LIVE PREVIEW - MATCHES PDF */
+.resume-template.resume-two-column-layout .resume-summary-section {
+  margin-top: var(--resume-summary-margin-top) !important;
+  margin-bottom: var(--resume-summary-margin-bottom) !important;
+  padding: 0 !important;
+  line-height: 1.2 !important;
+  text-align: left !important;
+}
+
+.resume-template.resume-two-column-layout .resume-summary-section *,
+.resume-template.resume-two-column-layout .resume-summary-section p,
+.resume-template.resume-two-column-layout .resume-summary-section div,
+.resume-template.resume-two-column-layout .resume-summary-section span {
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
 }
 
 /* Ensure italic text is always left-aligned */
@@ -178,21 +259,6 @@ export const useDynamicCSS = () => {
 .resume-template i {
   font-style: italic !important;
   text-align: left !important;
-}
-
-/* Section spacing - add 8pt breathing room between sections */
-.resume-template .resume-heading-2 {
-  margin-bottom: var(--resume-section-spacing) !important;
-}
-
-/* Ensure consistent spacing after each main section */
-.resume-template .resume-heading-2 + * {
-  margin-top: 0.5rem !important;
-}
-
-/* Add breathing room after section content */
-.resume-template .resume-heading-2 ~ *:last-child {
-  margin-bottom: var(--resume-section-spacing) !important;
 }
 
 /* Reset any template-specific padding to ensure consistent margins */
