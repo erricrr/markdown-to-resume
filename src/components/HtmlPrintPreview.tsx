@@ -1,13 +1,5 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Printer, Download } from "lucide-react";
 
 interface HtmlPrintPreviewProps {
@@ -18,8 +10,15 @@ interface HtmlPrintPreviewProps {
 }
 
 export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '', uploadedFileName = '' }: HtmlPrintPreviewProps) => {
-  const [isOpen, setIsOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+
+  // Preconnect and Google Fonts links for print window
+  const fontLinks = `
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lato:wght@300;400;700&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;600&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+  `;
 
   const handlePrint = () => {
     setIsExporting(true);
@@ -276,14 +275,15 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
 
       // Insert the print styles before closing head tag
       if (enhancedHtml.includes('</head>')) {
-        enhancedHtml = enhancedHtml.replace('</head>', printStyles + '</head>');
+        enhancedHtml = enhancedHtml.replace('</head>', fontLinks + printStyles + '</head>');
       } else {
-        // If no head tag, add one
+        // Fallback if no head tag
         enhancedHtml = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
   <title>Resume</title>
+  ${fontLinks}
   ${printStyles}
 </head>
 <body>
@@ -302,54 +302,15 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
     }
   };
 
+  // Direct PDF button without dialog
   return (
-    <>
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger asChild>
-          <Button
-            disabled={isExporting}
-            className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
-          >
-            <Download className="h-3 w-3 sm:h-4 sm:w-4" />
-            {isExporting ? 'Generating...' : 'PDF'}
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Print Resume</DialogTitle>
-            <DialogDescription>
-              Generate a professional PDF of your HTML resume
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex flex-col gap-3 mt-4">
-            <Button
-              onClick={() => {
-                handlePrint();
-                setIsOpen(false);
-              }}
-              className="gap-2"
-            >
-              <Printer className="h-4 w-4" />
-              Print Resume as PDF
-            </Button>
-          </div>
-          <div className="mt-4 p-3 bg-blue-50 rounded-lg text-sm text-blue-800">
-            <p className="font-medium mb-1">📋 Print Dialog Settings:</p>
-            <ul className="text-xs space-y-1">
-              <li>• <strong>Destination:</strong> "Save as PDF"</li>
-              <li>• <strong>Paper size:</strong> A4 or Letter</li>
-              <li>• <strong>Headers and footers:</strong> OFF (removes metadata)</li>
-              <li>• <strong>Background graphics:</strong> ON (preserves colors)</li>
-              <li>• <strong>Margins:</strong> Minimum</li>
-            </ul>
-          </div>
-
-          <div className="mt-3 p-3 bg-amber-50 rounded-lg text-sm text-amber-800">
-            <p className="font-medium mb-1">⚠️ Important:</p>
-            <p className="text-xs">Turn off "Headers and footers" to prevent browser metadata from appearing in your PDF. This ensures a clean, professional resume without URL/date stamps.</p>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </>
+    <Button
+      onClick={handlePrint}
+      disabled={isExporting}
+      className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
+    >
+      <Download className="h-4 w-4" />
+      {isExporting ? 'Generating...' : 'PDF'}
+    </Button>
   );
 };
