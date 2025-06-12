@@ -1,8 +1,6 @@
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
-import { getCompleteCSS, printStyles } from '../styles/resumeTemplates';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+import { getCompleteCSS } from '../styles/resumeTemplates';
 
 interface ResumeData {
   markdown: string;
@@ -262,19 +260,6 @@ export const exportToPDF = async (resumeData: ResumeData) => {
     return allCSS;
   };
 
-  // NEW: Function to get print styles without @media print wrapper
-  const getPrintStylesForPDF = () => {
-    // Extract the content from inside @media print { ... }
-    let printCSS = printStyles;
-
-    // Remove @media print wrapper and closing brace
-    printCSS = printCSS.replace(/@media print\s*\{/, '');
-    printCSS = printCSS.replace(/\}\s*$/, '');
-
-    console.log('🖨️ Extracted print styles for PDF:', printCSS.length, 'characters');
-    return printCSS;
-  };
-
   const htmlContent = getHtmlContent();
 
   /*
@@ -299,174 +284,36 @@ export const exportToPDF = async (resumeData: ResumeData) => {
   }
 
   const templateClasses = getTemplateClasses();
-  const allLivePreviewCSS = getAllLivePreviewStyles();
+
+  // Build CSS once, from a single source of truth
+  const baseCSS = getCompleteCSS(resumeData.template);
+  const dynamicCSS = getDynamicCSS();
 
   console.log('📄 PDF Export Info:');
   console.log('- Template:', resumeData.template);
   console.log('- Classes:', templateClasses);
   console.log('- Two Column:', resumeData.isTwoColumn);
   console.log('- Two Page:', resumeData.isTwoPage);
-  console.log('- Total captured CSS length:', allLivePreviewCSS.length);
 
-    // Get the page size from the resumeData or default to A4
+  // Get the page size from the resumeData or default to A4
   const { paperSize = 'A4' } = resumeData;
 
   console.log(`PDF Export: Using paper size ${paperSize}`);
 
+  // ONE consolidated CSS string – base styles + user overrides + minimal PDF adjustments
   const cssContent = `
-/* FONT IMPORTS FOR PDF CONSISTENCY */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lato:wght@300;400;700&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;600&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&family=Source+Sans+Pro:wght@300;400;600&display=swap');
+${baseCSS}
 
-/* Page settings for PDF - MATCH LIVE PREVIEW MARGINS */
-@page {
-  size: ${paperSize === 'A4' ? 'A4' : 'letter'};
-  margin: 0;
-  -webkit-print-color-adjust: exact !important;
-  print-color-adjust: exact !important;
-  color-adjust: exact !important;
-}
+/* USER CUSTOM CSS (from in-app CSS editor) */
+${dynamicCSS}
 
-/* ALL CSS CAPTURED FROM LIVE PREVIEW FOR EXACT CONSISTENCY */
-${allLivePreviewCSS}
+/* PDF page setup */
+@page { size: ${paperSize === 'A4' ? 'A4' : 'letter'}; margin: 0; }
 
-/* PDF-specific overrides to ensure proper printing */
-body {
-  margin: 0 !important;
-  padding: 0 !important;
-  -webkit-print-color-adjust: exact !important;
-  print-color-adjust: exact !important;
-  color-adjust: exact !important;
-}
+/* Hide application chrome */
+header, footer, .header, .footer { display: none !important; }
 
-/* Hide elements that shouldn't appear in PDF */
-header, footer, .header, .footer {
-  display: none !important;
-}
-
-body::before, body::after {
-  display: none !important;
-}
-
-/* Final override with maximum specificity to ensure PDF matches preview exactly */
-html body .resume-template {
-  /* Default page margins if CSS variables aren't set */
-  --resume-margin-top: 0.5in !important;
-  --resume-margin-right: 0.5in !important;
-  --resume-margin-bottom: 0.5in !important;
-  --resume-margin-left: 0.5in !important;
-
-  padding: var(--resume-margin-top) var(--resume-margin-right) var(--resume-margin-bottom) var(--resume-margin-left) !important;
-  margin: 0 !important;
-  box-shadow: none !important;
-  background: white !important;
-  width: ${paperSize === 'A4' ? '8.27in' : '8.5in'} !important;
-  min-height: ${paperSize === 'A4' ? '11.69in' : '11in'} !important;
-  box-sizing: border-box !important;
-  font-family: var(--resume-font-family) !important;
-  font-size: var(--resume-font-size) !important;
-  line-height: var(--resume-line-height) !important;
-}
-
-/* Paper size specific overrides */
-html body .resume-template.a4-paper {
-  width: 8.27in !important;
-  min-height: 11.69in !important;
-}
-
-/* Force exact font rendering to match preview */
-html body .resume-template * {
-  -webkit-font-smoothing: antialiased !important;
-  -moz-osx-font-smoothing: grayscale !important;
-  text-rendering: optimizeLegibility !important;
-}
-
-/* CRITICAL: Ensure bullets match Modern template size */
-html body .resume-template .resume-list-item::before,
-html body .resume-template li::before {
-  content: "•" !important;
-  position: absolute !important;
-  left: -1.0rem !important;
-  font-size: 1.0em !important;
-  font-weight: normal !important;
-  color: inherit !important;
-  line-height: 1.0 !important;
-  top: 0.1em !important;
-}
-
-/* Disable any marker bullets to prevent conflicts */
-html body .resume-template .resume-list-item::marker,
-html body .resume-template li::marker {
-  content: none !important;
-}
-
-/* Force consistent font sizes that match live preview exactly */
-html body .resume-template {
-  font-size: var(--resume-font-size) !important;
-  line-height: var(--resume-line-height) !important;
-}
-
-html body .resume-template .resume-heading-1,
-html body .resume-template h1 {
-  font-size: var(--resume-h1-font-size) !important;
-  font-weight: bold !important;
-  line-height: 1.2 !important;
-  font-family: var(--resume-font-family) !important;
-}
-
-html body .resume-template .resume-heading-2,
-html body .resume-template h2 {
-  font-size: var(--resume-h2-font-size) !important;
-  font-weight: bold !important;
-  line-height: 1.3 !important;
-  font-family: var(--resume-font-family) !important;
-}
-
-html body .resume-template .resume-heading-3,
-html body .resume-template h3 {
-  font-size: var(--resume-h3-font-size) !important;
-  font-weight: 500 !important;
-  line-height: 1.3 !important;
-  font-family: var(--resume-font-family) !important;
-  margin-top: 0.75rem !important;
-  margin-bottom: 0.375rem !important;
-}
-
-html body .resume-template .resume-paragraph,
-html body .resume-template p {
-  font-size: var(--resume-font-size) !important;
-  line-height: var(--resume-line-height) !important;
-  font-family: var(--resume-font-family) !important;
-}
-
-html body .resume-template .resume-list-item,
-html body .resume-template li {
-  font-size: var(--resume-font-size) !important;
-  line-height: var(--resume-line-height) !important;
-  font-family: var(--resume-font-family) !important;
-}
-
-/* Ensure italic text is always left-aligned in PDF */
-html body .resume-template .resume-emphasis,
-html body .resume-template em,
-html body .resume-template i {
-  font-style: italic !important;
-  text-align: left !important;
-}
-
-/* Section spacing in PDF - add 8pt breathing room between sections */
-html body .resume-template .resume-heading-2 {
-  margin-bottom: var(--resume-section-spacing) !important;
-}
-
-/* Ensure consistent spacing after each main section in PDF */
-html body .resume-template .resume-heading-2 + * {
-  margin-top: 0 !important;
-}
-
-/* Add breathing room after section content in PDF */
-html body .resume-template .resume-heading-2 ~ *:last-child {
-  margin-bottom: var(--resume-section-spacing) !important;
-}
+body { margin: 0; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
 `;
 
   // Create the complete HTML document with embedded CSS
@@ -549,9 +396,17 @@ html body .resume-template .resume-heading-2 ~ *:last-child {
             }
           }
 
-          setTimeout(function() {
-            window.print();
-          }, 500);
+          // Wait until all web fonts have loaded before printing
+          if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(function() {
+              window.print();
+            });
+          } else {
+            // Fallback: delay slightly if the Font API is not available
+            setTimeout(function() {
+              window.print();
+            }, 800);
+          }
         };
       </script>
     </body>
