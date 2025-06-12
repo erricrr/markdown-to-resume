@@ -870,7 +870,7 @@ export const templateStyles = {
 }
 
 .template-executive .resume-heading-2 {
-  font-family: 'Lato', sans-serif;
+  font-family: 'Playfair Display', serif;
   font-size: var(--resume-h2-font-size);
   font-weight: 600;
   color: #333333;
@@ -1489,6 +1489,7 @@ export const printStyles = `
 
   /* Executive template specific fixes */
   .resume-two-column-layout.template-executive .resume-heading-2 {
+    font-family: 'Playfair Display', serif;
     font-size: var(--resume-h2-font-size);
     margin: 1rem 0 0.75rem 0;
     padding: 0.25rem 0 0 0;
