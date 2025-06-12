@@ -18,6 +18,7 @@ import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/componen
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useFileUpload } from '@/contexts/FileUploadContext';
+import { splitMarkdownForTwoColumn } from '@/utils/markdownParser';
 
 const defaultMarkdown = `# Jane Doe
 **Software Engineer** | jane.doe@email.com | (555) 123-4567 | linkedin.com/in/janedoe
@@ -235,6 +236,65 @@ const MarkdownEditor = () => {
     setPaperSize(size);
   };
 
+        // Handle Two Column toggle with pre-filling functionality
+  const handleTwoColumnToggle = (checked: boolean) => {
+    setIsTwoColumn(checked);
+
+    if (checked) {
+      // Pre-fill when enabling Two Column mode if:
+      // 1. There's content in the single markdown editor that's different from default
+      // 2. The two-column fields contain default content (meaning user hasn't customized them)
+      const hasCustomMarkdown = markdown.trim() && markdown !== defaultMarkdown;
+      const hasDefaultTwoColumnContent =
+          (leftColumn === defaultLeftColumn) &&
+          (rightColumn === defaultRightColumn) &&
+          (header === defaultHeader) &&
+          (summary === defaultSummary);
+
+      console.log('🔍 Checking pre-fill conditions:', {
+        hasCustomMarkdown,
+        hasDefaultTwoColumnContent,
+        markdownLength: markdown.length,
+        leftColumnIsDefault: leftColumn === defaultLeftColumn,
+        rightColumnIsDefault: rightColumn === defaultRightColumn,
+        headerIsDefault: header === defaultHeader,
+        summaryIsDefault: summary === defaultSummary
+      });
+
+      if (hasCustomMarkdown && hasDefaultTwoColumnContent) {
+        console.log('🔄 Pre-filling two-column layout from existing markdown content');
+
+        try {
+          const splitContent = splitMarkdownForTwoColumn(markdown);
+
+          // Update all fields with parsed content
+          if (splitContent.header.trim()) {
+            setHeader(splitContent.header);
+          }
+          if (splitContent.summary.trim()) {
+            setSummary(splitContent.summary);
+          }
+          if (splitContent.leftColumn.trim()) {
+            setLeftColumn(splitContent.leftColumn);
+          }
+          if (splitContent.rightColumn.trim()) {
+            setRightColumn(splitContent.rightColumn);
+          }
+
+          console.log('✅ Successfully pre-filled two-column content');
+        } catch (error) {
+          console.warn('⚠️ Error parsing markdown for two-column layout:', error);
+        }
+      } else {
+        console.log('ℹ️ Skipping pre-fill - conditions not met');
+      }
+    } else {
+      // When disabling Two Column mode, we could optionally merge content back
+      // For now, we'll leave the single markdown editor unchanged
+      console.log('🔄 Switched back to single column mode');
+    }
+  };
+
   // Force re-render when template changes to ensure CSS is applied
   useEffect(() => {
     console.log(`📋 Template changed to: ${selectedTemplate}`);
@@ -305,7 +365,7 @@ const MarkdownEditor = () => {
 
     if (inputMode === "twoPage") {
       return (
-        <div className="grid grid-cols-1 gap-6 h-full overflow-auto pr-1">
+        <div className="grid grid-cols-1 gap-6 h-full overflow-y-auto pr-1">
           <Card className="border-0 bg-white overflow-hidden">
             <div className="p-6 border-b">
               <div className="flex items-center gap-2">
@@ -348,7 +408,7 @@ const MarkdownEditor = () => {
 
     if (inputMode === "twoColumn") {
       return (
-        <div className="grid grid-cols-1 gap-6 h-full overflow-auto pr-1">
+        <div className="grid grid-cols-1 gap-6 h-full overflow-y-auto pr-1">
           {/* Header and Summary in single row on all screens */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <Card className="border-0 bg-white overflow-hidden">
@@ -442,12 +502,12 @@ const MarkdownEditor = () => {
             </h2>
           </div>
         </div>
-        <div className="flex-1 p-6 pt-0 overflow-hidden flex flex-col">
+        <div className="flex-1 p-6 pt-0 flex flex-col">
           {renderSharedFileUpload()}
           <Textarea
             value={markdown}
             onChange={(e) => setMarkdown(e.target.value)}
-            className="flex-1 w-full resize-none overflow-auto min-h-[500px]"
+            className="flex-1 w-full resize-none overflow-y-auto"
             placeholder="Enter your resume in Markdown format..."
           />
         </div>
@@ -570,7 +630,7 @@ const MarkdownEditor = () => {
           <div className="flex flex-col gap-6">
                             {/* Editor Section - Small Screen */}
             <div className="w-full">
-              <div className="flex flex-col h-[400px] max-h-[400px] overflow-hidden">
+              <div className="flex flex-col h-[calc(50vh-80px)] max-h-[calc(50vh-80px)] overflow-hidden">
                 {/* Control Bar */}
                 <div className="flex flex-wrap items-center justify-center gap-4 w-full mb-4 py-1">
                   <div className="flex items-center gap-2">
@@ -578,7 +638,7 @@ const MarkdownEditor = () => {
                     <span className="text-xs sm:text-sm">Two Column</span>
                     <Switch
                       checked={isTwoColumn}
-                      onCheckedChange={setIsTwoColumn}
+                      onCheckedChange={handleTwoColumnToggle}
                     />
                   </div>
                   <TemplateSelector
@@ -604,7 +664,7 @@ const MarkdownEditor = () => {
                     </TabsTrigger>
                   </TabsList>
 
-                  <TabsContent value="editor" className="flex-1 overflow-auto">
+                  <TabsContent value="editor" className="flex-1 overflow-y-auto">
                     {renderInputSection()}
                   </TabsContent>
 
@@ -622,7 +682,7 @@ const MarkdownEditor = () => {
 
             {/* Preview Section - Small Screen */}
             <div className="w-full">
-              <Card className="border-0 bg-white overflow-hidden flex flex-col h-[500px] max-h-[500px]">
+              <Card className="border-0 bg-white overflow-hidden flex flex-col h-[calc(50vh-80px)] max-h-[calc(50vh-80px)]">
                 <div className="p-6 border-b shrink-0">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
@@ -662,7 +722,7 @@ const MarkdownEditor = () => {
         ) : (
           <ResizablePanelGroup
             direction="horizontal"
-            className="h-auto lg:h-[calc(100vh-200px)] max-h-[calc(100vh-200px)]"
+            className="h-[calc(100vh-220px)] max-h-[calc(100vh-220px)]"
             onLayout={handlePanelResize}
           >
             {/* Left Panel - Tabs for Editor and CSS */}
@@ -675,7 +735,7 @@ const MarkdownEditor = () => {
                     <span className="text-xs sm:text-sm">Two Column</span>
                     <Switch
                       checked={isTwoColumn}
-                      onCheckedChange={setIsTwoColumn}
+                      onCheckedChange={handleTwoColumnToggle}
                     />
                   </div>
                   <TemplateSelector
@@ -701,7 +761,7 @@ const MarkdownEditor = () => {
                     </TabsTrigger>
                   </TabsList>
 
-                  <TabsContent value="editor" className="flex-1 overflow-auto">
+                  <TabsContent value="editor" className="flex-1 overflow-y-auto">
                     {renderInputSection()}
                   </TabsContent>
 
