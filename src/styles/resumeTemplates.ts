@@ -324,6 +324,7 @@ body {
   margin-bottom: var(--resume-contact-spacing);
   font-size: 11pt;
   line-height: 1.2;
+  align-items: baseline;
 }
 .resume-contact-item {
   white-space: nowrap;
@@ -331,6 +332,8 @@ body {
 .resume-contact-separator {
   color: #666;
   margin: 0 0.125rem;
+  vertical-align: baseline;
+  line-height: inherit;
 }
 
 /* Control spacing for BR and NBSP elements */

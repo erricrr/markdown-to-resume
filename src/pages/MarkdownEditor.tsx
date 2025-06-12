@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Printer, Columns2, FileStack, Code, Eye, Sticker, Home } from "lucide-react";
+import { FileText, Printer, Columns2, FileStack, Code, Eye, Sticker, Home, Info } from "lucide-react";
 import { ResumePreview } from "@/components/ResumePreview";
 import { PrintPreview } from "@/components/PrintPreview";
 import { TemplateSelector } from "@/components/TemplateSelector";
@@ -340,169 +340,182 @@ const MarkdownEditor = () => {
     return "single";
   };
 
-  // Shared FileUpload component for all modes
-  const renderSharedFileUpload = () => (
-    <div className="mb-4">
-      <div className="flex items-center justify-between">
-        <h3 className="my-2">Add Image</h3>
-        <span className="text-xs text-gray-500">Auto-saved</span>
-      </div>
-      <FileUpload />
-    </div>
-  );
+  // Shared FileUpload component for all modes (now integrated into header)
 
   const renderInputSection = () => {
     const inputMode = getInputMode();
 
+    // Compact header with title, tips, and file upload in a single row
+    const commonHeader = (
+      <Card className="border-0 bg-white overflow-hidden shrink-0">
+        <div className="p-4">
+          <div className="flex items-center justify-between gap-4 mb-3">
+            <div className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-primary" />
+              <h2 className="text-base font-semibold text-foreground">
+                Markdown Editor
+              </h2>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <FileUpload />
+              </div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded-md cursor-help">
+                    <Info className="h-3 w-3 text-blue-600" />
+                    <span className="text-xs text-blue-700 font-medium">Tips</span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-sm p-3 text-sm">
+                  <div className="space-y-1">
+                    <p className="font-medium">💡 Markdown Tips:</p>
+                    <p>• Use Markdown formatting for rich text (# for headings, ** for bold, etc.)</p>
+                    <p>• Two-column mode will intelligently parse your content</p>
+                    <p>• Always review the parsed results in two-column layout</p>
+                    <p>• New to Markdown? Learn at: <a href="https://www.markdownguide.org/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">markdownguide.org</a> 🚀</p>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+          </div>
+        </div>
+      </Card>
+    );
+
     if (inputMode === "twoPage") {
       return (
-        <div className="grid grid-cols-1 gap-6 h-full overflow-y-auto pr-1">
-          <Card className="border-0 bg-white overflow-hidden">
-            <div className="p-6 border-b">
-              <div className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-primary" />
-                <h2 className="text-lg font-semibold text-foreground">
-                  First Page Content
-                </h2>
+        <div className="flex flex-col gap-3 h-full overflow-hidden">
+          {commonHeader}
+          <div className="grid grid-cols-1 gap-4 flex-1 overflow-y-auto pr-1">
+            <Card className="border-0 bg-white overflow-hidden">
+              <div className="p-3 border-b">
+                <div className="flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-primary" />
+                  <h2 className="text-sm font-semibold text-foreground">
+                    First Page Content
+                  </h2>
+                </div>
               </div>
-            </div>
-            <div className="p-6 pt-0">
-              <Textarea
-                value={firstPage}
-                onChange={(e) => setFirstPage(e.target.value)}
-                className="h-[300px] w-full resize-none overflow-y-auto"
-                placeholder="Enter content for the first page..."
-              />
-            </div>
-          </Card>
-          <Card className="border-0 bg-white overflow-hidden">
-            <div className="p-6 border-b">
-              <div className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-primary" />
-                <h2 className="text-lg font-semibold text-foreground">
-                  Second Page Content
-                </h2>
+              <div className="p-3">
+                <Textarea
+                  value={firstPage}
+                  onChange={(e) => setFirstPage(e.target.value)}
+                  className="h-[200px] w-full resize-none overflow-y-auto"
+                  placeholder="Enter content for the first page..."
+                />
               </div>
-            </div>
-            <div className="p-6 pt-0">
-              <Textarea
-                value={secondPage}
-                onChange={(e) => setSecondPage(e.target.value)}
-                className="h-[300px] w-full resize-none overflow-y-auto"
-                placeholder="Enter content for the second page..."
-              />
-            </div>
-          </Card>
+            </Card>
+            <Card className="border-0 bg-white overflow-hidden">
+              <div className="p-3 border-b">
+                <div className="flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-primary" />
+                  <h2 className="text-sm font-semibold text-foreground">
+                    Second Page Content
+                  </h2>
+                </div>
+              </div>
+              <div className="p-3">
+                <Textarea
+                  value={secondPage}
+                  onChange={(e) => setSecondPage(e.target.value)}
+                  className="h-[200px] w-full resize-none overflow-y-auto"
+                  placeholder="Enter content for the second page..."
+                />
+              </div>
+            </Card>
+          </div>
         </div>
       );
     }
 
     if (inputMode === "twoColumn") {
       return (
-        <div className="grid grid-cols-1 gap-6 h-full overflow-y-auto pr-1">
-          {/* Header and Summary in single row on all screens */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <Card className="border-0 bg-white overflow-hidden">
-              <div className="p-6 border-b">
-                <div className="flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-primary" />
-                  <h2 className="text-lg font-semibold text-foreground">
-                    Header Section
-                  </h2>
+        <div className="flex flex-col gap-3 h-full overflow-hidden">
+          {commonHeader}
+          <div className="grid grid-cols-1 gap-3 flex-1 overflow-y-auto pr-1">
+            {/* Header and Summary in single row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <Card className="border-0 bg-white overflow-hidden">
+                <div className="p-3 border-b">
+                  <h2 className="text-sm font-semibold text-foreground">Header</h2>
                 </div>
-              </div>
-              <div className="p-6 pt-0">
-                <Textarea
-                  value={header}
-                  onChange={(e) => setHeader(e.target.value)}
-                  className="h-[120px] w-full resize-none overflow-y-auto"
-                  placeholder="Enter header content (name, contact info)..."
-                />
-              </div>
-            </Card>
-            <Card className="border-0 bg-white overflow-hidden">
-              <div className="p-6 border-b">
-                <div className="flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-primary" />
-                  <h2 className="text-lg font-semibold text-foreground">
-                    Summary Section
-                  </h2>
+                <div className="p-3">
+                  <Textarea
+                    value={header}
+                    onChange={(e) => setHeader(e.target.value)}
+                    className="h-[80px] w-full resize-none overflow-y-auto text-sm"
+                    placeholder="# Name | title | email | phone"
+                  />
                 </div>
-              </div>
-              <div className="p-6 pt-0">
-                <Textarea
-                  value={summary}
-                  onChange={(e) => setSummary(e.target.value)}
-                  className="h-[120px] w-full resize-none overflow-y-auto"
-                  placeholder="Enter a brief professional summary..."
-                />
-              </div>
-            </Card>
-          </div>
+              </Card>
+              <Card className="border-0 bg-white overflow-hidden">
+                <div className="p-3 border-b">
+                  <h2 className="text-sm font-semibold text-foreground">Summary</h2>
+                </div>
+                <div className="p-3">
+                  <Textarea
+                    value={summary}
+                    onChange={(e) => setSummary(e.target.value)}
+                    className="h-[80px] w-full resize-none overflow-y-auto text-sm"
+                    placeholder="Brief professional summary..."
+                  />
+                </div>
+              </Card>
+            </div>
 
-          {/* Left and Right Columns */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            <Card className="border-0 bg-white overflow-hidden">
-              <div className="p-6 border-b">
-                <div className="flex items-center gap-3">
-                  <FileText className="h-5 w-5 text-primary" />
-                  <h2 className="text-lg font-semibold text-foreground">
-                    Left Column
-                  </h2>
+            {/* Left and Right Columns */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <Card className="border-0 bg-white overflow-hidden">
+                <div className="p-3 border-b">
+                  <h2 className="text-sm font-semibold text-foreground">Left Column</h2>
                 </div>
-              </div>
-              <div className="p-6 pt-0">
-                <Textarea
-                  value={leftColumn}
-                  onChange={(e) => setLeftColumn(e.target.value)}
-                  className="h-[300px] w-full resize-none overflow-y-auto"
-                  placeholder="Enter left column content (skills, contact, etc.)..."
-                />
-              </div>
-            </Card>
-            <Card className="border-0 bg-white overflow-hidden">
-              <div className="p-6 border-b">
-                <div className="flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-primary" />
-                  <h2 className="text-lg font-semibold text-foreground">
-                    Right Column
-                  </h2>
+                <div className="p-3">
+                  <Textarea
+                    value={leftColumn}
+                    onChange={(e) => setLeftColumn(e.target.value)}
+                    className="h-[220px] w-full resize-none overflow-y-auto text-sm"
+                    placeholder="Skills, contact, education..."
+                  />
                 </div>
-              </div>
-              <div className="p-6 pt-0">
-                <Textarea
-                  value={rightColumn}
-                  onChange={(e) => setRightColumn(e.target.value)}
-                  className="h-[300px] w-full resize-none overflow-y-auto"
-                  placeholder="Enter right column content (experience, projects, etc.)..."
-                />
-              </div>
-            </Card>
+              </Card>
+              <Card className="border-0 bg-white overflow-hidden">
+                <div className="p-3 border-b">
+                  <h2 className="text-sm font-semibold text-foreground">Right Column</h2>
+                </div>
+                <div className="p-3">
+                  <Textarea
+                    value={rightColumn}
+                    onChange={(e) => setRightColumn(e.target.value)}
+                    className="h-[220px] w-full resize-none overflow-y-auto text-sm"
+                    placeholder="Experience, projects..."
+                  />
+                </div>
+              </Card>
+            </div>
           </div>
         </div>
       );
     }
 
+    // Single column mode - integrate with common header
     return (
-      <Card className="border-0 bg-white overflow-hidden flex flex-col h-full">
-        <div className="p-6 border-b">
-          <div className="flex items-center gap-2">
-            <FileText className="h-5 w-5 text-primary" />
-            <h2 className="text-lg font-semibold text-foreground">
-              Markdown Editor
-            </h2>
+      <div className="flex flex-col gap-3 h-full overflow-hidden">
+        {commonHeader}
+        <Card className="border-0 bg-white overflow-hidden flex flex-col flex-1">
+          <div className="p-3 border-b">
+            <h2 className="text-sm font-semibold text-foreground">Main Content</h2>
           </div>
-        </div>
-        <div className="flex-1 p-6 pt-0 flex flex-col">
-          {renderSharedFileUpload()}
-          <Textarea
-            value={markdown}
-            onChange={(e) => setMarkdown(e.target.value)}
-            className="flex-1 w-full resize-none overflow-y-auto"
-            placeholder="Enter your resume in Markdown format..."
-          />
-        </div>
-      </Card>
+          <div className="flex-1 p-3 flex flex-col">
+            <Textarea
+              value={markdown}
+              onChange={(e) => setMarkdown(e.target.value)}
+              className="flex-1 w-full resize-none overflow-y-auto text-sm"
+              placeholder="Enter your resume in Markdown format..."
+            />
+          </div>
+        </Card>
+      </div>
     );
   };
 

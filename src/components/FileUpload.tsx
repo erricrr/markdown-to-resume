@@ -94,7 +94,7 @@ export const FileUpload = ({ onFileUploaded }: FileUploadProps) => {
             className="flex items-center gap-1 text-xs"
           >
             <Upload className="h-3 w-3" />
-            {isUploading ? 'Uploading...' : 'Upload File'}
+            {isUploading ? 'Uploading...' : 'Upload Image'}
           </Button>
           <span className="text-xs text-muted-foreground">Max 5MB</span>
         </div>

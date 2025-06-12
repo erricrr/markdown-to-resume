@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Code, Eye, Printer, Sticker, FileText, Home } from "lucide-react";
+import { Code, Eye, Printer, Sticker, FileText, Home, Info } from "lucide-react";
 import { HtmlPreview } from "@/components/HtmlPreview";
 import { HtmlPrintPreview } from "@/components/HtmlPrintPreview";
 import { FileUpload } from "@/components/FileUpload";
@@ -458,25 +458,42 @@ const HtmlEditor = () => {
 
   const renderHtmlEditor = () => (
     <Card className="border-0 bg-white overflow-hidden flex flex-col h-full max-h-full">
-      <div className="p-4 sm:p-6 border-b shrink-0">
-        <div className="flex items-center gap-2">
-          <Code className="h-5 w-5 text-primary shrink-0" />
-          <h2 className="text-lg font-semibold text-foreground truncate">
-            HTML Editor
-          </h2>
-          <Badge variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200 shrink-0">
-            CSS & JS Support
-          </Badge>
+      <div className="p-4">
+        <div className="flex items-center justify-between gap-4 mb-3">
+          <div className="flex items-center gap-2">
+            <Code className="h-4 w-4 text-primary shrink-0" />
+            <h2 className="text-base font-semibold text-foreground truncate">
+              HTML Editor
+            </h2>
+            <Badge variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200 shrink-0">
+              CSS & JS
+            </Badge>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <FileUpload />
+            </div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded-md cursor-help">
+                  <Info className="h-3 w-3 text-blue-600" />
+                  <span className="text-xs text-blue-700 font-medium">Tips</span>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-sm p-3 text-sm">
+                <div className="space-y-1">
+                  <p className="font-medium">💡 HTML Tips:</p>
+                  <p>• Create interactive resumes with HTML, CSS, and JavaScript</p>
+                  <p>• Use semantic HTML elements for better structure</p>
+                  <p>• Always test your resume in print mode before final export</p>
+                  <p>• Learn HTML at: <a href="https://www.w3schools.com/html/default.asp" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">w3schools.com</a> 🚀</p>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </div>
         </div>
       </div>
-      <div className="flex-1 p-4 sm:p-6 pt-0 overflow-hidden flex flex-col">
-        <div className="mb-4">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold mb-2 -mt-3.5">Add Image</h3>
-            <span className="text-xs text-gray-500">Auto-saved</span>
-          </div>
-          <FileUpload />
-        </div>
+      <div className="flex-1 p-4 pt-0 overflow-hidden flex flex-col">
         <Textarea
           value={html}
           onChange={(e) => setHtml(e.target.value)}
@@ -489,11 +506,11 @@ const HtmlEditor = () => {
 
   const renderPreview = () => (
     <Card className="border-0 bg-white overflow-hidden flex flex-col h-full max-h-full">
-      <div className="p-4 sm:p-6 border-b shrink-0">
+      <div className="p-4 border-b shrink-0">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
-            <Eye className="h-5 w-5 text-primary shrink-0" />
-            <h2 className="text-lg font-semibold text-foreground truncate">
+            <Eye className="h-4 w-4 text-primary shrink-0" />
+            <h2 className="text-base font-semibold text-foreground truncate">
               Live Preview
             </h2>
           </div>
@@ -502,7 +519,7 @@ const HtmlEditor = () => {
           </Badge>
         </div>
       </div>
-      <div className="flex-1 overflow-auto p-2 sm:p-4 bg-gray-50">
+      <div className="flex-1 overflow-auto p-3 bg-gray-50">
         <div className="w-full h-full flex items-start justify-center">
           <HtmlPreview
             ref={previewRef}
