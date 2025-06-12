@@ -189,6 +189,13 @@ const MarkdownEditor = () => {
     localStorage.setItem("markdown-editor-left-panel-size", newLeftPanelSize.toString());
   };
 
+  // Render the preview badge with consistent styling
+  const renderPreviewBadge = () => (
+    <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200 shrink-0">
+      PDF-accurate preview
+    </Badge>
+  );
+
   // Log when the selected template changes
   useEffect(() => {
     console.log('🔄 Selected template changed to:', selectedTemplate);
@@ -687,17 +694,15 @@ const MarkdownEditor = () => {
             {/* Preview Section - Small Screen */}
             <div className="w-full">
               <Card className="border-0 bg-white overflow-hidden flex flex-col h-[calc(50vh-80px)] max-h-[calc(50vh-80px)]">
-                <div className="p-6 border-b shrink-0">
+                <div className="p-4 border-b shrink-0">
                   <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2">
-                      <Eye className="h-5 w-5 text-primary" />
-                      <h2 className="text-lg font-semibold text-foreground">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Eye className="h-4 w-4 text-primary shrink-0" />
+                      <h2 className="text-base font-semibold text-foreground truncate">
                         Live Preview
                       </h2>
                     </div>
-                    <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
-                      PDF-accurate preview
-                    </Badge>
+                    {renderPreviewBadge()}
                   </div>
                 </div>
                 <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 bg-gray-50">
@@ -786,17 +791,15 @@ const MarkdownEditor = () => {
             {/* Right Panel - Preview */}
             <ResizablePanel minSize={30}>
               <Card className="border-0 bg-white overflow-hidden flex flex-col h-full max-h-full">
-                <div className="p-6 border-b shrink-0">
+                <div className="p-4 border-b shrink-0">
                   <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2">
-                      <Eye className="h-5 w-5 text-primary" />
-                      <h2 className="text-lg font-semibold text-foreground">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Eye className="h-4 w-4 text-primary shrink-0" />
+                      <h2 className="text-base font-semibold text-foreground truncate">
                         Live Preview
                       </h2>
                     </div>
-                    <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
-                      PDF-accurate preview
-                    </Badge>
+                    {renderPreviewBadge()}
                   </div>
                 </div>
                 <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 bg-gray-50">
