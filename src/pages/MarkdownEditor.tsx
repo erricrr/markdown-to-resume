@@ -173,7 +173,12 @@ const MarkdownEditor = () => {
   const previewRef = useRef<HTMLDivElement>(null);
   const { addTemplateCSS, debugCSS } = useDynamicCSS();
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
-  const { uploadedFileUrl, uploadedFileName } = useFileUpload();
+  const { uploadedFileUrl, uploadedFileName, refreshTimestamp, triggerRefresh } = useFileUpload();
+  const [hasImageReference, setHasImageReference] = useState(false);
+
+  // Track previous uploadedFileUrl to detect changes
+  const prevUploadedFileUrlRef = useRef(uploadedFileUrl);
+  const prevUploadedFileNameRef = useRef(uploadedFileName);
 
   // State for panel sizes
   const [leftPanelSize, setLeftPanelSize] = useState(() => {
@@ -188,6 +193,65 @@ const MarkdownEditor = () => {
     setLeftPanelSize(newLeftPanelSize);
     localStorage.setItem("markdown-editor-left-panel-size", newLeftPanelSize.toString());
   };
+
+  // Check for image references in markdown content
+  const detectImageReferences = (content: string) => {
+    // Detect markdown image syntax: ![alt](url) or HTML img tags
+    const markdownImageRegex = /!\[.*?\]\(.*?\)/;
+    const htmlImageRegex = /<img.*?>/i;
+    return markdownImageRegex.test(content) || htmlImageRegex.test(content);
+  };
+
+  // Check all content sources for image references
+  useEffect(() => {
+    const checkForImageReferences = () => {
+      const sources = [
+        markdown,
+        header,
+        summary,
+        leftColumn,
+        rightColumn,
+        firstPage,
+        secondPage
+      ];
+
+      const hasAnyImageReference = sources.some(content =>
+        content && detectImageReferences(content)
+      );
+
+      setHasImageReference(hasAnyImageReference);
+
+      // If image reference exists but no image is uploaded yet, or if image was just removed,
+      // we need to refresh the preview to show the correct placeholder/empty state
+      if (hasAnyImageReference && (!uploadedFileUrl || uploadedFileUrl !== prevUploadedFileUrlRef.current)) {
+        console.log('🖼️ Image reference detected with upload change - refreshing preview');
+        triggerRefresh();
+      }
+
+      // If image reference was just removed, refresh the preview
+      if (!hasAnyImageReference && prevUploadedFileUrlRef.current && uploadedFileUrl) {
+        console.log('🖼️ Image reference removed but image still uploaded - refreshing preview');
+        triggerRefresh();
+      }
+    };
+
+    checkForImageReferences();
+
+    // Update refs after checking
+    prevUploadedFileUrlRef.current = uploadedFileUrl;
+    prevUploadedFileNameRef.current = uploadedFileName;
+  }, [
+    markdown,
+    header,
+    summary,
+    leftColumn,
+    rightColumn,
+    firstPage,
+    secondPage,
+    uploadedFileUrl,
+    uploadedFileName,
+    triggerRefresh
+  ]);
 
   // Render the preview badge with consistent styling
   const renderPreviewBadge = () => (
@@ -243,7 +307,7 @@ const MarkdownEditor = () => {
     setPaperSize(size);
   };
 
-        // Handle Two Column toggle with pre-filling functionality
+  // Handle Two Column toggle with pre-filling functionality
   const handleTwoColumnToggle = (checked: boolean) => {
     setIsTwoColumn(checked);
 
@@ -734,7 +798,7 @@ const MarkdownEditor = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {isSmallScreen ? (
           <div className="flex flex-col gap-6">
-                            {/* Editor Section - Small Screen */}
+            {/* Editor Section - Small Screen */}
             <div className="w-full h-[400px]">
               <div className="flex flex-col h-full overflow-hidden">
                 {/* Control Bar */}
@@ -817,6 +881,7 @@ const MarkdownEditor = () => {
                       paperSize={paperSize}
                       uploadedFileUrl={uploadedFileUrl}
                       uploadedFileName={uploadedFileName}
+                      key={refreshTimestamp}
                     />
                   </div>
                 </div>
@@ -914,6 +979,7 @@ const MarkdownEditor = () => {
                       paperSize={paperSize}
                       uploadedFileUrl={uploadedFileUrl}
                       uploadedFileName={uploadedFileName}
+                      key={refreshTimestamp}
                     />
                   </div>
                 </div>

@@ -71,3 +71,43 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+## Image Support and Auto-Refresh
+
+The application includes smart image handling for both Markdown and HTML editors:
+
+1. **Adding Images**:
+   - You can reference images in your Markdown (`![alt text](image.jpg)`) or HTML (`<img src="image.jpg">`)
+   - Then upload the image using the upload button
+   - The preview will automatically refresh to show your image
+
+2. **Deleting Images**:
+   - When you remove image references from your content
+   - The preview will automatically refresh to reflect the changes
+
+3. **Supported Image Types**:
+   - JPG/JPEG
+   - PNG
+   - GIF
+   - WebP
+
+## Usage
+
+1. Choose between Markdown or HTML editor
+2. Write or paste your resume content
+3. Upload any images you want to include
+4. Select a template and adjust formatting as needed
+5. Use the Print Preview to export your resume as PDF
+
+## Development
+
+To run the project locally:
+
+```bash
+npm install
+npm run dev
+```
+
+## License
+
+MIT

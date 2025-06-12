@@ -426,7 +426,12 @@ const HtmlEditor = () => {
   const [paperSize, setPaperSize] = useState<'A4' | 'US_LETTER'>('A4');
   const previewRef = useRef<HTMLDivElement>(null);
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
-  const { uploadedFileUrl, uploadedFileName } = useFileUpload();
+  const { uploadedFileUrl, uploadedFileName, refreshTimestamp, triggerRefresh } = useFileUpload();
+  const [hasImageReference, setHasImageReference] = useState(false);
+
+  // Track previous upload state to detect changes
+  const prevUploadedFileUrlRef = useRef(uploadedFileUrl);
+  const prevUploadedFileNameRef = useRef(uploadedFileName);
 
   // State for panel sizes
   const [leftPanelSize, setLeftPanelSize] = useState(() => {
@@ -441,6 +446,41 @@ const HtmlEditor = () => {
     setLeftPanelSize(newLeftPanelSize);
     localStorage.setItem("html-editor-left-panel-size", newLeftPanelSize.toString());
   };
+
+  // Detect image references in HTML content
+  const detectImageReferences = (content: string) => {
+    const imgTagRegex = /<img[^>]*>/i;
+    const backgroundImageRegex = /background-image\s*:\s*url\s*\([^)]+\)/i;
+
+    return imgTagRegex.test(content) || backgroundImageRegex.test(content);
+  };
+
+  // Check for image references in HTML content
+  useEffect(() => {
+    const checkForImageReferences = () => {
+      const hasImgReference = detectImageReferences(html);
+      setHasImageReference(hasImgReference);
+
+      // If image reference exists but no image is uploaded yet, or if image was just removed,
+      // we need to refresh the preview to show the correct placeholder/empty state
+      if (hasImgReference && (!uploadedFileUrl || uploadedFileUrl !== prevUploadedFileUrlRef.current)) {
+        console.log('🖼️ HTML: Image reference detected with upload change - refreshing preview');
+        triggerRefresh();
+      }
+
+      // If image reference was just removed, refresh the preview
+      if (!hasImgReference && prevUploadedFileUrlRef.current && uploadedFileUrl) {
+        console.log('🖼️ HTML: Image reference removed but image still uploaded - refreshing preview');
+        triggerRefresh();
+      }
+    };
+
+    checkForImageReferences();
+
+    // Update refs after checking
+    prevUploadedFileUrlRef.current = uploadedFileUrl;
+    prevUploadedFileNameRef.current = uploadedFileName;
+  }, [html, uploadedFileUrl, uploadedFileName, triggerRefresh]);
 
   const handlePrintPDF = () => {
     window.print();
@@ -526,6 +566,7 @@ const HtmlEditor = () => {
             paperSize={paperSize}
             uploadedFileUrl={uploadedFileUrl}
             uploadedFileName={uploadedFileName}
+            key={refreshTimestamp} // Force re-render when upload changes
           />
         </div>
       </div>
@@ -626,6 +667,7 @@ const HtmlEditor = () => {
                 paperSize={paperSize}
                 uploadedFileUrl={uploadedFileUrl}
                 uploadedFileName={uploadedFileName}
+                key={refreshTimestamp}
               />
             </div>
           </div>

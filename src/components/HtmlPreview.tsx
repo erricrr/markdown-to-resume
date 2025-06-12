@@ -16,6 +16,9 @@ export const HtmlPreview = forwardRef<HTMLDivElement, HtmlPreviewProps>(
     const updateTimeoutRef = useRef<number | null>(null);
     const [renderedHtml, setRenderedHtml] = useState(html);
 
+    // Track image upload state to detect changes
+    const prevUploadStateRef = useRef({ url: uploadedFileUrl, name: uploadedFileName });
+
     // Debounce content updates
     useEffect(() => {
       // For initial render, set content immediately
@@ -40,6 +43,21 @@ export const HtmlPreview = forwardRef<HTMLDivElement, HtmlPreviewProps>(
         }
       };
     }, [html, isInitialRender]);
+
+    // Force update when image upload changes
+    useEffect(() => {
+      const prevUrl = prevUploadStateRef.current.url;
+      const prevName = prevUploadStateRef.current.name;
+
+      // If either URL or filename has changed
+      if (prevUrl !== uploadedFileUrl || prevName !== uploadedFileName) {
+        console.log('🖼️ HtmlPreview: Detected image upload change - refreshing iframe content');
+        prevUploadStateRef.current = { url: uploadedFileUrl, name: uploadedFileName };
+
+        // Force iframe content to update immediately
+        updateIframeContent();
+      }
+    }, [uploadedFileUrl, uploadedFileName]);
 
     useEffect(() => {
       console.log('HtmlPreview updateIframeContent triggered for renderedHtml');
@@ -88,15 +106,30 @@ export const HtmlPreview = forwardRef<HTMLDivElement, HtmlPreviewProps>(
 
           // Replace occurrences of the uploaded file name so inline <img> tags show the blob URL
           if (uploadedFileUrl && uploadedFileName) {
+            // Handle both full path and filename-only references
             const escapedName = uploadedFileName.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
             const regex = new RegExp(`src=([\"\'])([^\"\']*${escapedName})\\1`, 'g');
             htmlWithUploadedFile = htmlWithUploadedFile.replace(regex, (_m: string, quote: string) => `src=${quote}${uploadedFileUrl}${quote}`);
+
+            // Also try to handle just the filename without path
+            const filenameOnly = uploadedFileName.split('/').pop() || uploadedFileName;
+            if (filenameOnly !== uploadedFileName) {
+              const escapedBaseName = filenameOnly.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
+              const baseNameRegex = new RegExp(`src=([\"\'])([^\"\']*${escapedBaseName})\\1`, 'g');
+              htmlWithUploadedFile = htmlWithUploadedFile.replace(baseNameRegex, (_m: string, quote: string) => `src=${quote}${uploadedFileUrl}${quote}`);
+            }
           }
 
           // Ensure relative image URLs load from public root
           htmlWithUploadedFile = htmlWithUploadedFile.replace(/<img([^>]*)src="([^\"\']+)"([^>]*)>/g, (match: string, before: string, src: string, after: string) => {
             if (/^(https?:|data:|blob:|\/)/i.test(src)) return match;
             return `<img${before}src="/${src}"${after}>`;
+          });
+
+          // Add more complete image path matching for background-image CSS properties
+          htmlWithUploadedFile = htmlWithUploadedFile.replace(/background-image\s*:\s*url\s*\(\s*['"]?([^'"\)]+)['"]?\s*\)/gi, (match, url) => {
+            if (/^(https?:|data:|blob:|\/)/i.test(url)) return match;
+            return match.replace(url, `/${url}`);
           });
 
           let htmlContent = htmlWithUploadedFile;
@@ -191,150 +224,28 @@ export const HtmlPreview = forwardRef<HTMLDivElement, HtmlPreviewProps>(
       }
       @media print {
         @page {
-          size: ${paperSize === 'A4' ? 'A4' : 'letter'};
+          size: ${paperSize === 'A4' ? 'A4 portrait' : 'letter portrait'};
           margin: 0.5in;
         }
-        body {
-          margin: 0 !important;
-          padding: 20px !important;
-          background: white !important;
+        html, body {
+          -webkit-print-color-adjust: exact !important;
+          color-adjust: exact !important;
+          print-color-adjust: exact !important;
         }
+        /* Force background colors to print */
         * {
           -webkit-print-color-adjust: exact !important;
           color-adjust: exact !important;
-        }
-        .no-print {
-          display: none !important;
-        }
-        .page-break-before {
-          page-break-before: always !important;
-        }
-        .page-break-after {
-          page-break-after: always !important;
-        }
-        .page-break-inside-avoid {
-          page-break-inside: avoid !important;
+          print-color-adjust: exact !important;
         }
       }
     </style>
 </head>
 <body>
-${htmlWithUploadedFile}
+    ${htmlWithUploadedFile}
 </body>
-</html>`;
-          } else {
-            // If HTML already has DOCTYPE, inject our replacements and ensure it has proper print styles
-            let base = htmlWithUploadedFile;
-            htmlContent = base.replace(
-              /<\/head>/i,
-              `<link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lato:wght@300;400;700&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;600&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
-      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
-      <style>
-        /* Ensure proper CSS rendering and color preservation */
-        html, body {
-          margin: 0;
-          padding: 0;
-          width: 100%;
-          height: auto;
-          overflow-x: hidden;
-          max-width: 100%;
-        }
-        * {
-          box-sizing: border-box;
-          -webkit-print-color-adjust: exact !important;
-          color-adjust: exact !important;
-          print-color-adjust: exact !important;
-        }
-        /* Ensure content fits within iframe */
-        .resume, body > div {
-          max-width: 100% !important;
-          overflow-x: hidden !important;
-          width: auto !important;
-          margin: 0 auto !important;
-        }
-
-        /* Fix for two-column layouts */
-        .content {
-          display: grid !important;
-          grid-template-columns: 1fr 2fr !important;
-          gap: 20px !important;
-          width: 100% !important;
-        }
-
-        .left-column, .right-column {
-          width: 100% !important;
-          overflow: hidden !important;
-        }
-
-        /* Support for flex-based column layouts */
-        [class*="column-layout"],
-        [class*="two-column"],
-        [class*="columns"],
-        [class*="col-layout"] {
-          display: grid !important;
-          grid-template-columns: 1fr 2fr !important;
-          gap: 20px !important;
-          width: 100% !important;
-        }
-
-        /* Ensure all column elements have proper display */
-        [class*="column-left"],
-        [class*="left-col"],
-        [class*="sidebar"],
-        [class*="col-1"] {
-          width: 100% !important;
-          overflow: hidden !important;
-        }
-
-        [class*="column-right"],
-        [class*="right-col"],
-        [class*="main-content"],
-        [class*="col-2"] {
-          width: 100% !important;
-          overflow: hidden !important;
-        }
-
-        /* Scale content to fit the available width */
-        @media (max-width: 1000px) {
-          .resume, body > div {
-            transform: scale(0.95);
-            transform-origin: top center;
-          }
-        }
-        @media (max-width: 800px) {
-          .resume, body > div {
-            transform: scale(0.9);
-            transform-origin: top center;
-          }
-        }
-        @media print {
-          body {
-            margin: 0 !important;
-            padding: 20px !important;
-            background: white !important;
-          }
-          * {
-            -webkit-print-color-adjust: exact !important;
-            color-adjust: exact !important;
-          }
-          .no-print {
-            display: none !important;
-          }
-          .page-break-before {
-            page-break-before: always !important;
-          }
-          .page-break-after {
-            page-break-after: always !important;
-          }
-          .page-break-inside-avoid {
-            page-break-inside: avoid !important;
-          }
-        }
-      </style>
-</head>`
-            );
+</html>
+`;
           }
 
           iframeDoc.write(htmlContent);
@@ -367,14 +278,12 @@ ${htmlWithUploadedFile}
             }
           }, 100);
 
-
-
-                    // Set a generous initial height to prevent content from being cut off during load
+          // Set a generous initial height to prevent content from being cut off during load
           iframe.style.height = '800px';
           iframe.style.opacity = '0';
 
-                    // Wait for content to be fully rendered before showing
-          const finalizeIframe = () => {
+          // Wait for content to be fully rendered before showing
+          setTimeout(() => {
             // Quick measurement with fallback
             let attempts = 0;
             const maxAttempts = 3; // Reduced from 5
@@ -433,11 +342,11 @@ ${htmlWithUploadedFile}
                 }
               }
 
-              // Retry if measurements aren't ready yet, but with shorter intervals
               if (attempts < maxAttempts) {
-                setTimeout(measureAndResize, 75); // Reduced from 150ms
+                setTimeout(measureAndResize, 100); // More frequent rechecks
               } else {
-                // Fallback: show iframe even if we couldn't get perfect measurements
+                // Give up and show content anyway after max attempts
+                iframe.style.height = '800px'; // Fallback height
                 iframe.style.opacity = '1';
                 iframe.style.transition = 'opacity 0.15s ease-in-out';
 
@@ -452,28 +361,9 @@ ${htmlWithUploadedFile}
               }
             };
 
-            // Start measuring immediately, no delay
-            measureAndResize();
-          };
-
-                    // Use multiple methods to detect when content is ready
-          let isFinalized = false;
-          const finalize = () => {
-            if (!isFinalized) {
-              isFinalized = true;
-              finalizeIframe();
-            }
-          };
-
-          // Method 1: Listen for iframe load event (faster response)
-          iframe.addEventListener('load', () => {
-            setTimeout(finalize, 50); // Reduced from 100ms
-          });
-
-          // Method 2: Fallback timeout (much faster)
-          setTimeout(finalize, 400); // Reduced from 800ms
-
-
+            // Start measuring with a shorter initial delay
+            setTimeout(measureAndResize, 150); // Reduced from 800ms
+          }, 200); // Reduced from 400ms to start measurement sooner
 
           // Simplified resize handler for window resize only
           const handleResize = () => {

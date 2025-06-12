@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useState, useRef, MutableRefObject } from 'react';
+import { forwardRef, useEffect, useState, useRef, MutableRefObject, useMemo } from 'react';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import { ResumeTemplates } from '@/components/ResumeTemplates';
@@ -19,10 +19,8 @@ interface ResumePreviewProps {
   uploadedFileName?: string;
 }
 
-// List of valid template IDs
-const validTemplates = ['professional', 'modern', 'minimalist', 'creative', 'executive'] as const;
-
-type TemplateType = typeof validTemplates[number];
+// Import valid template types for TS checking
+import { TemplateType, validTemplates } from '@/types/resumeTypes';
 
 export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
   ({ markdown, leftColumn = '', rightColumn = '', header = '', summary = '', firstPage = '', secondPage = '', template: propTemplate, isTwoColumn = false, isTwoPage = false, paperSize = 'A4', uploadedFileUrl = '', uploadedFileName = '' }, ref) => {
@@ -36,10 +34,27 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
     const localRef = useRef<HTMLDivElement>(null);
     const resolvedRef = ref || localRef;
 
+    // Track if image upload has changed - used to trigger content refresh
+    const uploadStateRef = useRef({ url: uploadedFileUrl, name: uploadedFileName });
+    const [imageProcessingVersion, setImageProcessingVersion] = useState(0);
+
     // Log template changes for debugging
     useEffect(() => {
       console.log('🔍 ResumePreview: Template set to', template);
     }, [template]);
+
+    // Watch for changes to uploaded images to trigger refresh
+    useEffect(() => {
+      const prevUrl = uploadStateRef.current.url;
+      const prevName = uploadStateRef.current.name;
+
+      // Check if either the URL or filename has changed
+      if (prevUrl !== uploadedFileUrl || prevName !== uploadedFileName) {
+        console.log('🖼️ ResumePreview: Detected image upload change - reprocessing content');
+        uploadStateRef.current = { url: uploadedFileUrl, name: uploadedFileName };
+        setImageProcessingVersion(prev => prev + 1);
+      }
+    }, [uploadedFileUrl, uploadedFileName]);
 
     // Set up resize observer to detect container width changes
     useEffect(() => {
@@ -171,7 +186,8 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
       return `${titleHtml}${contactInfoHtml}`;
     };
 
-    const getHtmlContent = () => {
+    // Use useMemo to cache HTML content based on all input fields and image processing version
+    const getHtmlContent = useMemo(() => {
       if (isTwoPage && isTwoColumn) {
         // Combined mode: Two pages with two columns each
         const headerHtml = header ? processHeaderMarkdown(header) : '';
@@ -247,9 +263,18 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
         // Single-column, single-page mode
         return parseMarkdown(markdown);
       }
-    };
-
-    const htmlContent = getHtmlContent();
+    }, [
+      markdown,
+      leftColumn,
+      rightColumn,
+      header,
+      summary,
+      firstPage,
+      secondPage,
+      isTwoColumn,
+      isTwoPage,
+      imageProcessingVersion // Add this to trigger re-computation when images change
+    ]);
 
     /*
      * Smarter handling for uploaded files:
@@ -261,29 +286,46 @@ export const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
     const imageRegex = /\.(jpe?g|png|gif|webp)$/i;
     const isImageFile = (!!uploadedFileUrl && imageRegex.test(uploadedFileUrl)) || (!!uploadedFileName && imageRegex.test(uploadedFileName));
 
-    let contentWithUploadedFile = htmlContent;
+    // Process uploaded file references, also using useMemo to cache results
+    const contentWithUploadedFile = useMemo(() => {
+      let content = getHtmlContent;
 
-    if (uploadedFileUrl && uploadedFileName) {
-      const escapedName = uploadedFileName.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-      const regex = new RegExp(`src=([\"\'])([^\"\']*${escapedName})\\1`, 'g');
-      contentWithUploadedFile = contentWithUploadedFile.replace(regex, (_m: string, quote: string) => {
-        return `src=${quote}${uploadedFileUrl}${quote}`;
-      });
-    }
+      if (uploadedFileUrl && uploadedFileName) {
+        const escapedName = uploadedFileName.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+        const regex = new RegExp(`src=([\"\'])([^\"\']*${escapedName})\\1`, 'g');
+        content = content.replace(regex, (_m: string, quote: string) => {
+          return `src=${quote}${uploadedFileUrl}${quote}`;
+        });
 
-    if (uploadedFileUrl && contentWithUploadedFile) {
-      // Skip if the blob url already exists in markup (prevents duplicates)
-      const alreadyInserted = contentWithUploadedFile.includes(uploadedFileUrl);
-
-      // For non-image files we still want the attachment at the end once.
-      if (!alreadyInserted && !isImageFile) {
-        contentWithUploadedFile += `\n<div class="resume-uploaded-file"><img src="${uploadedFileUrl}" alt="Uploaded file" style="max-width: 100%; max-height: 300px; display: block; margin: 0.5rem 0;" /></div>`;
+        // Also try to match just the filename without path
+        const filenameOnly = uploadedFileName.split('/').pop() || uploadedFileName;
+        if (filenameOnly !== uploadedFileName) {
+          const escapedBaseName = filenameOnly.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+          const baseNameRegex = new RegExp(`src=([\"\'])([^\"\']*${escapedBaseName})\\1`, 'g');
+          content = content.replace(baseNameRegex, (_m: string, quote: string) => {
+            return `src=${quote}${uploadedFileUrl}${quote}`;
+          });
+        }
       }
-      // For image files we do NOTHING here – user must reference it explicitly in Markdown/HTML.
-    }
+
+      if (uploadedFileUrl && content) {
+        // Skip if the blob url already exists in markup (prevents duplicates)
+        const alreadyInserted = content.includes(uploadedFileUrl);
+
+        // For non-image files we still want the attachment at the end once.
+        if (!alreadyInserted && !isImageFile) {
+          content += `\n<div class="resume-uploaded-file"><img src="${uploadedFileUrl}" alt="Uploaded file" style="max-width: 100%; max-height: 300px; display: block; margin: 0.5rem 0;" /></div>`;
+        }
+        // For image files we do NOTHING here – user must reference it explicitly in Markdown/HTML.
+      }
+
+      return content;
+    }, [getHtmlContent, uploadedFileUrl, uploadedFileName, isImageFile, imageProcessingVersion]);
 
     // Log paper size to debug
-    console.log(`ResumePreview rendering with paper size: ${paperSize}`);
+    useEffect(() => {
+      console.log(`ResumePreview rendering with paper size: ${paperSize}`);
+    }, [paperSize]);
 
     return (
       <div ref={resolvedRef as MutableRefObject<HTMLDivElement>} className="resume-container" style={{ width: '100%' }} data-paper-size={paperSize}>
