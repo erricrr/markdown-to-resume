@@ -424,7 +424,7 @@ const MarkdownEditor = () => {
         <div className="flex items-center justify-between gap-4 mb-3">
             <div className="flex items-center gap-2">
               <FileText className="h-4 w-4 text-primary" />
-              <h2 className="text-base font-semibold text-foreground">
+              <h2 className="text-base font-semibold text-foreground truncate">
                 Markdown Editor
               </h2>
             </div>
