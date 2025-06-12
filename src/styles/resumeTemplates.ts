@@ -4,7 +4,7 @@
 export const baseResumeStyles = `
 /* CSS Custom Properties for User Customization - Scoped to Resume Template Only */
 .resume-template {
-  --resume-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --resume-font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --resume-font-size: 11pt;
   --resume-line-height: 1.15;
   --resume-margin-top: 0.5in;
@@ -134,7 +134,7 @@ body {
   font-size: var(--resume-h1-font-size);
   font-weight: bold;
   color: #000;
-  margin-top: 0;
+  margin-top: 0.5rem;
   margin-bottom: 0.25rem;
   font-family: var(--resume-font-family);
   line-height: 1.1;
@@ -143,7 +143,7 @@ body {
   font-size: var(--resume-h2-font-size);
   font-weight: 600;
   color: #000;
-  margin-top: 1.5rem;
+  margin-top: 0.5rem;
   margin-bottom: var(--resume-section-spacing);
   font-family: var(--resume-font-family);
 }
@@ -275,7 +275,7 @@ body {
 
 /* Ensure consistent spacing after each main section */
 .resume-heading-2 + * {
-  margin-top: 0;
+  margin-top: 0.5rem;
 }
 
 /* Add breathing room after section content */
@@ -484,12 +484,12 @@ export const templateStyles = {
 .template-professional {
   background: #ffffff;
   color: #333333;
-  font-family: 'Lato', sans-serif;
+  font-family: 'Roboto', sans-serif;
   line-height: var(--resume-line-height);
 }
 
 .template-professional .resume-heading-1 {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Raleway', sans-serif;
   font-size: var(--resume-h1-font-size);
   font-weight: 600;
   color: #222222;
@@ -502,11 +502,11 @@ export const templateStyles = {
 }
 
 .template-professional .resume-heading-2 {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Raleway', sans-serif;
   font-size: var(--resume-h2-font-size);
   font-weight: 600;
   color: #444444;
-  margin-top: 1.5rem;
+  margin-top: 0.5rem;
   margin-bottom: var(--resume-section-spacing);
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -557,13 +557,13 @@ export const templateStyles = {
 .template-modern {
   background: #ffffff;
   color: #333333;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Poppins', sans-serif;
   line-height: var(--resume-line-height);
   position: relative;
 }
 
 .template-modern .resume-heading-1 {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: var(--resume-h1-font-size);
   font-weight: 600;
   color: #000;
@@ -588,11 +588,11 @@ export const templateStyles = {
 }
 
 .template-modern .resume-heading-2 {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-size: var(--resume-h2-font-size);
   font-weight: 700;
   color: #000;
-  margin-top: 1.5rem;
+  margin-top: 0.5rem;
   margin-bottom: var(--resume-section-spacing);
   text-transform: uppercase;
   letter-spacing: 1.5px;
@@ -662,11 +662,12 @@ export const templateStyles = {
 .template-minimalist {
   background: #ffffff;
   color: #333333;
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Nunito', sans-serif;
   line-height: var(--resume-line-height);
 }
 
 .template-minimalist .resume-heading-1 {
+  font-family: 'Nunito', sans-serif;
   font-size: var(--resume-h1-font-size);
   font-weight: 300;
   color: #222222;
@@ -678,10 +679,11 @@ export const templateStyles = {
 }
 
 .template-minimalist .resume-heading-2 {
+  font-family: 'Nunito', sans-serif;
   font-size: var(--resume-h2-font-size);
   font-weight: 600;
   color: #666666;
-  margin-top: 1.5rem;
+  margin-top: 0.5rem;
   margin-bottom: var(--resume-section-spacing);
   text-transform: uppercase;
   letter-spacing: 1.5px;
@@ -719,7 +721,7 @@ export const templateStyles = {
 /* Creative Template - Modern greyscale design with clean styling */
 .template-creative {
   background: white;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Work Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   position: relative;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
@@ -727,6 +729,7 @@ export const templateStyles = {
 
 /* Modern greyscale header section */
 .template-creative .resume-heading-1 {
+  font-family: 'Work Sans', sans-serif;
   font-size: var(--resume-h1-font-size);
   font-weight: 800;
   color: #1f2937;
@@ -768,10 +771,11 @@ export const templateStyles = {
 
 /* Section headings with modern accent */
 .template-creative .resume-heading-2 {
+  font-family: 'Work Sans', sans-serif;
   font-size: var(--resume-h2-font-size);
   font-weight: 700;
   color: #1f2937;
-  margin-top: 1.5rem;
+  margin-top: 0.5rem;
   margin-bottom: var(--resume-section-spacing);
   text-transform: uppercase;
   letter-spacing: 1.5px;
@@ -850,12 +854,12 @@ export const templateStyles = {
 .template-executive {
   background: #ffffff;
   color: #333333;
-  font-family: 'Lato', sans-serif;
+  font-family: 'Ubuntu', sans-serif !important;
   line-height: var(--resume-line-height);
 }
 
 .template-executive .resume-heading-1 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Merriweather', serif !important;
   font-size: var(--resume-h1-font-size);
   font-weight: 700;
   color: #111111;
@@ -870,11 +874,11 @@ export const templateStyles = {
 }
 
 .template-executive .resume-heading-2 {
-  font-family: 'Lato', sans-serif;
+  font-family: 'Merriweather', serif !important;
   font-size: var(--resume-h2-font-size);
   font-weight: 600;
   color: #333333;
-  margin-top: 1.5rem;
+  margin-top: 0.5rem;
   margin-bottom: var(--resume-section-spacing);
   padding: 0.25rem 0 0.25rem 0.5rem;
   border-left: 3px solid #333333;
@@ -887,6 +891,14 @@ export const templateStyles = {
   print-color-adjust: exact !important;
 }
 
+.template-executive .resume-heading-3 {
+  font-family: 'Merriweather', serif !important;
+  font-weight: 600;
+  color: #444444;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
 .template-executive p,
 .template-executive li {
   color: #555555;
@@ -894,9 +906,11 @@ export const templateStyles = {
   font-weight: 400;
   font-size: var(--resume-font-size);
   line-height: var(--resume-line-height);
+  font-family: 'Ubuntu', sans-serif !important;
 }
 
 .template-executive a {
+  font-family: 'Ubuntu', sans-serif !important;
   color: #333333;
   text-decoration: none;
   font-weight: 500;
@@ -912,10 +926,12 @@ export const templateStyles = {
 .template-executive ul,
 .template-executive ol {
   padding-left: 1.5rem;
+  font-family: 'Ubuntu', sans-serif !important;
 }
 
 .template-executive li {
   margin-bottom: 0.5rem;
+  font-family: 'Ubuntu', sans-serif !important;
 }
 
 /* Hide HR in executive template */
@@ -1339,7 +1355,7 @@ export const printStyles = `
   .resume-two-column-layout .resume-column-left,
   .resume-two-column-layout .resume-column-right {
     padding-top: 0.5rem;
-    margin-top: 0;
+    margin-top: 0.5rem;
   }
 
   /* COMPREHENSIVE TWO-COLUMN LAYOUT FIXES FOR ALL TEMPLATES */
@@ -1371,7 +1387,7 @@ export const printStyles = `
   /* Professional template specific fixes */
   .resume-two-column-layout.template-professional .resume-heading-2 {
     font-size: var(--resume-h2-font-size);
-    margin: 1rem 0 0.5rem 0;
+    margin: 0 0 0.5rem 0;
     padding: 0.25rem 0 0 0;
     border-bottom: none;
     text-transform: uppercase;
@@ -1646,13 +1662,44 @@ export const printStyles = `
 
   /* Ensure consistent spacing after each main section in PDF */
   .resume-heading-2 + * {
-    margin-top: 0;
+    margin-top: 0.5rem;
   }
 
   /* Add breathing room after section content in PDF */
   .resume-heading-2 ~ *:last-child {
     margin-bottom: var(--resume-section-spacing);
   }
+}
+`;
+
+/* Add specific styling for two-column executive template */
+export const executiveSpecificStyles = `
+.resume-two-column-layout.template-executive {
+  font-family: 'Ubuntu', sans-serif !important;
+}
+
+.resume-two-column-layout.template-executive .resume-header .resume-heading-1 {
+  font-family: 'Merriweather', serif !important;
+  font-weight: 700;
+  color: #111111;
+  padding-bottom: 0.5rem;
+  border-bottom: 3px solid #333333;
+}
+
+.resume-two-column-layout.template-executive .resume-column-left *,
+.resume-two-column-layout.template-executive .resume-column-right * {
+  font-family: 'Ubuntu', sans-serif !important;
+}
+
+.resume-two-column-layout.template-executive .resume-heading-2 {
+  font-family: 'Merriweather', serif !important;
+  font-weight: 600;
+  color: #333333;
+}
+
+.resume-two-column-layout.template-executive .resume-strong {
+  font-family: 'Ubuntu', sans-serif !important;
+  font-weight: 600;
 }
 `;
 
@@ -1663,13 +1710,19 @@ export const getTemplateStyles = (templateName: string): string => {
     console.warn(`Template "${templateName}" not found, using professional as fallback`);
     return templateStyles.professional;
   }
+
+  // Add executive specific styles for executive template
+  if (templateName === 'executive') {
+    return template + executiveSpecificStyles;
+  }
+
   return template;
 };
 
 // Function to get complete CSS for PDF export
 export const getCompleteCSS = (templateName?: string): string => {
   const fontImports = `
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lato:wght@300;400;700&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;600&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&family=Source+Sans+Pro:wght@300;400;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Nunito:wght@300;400;600;700&family=Poppins:wght@400;500;600;700;800&family=Merriweather:wght@300;400;700&family=Ubuntu:wght@300;400;500;700&family=Work+Sans:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap');
   `;
   let css = fontImports + baseResumeStyles;
 

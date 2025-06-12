@@ -240,11 +240,25 @@ const MarkdownEditor = () => {
     console.log(`📋 Template changed to: ${selectedTemplate}`);
     // Re-apply the CSS from localStorage when template changes
     const savedCSS = localStorage.getItem(`css-editor-${selectedTemplate}`);
-    if (savedCSS) {
+
+    // Special handling for executive template to ensure font changes take effect
+    if (selectedTemplate === 'executive') {
+      console.log('🎨 Applying updated Executive template CSS with new fonts');
+      // Force a refresh of the executive template CSS
+      import('@/styles/resumeTemplates').then(({ templateStyles, executiveSpecificStyles }) => {
+        const executiveCSS = templateStyles.executive + executiveSpecificStyles;
+        // Update the localStorage cache
+        localStorage.setItem(`css-editor-executive`, executiveCSS);
+        // Apply the updated CSS
+        addTemplateCSS('executive', executiveCSS);
+        // Apply high-priority font fixes
+        debugCSS();
+      });
+    } else if (savedCSS) {
       console.log('🎨 Re-applying saved CSS after template change:', selectedTemplate);
       addTemplateCSS(selectedTemplate, savedCSS);
     }
-  }, [selectedTemplate, addTemplateCSS]);
+  }, [selectedTemplate, addTemplateCSS, debugCSS]);
 
   // Re-apply CSS when component mounts or returns from another editor
   useEffect(() => {

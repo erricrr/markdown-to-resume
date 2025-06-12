@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
+import React from 'react';
 
 interface ResumeTemplatesProps {
   htmlContent: string;
@@ -14,7 +15,7 @@ interface ResumeTemplatesProps {
 // List of valid template IDs
 const validTemplates = ['professional', 'modern', 'minimalist', 'creative', 'executive'];
 
-export const ResumeTemplates = ({
+export const ResumeTemplates: React.FC<ResumeTemplatesProps> = ({
   htmlContent,
   template: propTemplate,
   isTwoColumn = false,
@@ -22,7 +23,7 @@ export const ResumeTemplates = ({
   isPreview = true,
   containerWidth = 0,
   paperSize = 'A4'
-}: ResumeTemplatesProps) => {
+}) => {
   // Calculate scaling factor based on container width
   const [scale, setScale] = useState(0.75); // Default scale
 
@@ -38,6 +39,46 @@ export const ResumeTemplates = ({
       setScale(newScale);
     }
   }, [containerWidth, paperSize]);
+
+  // Apply executive template font fix when needed
+  useEffect(() => {
+    if (propTemplate === 'executive') {
+      // Create a style element specifically for executive template font fixes
+      const executiveFixStyle = document.createElement('style');
+      executiveFixStyle.id = 'executive-font-fix';
+      executiveFixStyle.textContent = `
+        .template-executive {
+          font-family: 'Ubuntu', sans-serif !important;
+        }
+        .template-executive .resume-heading-1,
+        .template-executive .resume-heading-2,
+        .template-executive .resume-heading-3 {
+          font-family: 'Merriweather', serif !important;
+        }
+        .template-executive p,
+        .template-executive li,
+        .template-executive a,
+        .template-executive .resume-paragraph,
+        .template-executive .resume-list-item {
+          font-family: 'Ubuntu', sans-serif !important;
+        }
+      `;
+
+      // Remove any existing fix to avoid duplicates
+      const existing = document.getElementById('executive-font-fix');
+      if (existing) {
+        existing.remove();
+      }
+
+      // Add the fix to the document head
+      document.head.appendChild(executiveFixStyle);
+
+      return () => {
+        // Clean up when component unmounts or template changes
+        executiveFixStyle.remove();
+      };
+    }
+  }, [propTemplate]);
 
   // Ensure we always have a valid template
   const template = validTemplates.includes(propTemplate) ? propTemplate : 'professional';

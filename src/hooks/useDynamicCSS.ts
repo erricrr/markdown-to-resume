@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
-import { templateStyles, baseResumeStyles, printStyles } from '../styles/resumeTemplates';
+import { templateStyles, baseResumeStyles, printStyles, executiveSpecificStyles } from '../styles/resumeTemplates';
 
 export const useDynamicCSS = () => {
   const styleElementRef = useRef<HTMLStyleElement | null>(null);
@@ -30,11 +30,20 @@ export const useDynamicCSS = () => {
       console.error('❌ Default Professional template CSS not found in templateStyles');
     }
 
+    // Add a special style element for executive template fonts
+    ensureExecutiveFontsApplied();
+
     return () => {
       // Cleanup on unmount
       if (styleElementRef.current && styleElementRef.current.parentNode) {
         styleElementRef.current.parentNode.removeChild(styleElementRef.current);
         console.log('🧹 Dynamic CSS style element removed');
+      }
+
+      // Remove the executive font styles
+      const execStyles = document.getElementById('executive-font-fix');
+      if (execStyles) {
+        execStyles.remove();
       }
     };
   }, []);
@@ -178,7 +187,7 @@ export const useDynamicCSS = () => {
 
 /* Ensure consistent spacing after each main section */
 .resume-template .resume-heading-2 + * {
-  margin-top: 0 !important;
+  margin-top: 0.5rem !important;
 }
 
 /* Add breathing room after section content */
@@ -240,18 +249,94 @@ export const useDynamicCSS = () => {
     document.body.offsetHeight;
   }, []);
 
+  // Ensure the Executive template's fonts are always correctly applied
+  const ensureExecutiveFontsApplied = useCallback(() => {
+    // Create a special style element for Executive template font fixes
+    console.log('🔄 Ensuring Executive template fonts are applied correctly');
+
+    // Remove any existing font fix first
+    const existingFix = document.getElementById('executive-font-fix');
+    if (existingFix) {
+      existingFix.remove();
+    }
+
+    // Create a new style element with high-specificity rules
+    const execFontStyles = document.createElement('style');
+    execFontStyles.id = 'executive-font-fix';
+    execFontStyles.setAttribute('data-source', 'css-editor');
+    execFontStyles.textContent = `
+      /* High priority font fixes for Executive template */
+      .template-executive,
+      .resume-template.template-executive {
+        font-family: 'Ubuntu', sans-serif !important;
+      }
+
+      .template-executive .resume-heading-1,
+      .template-executive .resume-heading-2,
+      .template-executive .resume-heading-3,
+      .resume-template.template-executive .resume-heading-1,
+      .resume-template.template-executive .resume-heading-2,
+      .resume-template.template-executive .resume-heading-3 {
+        font-family: 'Merriweather', serif !important;
+      }
+
+      .template-executive p,
+      .template-executive li,
+      .template-executive a,
+      .template-executive span,
+      .template-executive div,
+      .resume-template.template-executive p,
+      .resume-template.template-executive li,
+      .resume-template.template-executive a,
+      .resume-template.template-executive span,
+      .resume-template.template-executive div {
+        font-family: 'Ubuntu', sans-serif !important;
+      }
+
+      /* Two-column specific fixes */
+      .resume-two-column-layout.template-executive,
+      .resume-template.resume-two-column-layout.template-executive {
+        font-family: 'Ubuntu', sans-serif !important;
+      }
+
+      .resume-two-column-layout.template-executive .resume-heading-1,
+      .resume-two-column-layout.template-executive .resume-heading-2,
+      .resume-two-column-layout.template-executive .resume-heading-3,
+      .resume-template.resume-two-column-layout.template-executive .resume-heading-1,
+      .resume-template.resume-two-column-layout.template-executive .resume-heading-2,
+      .resume-template.resume-two-column-layout.template-executive .resume-heading-3 {
+        font-family: 'Merriweather', serif !important;
+      }
+    `;
+
+    document.head.appendChild(execFontStyles);
+    console.log('✅ High-priority Executive font fixes added to document');
+  }, []);
+
   const addTemplateCSS = useCallback((template: string, css: string) => {
     console.log(`📝 Adding CSS for template: ${template}`);
     // Update the CSS for this template only
     templateCSSRef.current[template] = css;
     updateAllCSS();
-  }, [updateAllCSS]);
+
+    // If this is the executive template, ensure its fonts are applied properly
+    if (template === 'executive') {
+      console.log('🎨 Executive template detected, ensuring font fixes are applied');
+      ensureExecutiveFontsApplied();
+    }
+  }, [updateAllCSS, ensureExecutiveFontsApplied]);
 
   const setActiveTemplate = useCallback((template: string) => {
     console.log(`🎯 Setting active template: ${template}`);
     // Only apply CSS for the active template to prevent conflicts
     updateAllCSS();
-  }, [updateAllCSS]);
+
+    // If this is the executive template, ensure its fonts are applied properly
+    if (template === 'executive') {
+      console.log('🎨 Executive template selected, ensuring font fixes are applied');
+      ensureExecutiveFontsApplied();
+    }
+  }, [updateAllCSS, ensureExecutiveFontsApplied]);
 
   const removeTemplateCSS = useCallback((template: string) => {
     console.log(`🗑️ Removing CSS for template: ${template}`);
@@ -290,6 +375,7 @@ export const useDynamicCSS = () => {
     removeTemplateCSS,
     clearCSS,
     getTemplateCSS,
-    debugCSS
+    debugCSS,
+    ensureExecutiveFontsApplied
   };
 };
