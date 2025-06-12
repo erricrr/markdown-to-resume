@@ -457,7 +457,7 @@ const HtmlEditor = () => {
 
   const renderHtmlEditor = () => (
     <Card className="border-0 bg-white overflow-hidden flex flex-col h-full max-h-full">
-      <div className="p-4">
+        <div className="pl-4 pt-3 -mb-1 px-1">
         <div className="flex items-center justify-between gap-4 mb-3">
           <div className="flex items-center gap-2">
             <Code className="h-4 w-4 text-primary shrink-0" />

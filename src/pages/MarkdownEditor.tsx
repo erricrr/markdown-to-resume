@@ -355,8 +355,8 @@ const MarkdownEditor = () => {
     // Compact header with title, tips, and file upload in a single row
     const commonHeader = (
       <Card className="border-0 bg-white overflow-hidden shrink-0">
-        <div className="p-4">
-          <div className="flex items-center justify-between gap-4 mb-3">
+        <div className="pl-4 pt-3 -mb-1 px-1">
+        <div className="flex items-center justify-between gap-4 mb-3">
             <div className="flex items-center gap-2">
               <FileText className="h-4 w-4 text-primary" />
               <h2 className="text-base font-semibold text-foreground">
@@ -392,41 +392,69 @@ const MarkdownEditor = () => {
 
     if (inputMode === "twoPage") {
       return (
-        <div className="flex flex-col gap-3 h-full overflow-hidden">
-          {commonHeader}
-          <div className="grid grid-cols-1 gap-4 flex-1 overflow-y-auto pr-1">
+        <div className="flex flex-col gap-2 h-full overflow-hidden">
+          {!isSmallScreen && commonHeader}
+          <div className="grid grid-cols-1 gap-2 flex-1 overflow-y-auto pr-1">
             <Card className="border-0 bg-white overflow-hidden">
-              <div className="p-3 border-b">
-                <div className="flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-primary" />
-                  <h2 className="text-sm font-semibold text-foreground">
-                    First Page Content
-                  </h2>
+              <div className="p-2 border-b">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-primary" />
+                    <h2 className="text-sm font-semibold text-foreground">
+                      First Page Content
+                    </h2>
+                  </div>
+                  {isSmallScreen && (
+                    <div className="flex items-center gap-1">
+                      <FileUpload />
+                    </div>
+                  )}
                 </div>
               </div>
-              <div className="p-3">
+              <div className="p-2">
                 <Textarea
                   value={firstPage}
                   onChange={(e) => setFirstPage(e.target.value)}
-                  className="h-[200px] w-full resize-none overflow-y-auto"
+                  className={`${isSmallScreen ? 'h-[130px]' : 'h-[200px]'} w-full resize-none overflow-y-auto`}
                   placeholder="Enter content for the first page..."
                 />
               </div>
             </Card>
             <Card className="border-0 bg-white overflow-hidden">
-              <div className="p-3 border-b">
-                <div className="flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-primary" />
-                  <h2 className="text-sm font-semibold text-foreground">
-                    Second Page Content
-                  </h2>
+              <div className="p-2 border-b">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-primary" />
+                    <h2 className="text-sm font-semibold text-foreground">
+                      Second Page Content
+                    </h2>
+                  </div>
+                  {isSmallScreen && (
+                    <div className="flex items-center gap-1">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded-md cursor-help">
+                            <Info className="h-3 w-3 text-blue-600" />
+                            <span className="text-xs text-blue-700 font-medium">Tips</span>
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-sm p-3 text-sm">
+                          <div className="space-y-1">
+                            <p className="font-medium">💡 Markdown Tips:</p>
+                            <p>• Content is automatically paginated</p>
+                            <p>• Each page will be rendered separately</p>
+                          </div>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                  )}
                 </div>
               </div>
-              <div className="p-3">
+              <div className="p-2">
                 <Textarea
                   value={secondPage}
                   onChange={(e) => setSecondPage(e.target.value)}
-                  className="h-[200px] w-full resize-none overflow-y-auto"
+                  className={`${isSmallScreen ? 'h-[130px]' : 'h-[200px]'} w-full resize-none overflow-y-auto`}
                   placeholder="Enter content for the second page..."
                 />
               </div>
@@ -438,33 +466,61 @@ const MarkdownEditor = () => {
 
     if (inputMode === "twoColumn") {
       return (
-        <div className="flex flex-col gap-3 h-full overflow-hidden">
-          {commonHeader}
-          <div className="grid grid-cols-1 gap-3 flex-1 overflow-y-auto pr-1">
+        <div className="flex flex-col gap-2 h-full overflow-hidden">
+          {!isSmallScreen && commonHeader}
+          <div className="grid grid-cols-1 gap-2 flex-1 overflow-y-auto pr-1">
             {/* Header and Summary in single row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               <Card className="border-0 bg-white overflow-hidden">
-                <div className="p-3 border-b">
-                  <h2 className="text-sm font-semibold text-foreground">Header</h2>
+                <div className="p-2 border-b">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-sm font-semibold text-foreground">Header</h2>
+                    {isSmallScreen && (
+                      <div className="flex items-center gap-1">
+                        <FileUpload />
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div className="p-3">
+                <div className="p-2">
                   <Textarea
                     value={header}
                     onChange={(e) => setHeader(e.target.value)}
-                    className="h-[80px] w-full resize-none overflow-y-auto text-sm"
+                    className={`${isSmallScreen ? 'h-[50px]' : 'h-[80px]'} w-full resize-none overflow-y-auto text-sm`}
                     placeholder="# Name | title | email | phone"
                   />
                 </div>
               </Card>
               <Card className="border-0 bg-white overflow-hidden">
-                <div className="p-3 border-b">
-                  <h2 className="text-sm font-semibold text-foreground">Summary</h2>
+                <div className="p-2 border-b">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-sm font-semibold text-foreground">Summary</h2>
+                    {isSmallScreen && (
+                      <div className="flex items-center gap-1">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded-md cursor-help">
+                              <Info className="h-3 w-3 text-blue-600" />
+                              <span className="text-xs text-blue-700 font-medium">Tips</span>
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-sm p-3 text-sm">
+                            <div className="space-y-1">
+                              <p className="font-medium">💡 Markdown Tips:</p>
+                              <p>• Use Markdown formatting for rich text</p>
+                              <p>• Columns will be intelligently arranged</p>
+                            </div>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div className="p-3">
+                <div className="p-2">
                   <Textarea
                     value={summary}
                     onChange={(e) => setSummary(e.target.value)}
-                    className="h-[80px] w-full resize-none overflow-y-auto text-sm"
+                    className={`${isSmallScreen ? 'h-[50px]' : 'h-[80px]'} w-full resize-none overflow-y-auto text-sm`}
                     placeholder="Brief professional summary..."
                   />
                 </div>
@@ -472,29 +528,29 @@ const MarkdownEditor = () => {
             </div>
 
             {/* Left and Right Columns */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               <Card className="border-0 bg-white overflow-hidden">
-                <div className="p-3 border-b">
+                <div className="p-2 border-b">
                   <h2 className="text-sm font-semibold text-foreground">Left Column</h2>
                 </div>
-                <div className="p-3">
+                <div className="p-2">
                   <Textarea
                     value={leftColumn}
                     onChange={(e) => setLeftColumn(e.target.value)}
-                    className="h-[220px] w-full resize-none overflow-y-auto text-sm"
+                    className={`${isSmallScreen ? 'h-[70px]' : 'h-[220px]'} w-full resize-none overflow-y-auto text-sm`}
                     placeholder="Skills, contact, education..."
                   />
                 </div>
               </Card>
               <Card className="border-0 bg-white overflow-hidden">
-                <div className="p-3 border-b">
+                <div className="p-2 border-b">
                   <h2 className="text-sm font-semibold text-foreground">Right Column</h2>
                 </div>
-                <div className="p-3">
+                <div className="p-2">
                   <Textarea
                     value={rightColumn}
                     onChange={(e) => setRightColumn(e.target.value)}
-                    className="h-[220px] w-full resize-none overflow-y-auto text-sm"
+                    className={`${isSmallScreen ? 'h-[70px]' : 'h-[220px]'} w-full resize-none overflow-y-auto text-sm`}
                     placeholder="Experience, projects..."
                   />
                 </div>
@@ -507,21 +563,60 @@ const MarkdownEditor = () => {
 
     // Single column mode - integrate with common header
     return (
-      <div className="flex flex-col gap-3 h-full overflow-hidden">
-        {commonHeader}
-        <Card className="border-0 bg-white overflow-hidden flex flex-col flex-1">
-          <div className="p-3 border-b">
-            <h2 className="text-sm font-semibold text-foreground">Main Content</h2>
-          </div>
-          <div className="flex-1 p-3 flex flex-col">
-            <Textarea
-              value={markdown}
-              onChange={(e) => setMarkdown(e.target.value)}
-              className="flex-1 w-full resize-none overflow-y-auto text-sm"
-              placeholder="Enter your resume in Markdown format..."
-            />
-          </div>
-        </Card>
+      <div className="flex flex-col gap-2 h-full overflow-hidden">
+        {isSmallScreen ? (
+          <Card className="border-0 bg-white overflow-hidden flex flex-col flex-1">
+            <div className="p-2 border-b shrink-0">
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-semibold text-foreground">Main Content</h2>
+                <div className="flex items-center gap-1">
+                  <FileUpload />
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded-md cursor-help">
+                        <Info className="h-3 w-3 text-blue-600" />
+                        <span className="text-xs text-blue-700 font-medium">Tips</span>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-sm p-3 text-sm">
+                      <div className="space-y-1">
+                        <p className="font-medium">💡 Markdown Tips:</p>
+                        <p>• Use Markdown formatting for rich text (# for headings, ** for bold, etc.)</p>
+                        <p>• Two-column mode will intelligently parse your content</p>
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              </div>
+            </div>
+            <div className="flex-1 p-2 flex flex-col" style={{ height: 'calc(100% - 37px)' }}>
+              <Textarea
+                value={markdown}
+                onChange={(e) => setMarkdown(e.target.value)}
+                className="w-full resize-none overflow-y-auto text-sm"
+                style={{ height: '100%', paddingBottom: '8px' }}
+                placeholder="Enter your resume in Markdown format..."
+              />
+            </div>
+          </Card>
+        ) : (
+          <>
+            {commonHeader}
+            <Card className="border-0 bg-white overflow-hidden flex flex-col flex-1">
+              <div className="p-3 border-b">
+                <h2 className="text-sm font-semibold text-foreground">Main Content</h2>
+              </div>
+              <div className="flex-1 p-3 flex flex-col">
+                <Textarea
+                  value={markdown}
+                  onChange={(e) => setMarkdown(e.target.value)}
+                  className="flex-1 w-full resize-none overflow-y-auto text-sm"
+                  placeholder="Enter your resume in Markdown format..."
+                />
+              </div>
+            </Card>
+          </>
+        )}
       </div>
     );
   };
@@ -640,10 +735,10 @@ const MarkdownEditor = () => {
         {isSmallScreen ? (
           <div className="flex flex-col gap-6">
                             {/* Editor Section - Small Screen */}
-            <div className="w-full">
-              <div className="flex flex-col h-[calc(50vh-80px)] max-h-[calc(50vh-80px)] overflow-hidden">
+            <div className="w-full h-[400px]">
+              <div className="flex flex-col h-full overflow-hidden">
                 {/* Control Bar */}
-                <div className="flex flex-wrap items-center justify-center gap-4 w-full mb-4 py-1">
+                <div className="flex flex-wrap items-center justify-center gap-4 w-full mb-2 py-1 shrink-0">
                   <div className="flex items-center gap-2">
                     <Columns2 className="h-4 w-4" />
                     <span className="text-xs sm:text-sm">Two Column</span>
@@ -657,8 +752,8 @@ const MarkdownEditor = () => {
                     onTemplateChange={setSelectedTemplate}
                   />
                 </div>
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col overflow-hidden">
-                  <TabsList className="flex w-full mb-4 gap-1 p-1 bg-muted rounded-lg shrink-0">
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="h-[calc(100%-40px)] flex flex-col overflow-hidden">
+                  <TabsList className="flex w-full mb-2 gap-1 p-1 bg-muted rounded-lg shrink-0">
                     <TabsTrigger
                       value="editor"
                       className="flex-1 flex items-center justify-center gap-1 text-xs sm:text-sm py-1.5 px-2 rounded-md h-8 data-[state=active]:bg-white data-[state=active]:shadow-sm"
@@ -692,8 +787,8 @@ const MarkdownEditor = () => {
             </div>
 
             {/* Preview Section - Small Screen */}
-            <div className="w-full">
-              <Card className="border-0 bg-white overflow-hidden flex flex-col h-[calc(50vh-80px)] max-h-[calc(50vh-80px)]">
+            <div className="w-full h-[350px]">
+              <Card className="border-0 bg-white overflow-hidden flex flex-col h-full">
                 <div className="p-4 border-b shrink-0">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2 min-w-0">
