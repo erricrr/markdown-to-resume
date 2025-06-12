@@ -493,11 +493,11 @@ const HtmlEditor = () => {
           </div>
         </div>
       </div>
-      <div className="flex-1 p-4 pt-0 overflow-hidden flex flex-col">
+      <div className="flex-1 overflow-hidden">
         <Textarea
           value={html}
           onChange={(e) => setHtml(e.target.value)}
-          className="flex-1 w-full font-mono text-sm resize-none overflow-auto"
+          className="h-full w-full font-mono text-sm resize-none overflow-y-auto p-4"
           placeholder="Enter your HTML content with embedded CSS and JavaScript..."
         />
       </div>
