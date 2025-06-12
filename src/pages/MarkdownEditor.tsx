@@ -241,44 +241,37 @@ const MarkdownEditor = () => {
     setIsTwoColumn(checked);
 
     if (checked) {
-      // Pre-fill when enabling Two Column mode if:
-      // 1. There's content in the single markdown editor that's different from default
-      // 2. The two-column fields contain default content (meaning user hasn't customized them)
-      const hasCustomMarkdown = markdown.trim() && markdown !== defaultMarkdown;
-      const hasDefaultTwoColumnContent =
-          (leftColumn === defaultLeftColumn) &&
-          (rightColumn === defaultRightColumn) &&
-          (header === defaultHeader) &&
-          (summary === defaultSummary);
-
-      console.log('🔍 Checking pre-fill conditions:', {
-        hasCustomMarkdown,
-        hasDefaultTwoColumnContent,
-        markdownLength: markdown.length,
-        leftColumnIsDefault: leftColumn === defaultLeftColumn,
-        rightColumnIsDefault: rightColumn === defaultRightColumn,
-        headerIsDefault: header === defaultHeader,
-        summaryIsDefault: summary === defaultSummary
-      });
-
-      if (hasCustomMarkdown && hasDefaultTwoColumnContent) {
-        console.log('🔄 Pre-filling two-column layout from existing markdown content');
+      // Always try to pre-fill when switching to Two Column mode if there's meaningful content
+      if (markdown.trim() && markdown.length > 50) { // Simple check: has content and is substantial
+        console.log('🔄 Pre-filling two-column layout from markdown content');
+        console.log('📄 Markdown content length:', markdown.length);
 
         try {
           const splitContent = splitMarkdownForTwoColumn(markdown);
 
-          // Update all fields with parsed content
+          console.log('🔍 Split content results:', {
+            headerLength: splitContent.header.length,
+            summaryLength: splitContent.summary.length,
+            leftColumnLength: splitContent.leftColumn.length,
+            rightColumnLength: splitContent.rightColumn.length
+          });
+
+          // Always update with parsed content when switching to two-column
           if (splitContent.header.trim()) {
             setHeader(splitContent.header);
+            console.log('✅ Set header:', splitContent.header.substring(0, 50) + '...');
           }
           if (splitContent.summary.trim()) {
             setSummary(splitContent.summary);
+            console.log('✅ Set summary:', splitContent.summary.substring(0, 50) + '...');
           }
           if (splitContent.leftColumn.trim()) {
             setLeftColumn(splitContent.leftColumn);
+            console.log('✅ Set left column (first 50 chars):', splitContent.leftColumn.substring(0, 50) + '...');
           }
           if (splitContent.rightColumn.trim()) {
             setRightColumn(splitContent.rightColumn);
+            console.log('✅ Set right column (first 50 chars):', splitContent.rightColumn.substring(0, 50) + '...');
           }
 
           console.log('✅ Successfully pre-filled two-column content');
@@ -286,11 +279,9 @@ const MarkdownEditor = () => {
           console.warn('⚠️ Error parsing markdown for two-column layout:', error);
         }
       } else {
-        console.log('ℹ️ Skipping pre-fill - conditions not met');
+        console.log('ℹ️ No substantial markdown content to pre-fill');
       }
     } else {
-      // When disabling Two Column mode, we could optionally merge content back
-      // For now, we'll leave the single markdown editor unchanged
       console.log('🔄 Switched back to single column mode');
     }
   };
