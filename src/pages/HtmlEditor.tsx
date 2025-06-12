@@ -13,6 +13,7 @@ import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/componen
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useFileUpload } from '@/contexts/FileUploadContext';
+import { TipTooltip } from '@/components/MarkdownTips';
 
 const defaultHtml = `<!DOCTYPE html>
 <html lang="en">
@@ -504,31 +505,15 @@ const HtmlEditor = () => {
             <h2 className="text-base font-semibold text-foreground truncate">
               HTML Editor
             </h2>
-            <Badge variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200 shrink-0">
+            {/* <Badge variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200 shrink-0">
               CSS & JS
-            </Badge>
+            </Badge> */}
           </div>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
               <FileUpload />
             </div>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded-md cursor-help">
-                  <Info className="h-3 w-3 text-blue-600" />
-                  <span className="text-xs text-blue-700 font-medium">Tips</span>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent className="max-w-sm p-3 text-sm">
-                <div className="space-y-1">
-                  <p className="font-medium">💡 HTML Tips:</p>
-                  <p>• Create interactive resumes with HTML, CSS, and JavaScript</p>
-                  <p>• Use semantic HTML elements for better structure</p>
-                  <p>• Always test your resume in print mode before final export</p>
-                  <p>• Learn HTML at: <a href="https://www.w3schools.com/html/default.asp" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">w3schools.com</a> 🚀</p>
-                </div>
-              </TooltipContent>
-            </Tooltip>
+            <TipTooltip type="html" />
           </div>
         </div>
       </div>

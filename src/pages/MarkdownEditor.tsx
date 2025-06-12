@@ -19,6 +19,7 @@ import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useFileUpload } from '@/contexts/FileUploadContext';
 import { splitMarkdownForTwoColumn } from '@/utils/markdownParser';
+import { TipTooltip } from '@/components/MarkdownTips';
 
 const defaultMarkdown = `# Jane Doe
 **Software Engineer** | jane.doe@email.com | (555) 123-4567 | linkedin.com/in/janedoe
@@ -431,23 +432,7 @@ const MarkdownEditor = () => {
               <div className="flex items-center gap-2">
                 <FileUpload />
               </div>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded-md cursor-help">
-                    <Info className="h-3 w-3 text-blue-600" />
-                    <span className="text-xs text-blue-700 font-medium">Tips</span>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent className="max-w-sm p-3 text-sm">
-                  <div className="space-y-1">
-                    <p className="font-medium">💡 Markdown Tips:</p>
-                    <p>• Use Markdown formatting for rich text (# for headings, ** for bold, etc.)</p>
-                    <p>• Two-column mode will intelligently parse your content</p>
-                    <p>• Always review the parsed results in two-column layout</p>
-                    <p>• New to Markdown? Learn at: <a href="https://www.markdownguide.org/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">markdownguide.org</a> 🚀</p>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
+              <TipTooltip type="markdown" />
             </div>
           </div>
         </div>
@@ -495,21 +480,16 @@ const MarkdownEditor = () => {
                   </div>
                   {isSmallScreen && (
                     <div className="flex items-center gap-1">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded-md cursor-help">
-                            <Info className="h-3 w-3 text-blue-600" />
-                            <span className="text-xs text-blue-700 font-medium">Tips</span>
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-sm p-3 text-sm">
+                      <TipTooltip
+                        type="custom"
+                        customContent={
                           <div className="space-y-1">
-                            <p className="font-medium">💡 Markdown Tips:</p>
+                            <p className="font-medium">💡 Multi-Page Tips:</p>
                             <p>• Content is automatically paginated</p>
                             <p>• Each page will be rendered separately</p>
                           </div>
-                        </TooltipContent>
-                      </Tooltip>
+                        }
+                      />
                     </div>
                   )}
                 </div>
@@ -561,21 +541,7 @@ const MarkdownEditor = () => {
                     <h2 className="text-sm font-semibold text-foreground">Summary</h2>
                     {isSmallScreen && (
                       <div className="flex items-center gap-1">
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded-md cursor-help">
-                              <Info className="h-3 w-3 text-blue-600" />
-                              <span className="text-xs text-blue-700 font-medium">Tips</span>
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent className="max-w-sm p-3 text-sm">
-                            <div className="space-y-1">
-                              <p className="font-medium">💡 Markdown Tips:</p>
-                              <p>• Use Markdown formatting for rich text</p>
-                              <p>• Columns will be intelligently arranged</p>
-                            </div>
-                          </TooltipContent>
-                        </Tooltip>
+                        <TipTooltip type="two-column" />
                       </div>
                     )}
                   </div>
@@ -635,21 +601,7 @@ const MarkdownEditor = () => {
                 <h2 className="text-sm font-semibold text-foreground">Main Content</h2>
                 <div className="flex items-center gap-1">
                   <FileUpload />
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded-md cursor-help">
-                        <Info className="h-3 w-3 text-blue-600" />
-                        <span className="text-xs text-blue-700 font-medium">Tips</span>
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent className="max-w-sm p-3 text-sm">
-                      <div className="space-y-1">
-                        <p className="font-medium">💡 Markdown Tips:</p>
-                        <p>• Use Markdown formatting for rich text (# for headings, ** for bold, etc.)</p>
-                        <p>• Two-column mode will intelligently parse your content</p>
-                      </div>
-                    </TooltipContent>
-                  </Tooltip>
+                  <TipTooltip type="markdown" />
                 </div>
               </div>
             </div>

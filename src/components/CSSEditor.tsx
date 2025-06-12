@@ -6,6 +6,7 @@ import { Code, Download, RotateCcw, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { templateStyles } from '../styles/resumeTemplates';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+import { TipTooltip } from '@/components/MarkdownTips';
 
 export interface CSSEditorProps {
   selectedTemplate: string;
@@ -108,23 +109,10 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange }: C
           </div>
 
           <div className="flex items-center gap-2">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded-md cursor-help">
-                  <Info className="h-4 w-4 text-blue-600" />
-                  <span className="text-xs text-blue-700">Tips</span>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" className="max-w-md">
-                <div className="space-y-2 text-sm">
-                  <div><strong>CSS Variables:</strong> Use --resume-font-family, --resume-font-size, --resume-h1-font-size for easy customization</div>
-                  <div><strong>Colors:</strong> Target .template-{selectedTemplate} for template-specific styling</div>
-                  <div><strong>Priority:</strong> Add !important if styles aren't applying</div>
-                  <div><strong>Live Updates:</strong> Changes apply immediately to preview and PDF</div>
-                  <div><strong>Learn CSS:</strong> <a href="https://www.w3schools.com/css/" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">W3Schools CSS Tutorial</a></div>
-                </div>
-              </TooltipContent>
-            </Tooltip>
+            <TipTooltip
+              type="css"
+              selectedTemplate={selectedTemplate}
+            />
 
             <Button
               variant="outline"
