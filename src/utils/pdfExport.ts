@@ -21,8 +21,11 @@ export const exportToPDF = async (resumeData: ResumeData) => {
   // Use the shared utility to generate the resume's body HTML
   const bodyHtml = generateCompleteResumeHTML(resumeData as ResumeContentData);
 
-  // Get all <link> and <style> tags from the main document's head
-  const headContent = document.head.innerHTML;
+  // Get all <link> and <style> tags from the main document's head, excluding the original title
+  const headContent = Array.from(document.head.children)
+    .filter(el => el.tagName.toLowerCase() !== 'title')
+    .map(el => el.outerHTML)
+    .join('\n');
 
   // Get any dynamic CSS that has been applied via the CSS editor
   const getDynamicCSS = () => {
