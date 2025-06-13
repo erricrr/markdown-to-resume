@@ -1,19 +1,18 @@
 import { useState, useRef, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { Code, Eye, FileText } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Code, Eye, Printer, Sticker, FileText, Home, Info } from "lucide-react";
 import { HtmlPreview } from "@/components/HtmlPreview";
 import { HtmlPrintPreview } from "@/components/HtmlPrintPreview";
 import { FileUpload } from "@/components/FileUpload";
 import { PaperSizeSelector } from "@/components/PaperSizeSelector";
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { useFileUpload } from '@/contexts/FileUploadContext';
 import { TipTooltip } from '@/components/UsageTips';
+import { EditorLayout } from '@/components/EditorLayout';
+import { EditorHeader } from '@/components/EditorHeader';
+import { usePanelManagement } from '@/hooks/usePanelManagement';
+import { useImageReferenceDetection } from '@/hooks/useImageReferenceDetection';
 
 const defaultHtml = `<!DOCTYPE html>
 <html lang="en">
@@ -417,75 +416,17 @@ const defaultHtml = `<!DOCTYPE html>
 </html>`;
 
 const HtmlEditor = () => {
-  const navigate = useNavigate();
   const [html, setHtml] = useState(() => {
-    // Try to load from localStorage first, fallback to default
     const saved = localStorage.getItem('html-editor-content');
     return saved || defaultHtml;
   });
-  const [activeTab, setActiveTab] = useState("editor");
   const [paperSize, setPaperSize] = useState<'A4' | 'US_LETTER'>('A4');
   const previewRef = useRef<HTMLDivElement>(null);
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
-  const { uploadedFileUrl, uploadedFileName, refreshTimestamp, triggerRefresh } = useFileUpload();
-  const [hasImageReference, setHasImageReference] = useState(false);
 
-  // Track previous upload state to detect changes
-  const prevUploadedFileUrlRef = useRef(uploadedFileUrl);
-  const prevUploadedFileNameRef = useRef(uploadedFileName);
-
-  // State for panel sizes
-  const [leftPanelSize, setLeftPanelSize] = useState(() => {
-    // Try to get from localStorage, default to 50
-    const savedSize = localStorage.getItem("html-editor-left-panel-size");
-    return savedSize ? parseInt(savedSize, 10) : 50;
-  });
-
-  // Handle panel resizing
-  const handlePanelResize = (sizes: number[]) => {
-    const newLeftPanelSize = sizes[0];
-    setLeftPanelSize(newLeftPanelSize);
-    localStorage.setItem("html-editor-left-panel-size", newLeftPanelSize.toString());
-  };
-
-  // Detect image references in HTML content
-  const detectImageReferences = (content: string) => {
-    const imgTagRegex = /<img[^>]*>/i;
-    const backgroundImageRegex = /background-image\s*:\s*url\s*\([^)]+\)/i;
-
-    return imgTagRegex.test(content) || backgroundImageRegex.test(content);
-  };
-
-  // Check for image references in HTML content
-  useEffect(() => {
-    const checkForImageReferences = () => {
-      const hasImgReference = detectImageReferences(html);
-      setHasImageReference(hasImgReference);
-
-      // If image reference exists but no image is uploaded yet, or if image was just removed,
-      // we need to refresh the preview to show the correct placeholder/empty state
-      if (hasImgReference && (!uploadedFileUrl || uploadedFileUrl !== prevUploadedFileUrlRef.current)) {
-        console.log('🖼️ HTML: Image reference detected with upload change - refreshing preview');
-        triggerRefresh();
-      }
-
-      // If image reference was just removed, refresh the preview
-      if (!hasImgReference && prevUploadedFileUrlRef.current && uploadedFileUrl) {
-        console.log('🖼️ HTML: Image reference removed but image still uploaded - refreshing preview');
-        triggerRefresh();
-      }
-    };
-
-    checkForImageReferences();
-
-    // Update refs after checking
-    prevUploadedFileUrlRef.current = uploadedFileUrl;
-    prevUploadedFileNameRef.current = uploadedFileName;
-  }, [html, uploadedFileUrl, uploadedFileName, triggerRefresh]);
-
-  const handlePrintPDF = () => {
-    window.print();
-  };
+  // Use shared hooks
+  const { leftPanelSize, handlePanelResize } = usePanelManagement('html-editor');
+  const { uploadedFileUrl, uploadedFileName, refreshTimestamp } = useImageReferenceDetection(html, { detectHtml: true });
 
   // Auto-save effect
   useEffect(() => {
@@ -498,16 +439,13 @@ const HtmlEditor = () => {
 
   const renderHtmlEditor = () => (
     <Card className="border-0 bg-white overflow-hidden flex flex-col h-full max-h-full">
-        <div className="pl-4 pt-3 -mb-1 px-1">
+      <div className="pl-4 pt-3 -mb-1 px-1">
         <div className="flex items-center justify-between gap-4 mb-3">
           <div className="flex items-center gap-2">
             <Code className="h-4 w-4 text-primary shrink-0" />
             <h2 className="text-base font-semibold text-foreground truncate">
               HTML Editor
             </h2>
-            {/* <Badge variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200 shrink-0">
-              CSS & JS
-            </Badge> */}
           </div>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
@@ -543,7 +481,7 @@ const HtmlEditor = () => {
           </Badge>
         </div>
       </div>
-      <div className="flex-1 overflow-auto p-3 bg-gray-50">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 bg-gray-50">
         <div className="w-full h-full flex items-start justify-center">
           <HtmlPreview
             ref={previewRef}
@@ -551,7 +489,7 @@ const HtmlEditor = () => {
             paperSize={paperSize}
             uploadedFileUrl={uploadedFileUrl}
             uploadedFileName={uploadedFileName}
-            key={refreshTimestamp} // Force re-render when upload changes
+            key={refreshTimestamp}
           />
         </div>
       </div>
@@ -560,138 +498,36 @@ const HtmlEditor = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b app-header">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 sm:py-6 gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center">
-                <Code className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-                  HTML Resume Editor
-                </h1>
-                <p className="text-xs sm:text-sm text-gray-600">
-                  Create interactive resumes with HTML, CSS, and JavaScript
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-              {/* Home Button */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    aria-label="Home"
-                    onClick={() => navigate("/")}
-                    className="bg-white hover:bg-gray-50 hover:text-gray-900 hidden sm:flex items-center gap-2 font-medium"
-                  >
-                    <Home className="h-4 w-4" />
-                    <span>Home</span>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Go to Home</TooltipContent>
-              </Tooltip>
+      <EditorHeader
+        title="HTML Resume Editor"
+        description="Create interactive resumes with HTML, CSS, and JavaScript"
+        icon={<Code className="h-6 w-6 text-white" />}
+        iconBgColor="bg-gradient-to-br from-orange-500 to-red-600"
+        alternateEditorPath="/markdown"
+        alternateEditorIcon={<FileText className="h-4 w-4" />}
+        alternateEditorLabel="Markdown Editor"
+      >
+        <PaperSizeSelector
+          selectedPaperSize={paperSize}
+          onPaperSizeChange={handlePaperSizeChange}
+        />
+        <HtmlPrintPreview
+          html={html}
+          paperSize={paperSize}
+          uploadedFileUrl={uploadedFileUrl}
+          uploadedFileName={uploadedFileName}
+          key={refreshTimestamp}
+        />
+      </EditorHeader>
 
-              {/* Mobile Home Button */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    aria-label="Home"
-                    onClick={() => navigate("/")}
-                    className="bg-white hover:bg-gray-50 hover:text-gray-900 sm:hidden font-medium"
-                  >
-                    <Home className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Go to Home</TooltipContent>
-              </Tooltip>
-
-              {/* Switch to Markdown Button */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    aria-label="Switch to Markdown"
-                    onClick={() => navigate("/markdown")}
-                    className="bg-white hover:bg-gray-50 hover:text-gray-900 hidden sm:flex items-center gap-2 font-medium"
-                  >
-                    <FileText className="h-4 w-4" />
-                    <span>Markdown Editor</span>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Switch to Markdown Editor</TooltipContent>
-              </Tooltip>
-
-              {/* Mobile Markdown Button */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    aria-label="Switch to Markdown"
-                    onClick={() => navigate("/markdown")}
-                    className="bg-white hover:bg-gray-50 hover:text-gray-900 sm:hidden font-medium"
-                  >
-                    <FileText className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Switch to Markdown Editor</TooltipContent>
-              </Tooltip>
-              <PaperSizeSelector
-                selectedPaperSize={paperSize}
-                onPaperSizeChange={handlePaperSizeChange}
-              />
-              <HtmlPrintPreview
-                html={html}
-                paperSize={paperSize}
-                uploadedFileUrl={uploadedFileUrl}
-                uploadedFileName={uploadedFileName}
-                key={refreshTimestamp}
-              />
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-hidden">
-        {isSmallScreen ? (
-          <div className="flex flex-col gap-6">
-            {/* Editor Section - Small Screen */}
-            <div className="w-full h-[400px] max-h-[400px]">
-              {renderHtmlEditor()}
-            </div>
-
-            {/* Preview Section - Small Screen */}
-            <div className="w-full h-[500px] max-h-[500px]">
-              {renderPreview()}
-            </div>
-          </div>
-        ) : (
-          <ResizablePanelGroup
-            direction="horizontal"
-            className="h-auto lg:h-[calc(100vh-200px)] max-h-[calc(100vh-200px)] w-full"
-            onLayout={handlePanelResize}
-          >
-            {/* Left Panel - HTML Editor */}
-            <ResizablePanel defaultSize={40} minSize={25} maxSize={60}>
-              {renderHtmlEditor()}
-            </ResizablePanel>
-
-            <ResizableHandle withHandle />
-
-            {/* Right Panel - Preview */}
-            <ResizablePanel defaultSize={60} minSize={40}>
-              {renderPreview()}
-            </ResizablePanel>
-          </ResizablePanelGroup>
-        )}
+        <EditorLayout
+          leftPanel={renderHtmlEditor()}
+          rightPanel={renderPreview()}
+          leftPanelSize={leftPanelSize}
+          onPanelResize={handlePanelResize}
+          storageKey="html-editor"
+        />
       </div>
     </div>
   );

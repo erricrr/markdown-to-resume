@@ -20,6 +20,10 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useFileUpload } from '@/contexts/FileUploadContext';
 import { splitMarkdownForTwoColumn } from '@/utils/markdownParser';
 import { TipTooltip } from '@/components/UsageTips';
+import { EditorLayout } from '@/components/EditorLayout';
+import { EditorHeader } from '@/components/EditorHeader';
+import { usePanelManagement } from '@/hooks/usePanelManagement';
+import { useImageReferenceDetection } from '@/hooks/useImageReferenceDetection';
 
 const defaultMarkdown = `# Jane Doe
 **Software Engineer** | jane.doe@email.com | (555) 123-4567 | linkedin.com/in/janedoe
@@ -111,7 +115,6 @@ const defaultRightColumn = `## Experience
 const MarkdownEditor = () => {
   const navigate = useNavigate();
   const [markdown, setMarkdown] = useState(() => {
-    // Try to load from localStorage first, fallback to default
     const saved = localStorage.getItem('markdown-editor-content');
     return saved || defaultMarkdown;
   });
@@ -131,69 +134,24 @@ const MarkdownEditor = () => {
     const saved = localStorage.getItem('markdown-editor-right-column');
     return saved || defaultRightColumn;
   });
-  const [firstPage, setFirstPage] = useState(() => {
-    const saved = localStorage.getItem('markdown-editor-first-page');
-    return saved || `## Certifications
-- AWS Certified Solutions Architect
-- Google Cloud Professional Developer
-- Certified Kubernetes Administrator
-
-## Languages
-- English (Native)
-- Spanish (Conversational)
-- French (Basic)`;
-  });
-  const [secondPage, setSecondPage] = useState(() => {
-    const saved = localStorage.getItem('markdown-editor-second-page');
-    return saved || `## Additional Projects
-
-### E-commerce Platform
-- Built full-stack e-commerce solution with payment integration
-- Technologies: React, Node.js, Stripe API, PostgreSQL
-- Served 10,000+ daily active users
-
-### Task Management App
-- Developed collaborative task management application
-- Technologies: Vue.js, Firebase, PWA
-- Featured real-time collaboration and offline sync
-
-### Open Source Contributions
-- Contributor to popular React libraries
-- Maintained documentation for 5+ projects
-- Active in developer community discussions`;
-  });
   const [selectedTemplate, setSelectedTemplate] = useState<string>(() => {
-    // Ensure we always start with 'professional' as the default template
     console.log('🔵 Initializing selectedTemplate with default value: professional');
     return 'professional';
   });
   const [isTwoColumn, setIsTwoColumn] = useState(false);
-  const [isTwoPage, setIsTwoPage] = useState(false);
   const [paperSize, setPaperSize] = useState<'A4' | 'US_LETTER'>('A4');
   const [activeTab, setActiveTab] = useState("editor");
   const previewRef = useRef<HTMLDivElement>(null);
   const { addTemplateCSS, debugCSS } = useDynamicCSS();
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
-  const { uploadedFileUrl, uploadedFileName, refreshTimestamp, triggerRefresh } = useFileUpload();
-  const [hasImageReference, setHasImageReference] = useState(false);
+
+  // Use shared hooks
+  const { leftPanelSize, handlePanelResize } = usePanelManagement('markdown-editor');
+  const { uploadedFileUrl, uploadedFileName, refreshTimestamp, triggerRefresh } = useImageReferenceDetection(markdown, { detectMarkdown: true });
 
   // Track previous uploadedFileUrl to detect changes
   const prevUploadedFileUrlRef = useRef(uploadedFileUrl);
   const prevUploadedFileNameRef = useRef(uploadedFileName);
-
-  // State for panel sizes
-  const [leftPanelSize, setLeftPanelSize] = useState(() => {
-    // Try to get from localStorage, default to 50
-    const savedSize = localStorage.getItem("markdown-editor-left-panel-size");
-    return savedSize ? parseInt(savedSize, 10) : 50;
-  });
-
-  // Handle panel resizing
-  const handlePanelResize = (sizes: number[]) => {
-    const newLeftPanelSize = sizes[0];
-    setLeftPanelSize(newLeftPanelSize);
-    localStorage.setItem("markdown-editor-left-panel-size", newLeftPanelSize.toString());
-  };
 
   // Check for image references in markdown content
   const detectImageReferences = (content: string) => {
@@ -211,16 +169,12 @@ const MarkdownEditor = () => {
         header,
         summary,
         leftColumn,
-        rightColumn,
-        firstPage,
-        secondPage
+        rightColumn
       ];
 
       const hasAnyImageReference = sources.some(content =>
         content && detectImageReferences(content)
       );
-
-      setHasImageReference(hasAnyImageReference);
 
       // If image reference exists but no image is uploaded yet, or if image was just removed,
       // we need to refresh the preview to show the correct placeholder/empty state
@@ -247,8 +201,6 @@ const MarkdownEditor = () => {
     summary,
     leftColumn,
     rightColumn,
-    firstPage,
-    secondPage,
     uploadedFileUrl,
     uploadedFileName,
     triggerRefresh
@@ -286,14 +238,6 @@ const MarkdownEditor = () => {
   useEffect(() => {
     localStorage.setItem('markdown-editor-right-column', rightColumn);
   }, [rightColumn]);
-
-  useEffect(() => {
-    localStorage.setItem('markdown-editor-first-page', firstPage);
-  }, [firstPage]);
-
-  useEffect(() => {
-    localStorage.setItem('markdown-editor-second-page', secondPage);
-  }, [secondPage]);
 
   const handlePrintPDF = () => {
     window.print();
@@ -431,23 +375,17 @@ const MarkdownEditor = () => {
   }, [activeTab, selectedTemplate, addTemplateCSS]);
 
   const getInputMode = () => {
-    if (isTwoPage) return "twoPage";
     if (isTwoColumn) return "twoColumn";
     return "single";
   };
 
-  // Shared FileUpload component for all modes (now integrated into header)
-
   const renderInputSection = () => {
-    const inputMode = getInputMode();
-
-    // Compact header with title, tips, and file upload in a single row
-    const commonHeader = (
-      <Card className="border-0 bg-white overflow-hidden shrink-0">
+    return (
+      <Card className="border-0 bg-white overflow-hidden flex flex-col h-full max-h-full">
         <div className="pl-4 pt-3 -mb-1 px-1">
-        <div className="flex items-center justify-between gap-4 mb-3">
+          <div className="flex items-center justify-between gap-4 mb-3">
             <div className="flex items-center gap-2">
-              <FileText className="h-4 w-4 text-primary" />
+              <FileText className="h-4 w-4 text-primary shrink-0" />
               <h2 className="text-base font-semibold text-foreground truncate">
                 Markdown Editor
               </h2>
@@ -460,509 +398,174 @@ const MarkdownEditor = () => {
             </div>
           </div>
         </div>
-      </Card>
-    );
 
-    if (inputMode === "twoPage") {
-      return (
-        <div className="flex flex-col gap-2 h-full overflow-hidden">
-          {!isSmallScreen && commonHeader}
-          <div className="grid grid-cols-1 gap-2 flex-1 overflow-y-auto pr-1">
-            <Card className="border-0 bg-white overflow-hidden">
-              <div className="p-2 border-b">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <FileText className="h-4 w-4 text-primary" />
-                    <h2 className="text-sm font-semibold text-foreground">
-                      First Page Content
-                    </h2>
-                  </div>
-                  {isSmallScreen && (
-                    <div className="flex items-center gap-1">
-                      <FileUpload />
+        <div className="flex-1 overflow-hidden">
+          <Tabs defaultValue="editor" value={activeTab} onValueChange={setActiveTab} className="h-full">
+            <div className="px-4 border-b">
+              <TabsList className="w-full justify-start">
+                <TabsTrigger value="editor" className="flex-1">Editor</TabsTrigger>
+                <TabsTrigger value="css" className="flex-1">CSS</TabsTrigger>
+              </TabsList>
+            </div>
+
+            <TabsContent value="editor" className="h-[calc(100%-40px)] mt-0">
+              <div className="p-4 h-full flex flex-col">
+                <div className="flex items-center justify-between mb-4 shrink-0">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <Switch
+                        id="two-column"
+                        checked={isTwoColumn}
+                        onCheckedChange={handleTwoColumnToggle}
+                      />
+                      <label htmlFor="two-column" className="text-sm font-medium">
+                        Two Column
+                      </label>
                     </div>
-                  )}
-                </div>
-              </div>
-              <div className="p-2">
-                <Textarea
-                  value={firstPage}
-                  onChange={(e) => setFirstPage(e.target.value)}
-                  className={`${isSmallScreen ? 'h-[130px]' : 'h-[200px]'} w-full resize-none overflow-y-auto`}
-                  placeholder="Enter content for the first page..."
-                />
-              </div>
-            </Card>
-            <Card className="border-0 bg-white overflow-hidden">
-              <div className="p-2 border-b">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <FileText className="h-4 w-4 text-primary" />
-                    <h2 className="text-sm font-semibold text-foreground">
-                      Second Page Content
-                    </h2>
                   </div>
-                  {isSmallScreen && (
-                    <div className="flex items-center gap-1">
-                      <TipTooltip
-                        type="custom"
-                        customContent={
-                          <div className="space-y-1">
-                            <p className="font-medium">💡 Multi-Page Tips:</p>
-                            <p>• Content is automatically paginated</p>
-                            <p>• Each page will be rendered separately</p>
-                          </div>
-                        }
+                  <TemplateSelector
+                    selectedTemplate={selectedTemplate}
+                    onTemplateChange={setSelectedTemplate}
+                  />
+                </div>
+
+                {isTwoColumn ? (
+                  <div className="grid grid-cols-2 gap-4 flex-1 min-h-0">
+                    <div className="flex flex-col gap-4 min-h-0">
+                      <div className="shrink-0">
+                        <label className="text-sm font-medium mb-2 block">Header</label>
+                        <Textarea
+                          value={header}
+                          onChange={(e) => setHeader(e.target.value)}
+                          className="h-24 resize-none"
+                          placeholder="Enter header content..."
+                        />
+                      </div>
+                      <div className="shrink-0">
+                        <label className="text-sm font-medium mb-2 block">Summary</label>
+                        <Textarea
+                          value={summary}
+                          onChange={(e) => setSummary(e.target.value)}
+                          className="h-24 resize-none"
+                          placeholder="Enter summary content..."
+                        />
+                      </div>
+                      <div className="flex-1 min-h-0">
+                        <label className="text-sm font-medium mb-2 block">Left Column</label>
+                        <Textarea
+                          value={leftColumn}
+                          onChange={(e) => setLeftColumn(e.target.value)}
+                          className="h-full resize-none"
+                          placeholder="Enter left column content..."
+                        />
+                      </div>
+                    </div>
+                    <div className="flex-1 min-h-0">
+                      <label className="text-sm font-medium mb-2 block">Right Column</label>
+                      <Textarea
+                        value={rightColumn}
+                        onChange={(e) => setRightColumn(e.target.value)}
+                        className="h-full resize-none"
+                        placeholder="Enter right column content..."
                       />
                     </div>
-                  )}
-                </div>
-              </div>
-              <div className="p-2">
-                <Textarea
-                  value={secondPage}
-                  onChange={(e) => setSecondPage(e.target.value)}
-                  className={`${isSmallScreen ? 'h-[130px]' : 'h-[200px]'} w-full resize-none overflow-y-auto`}
-                  placeholder="Enter content for the second page..."
-                />
-              </div>
-            </Card>
-          </div>
-        </div>
-      );
-    }
-
-    if (inputMode === "twoColumn") {
-      return (
-        <div className="flex flex-col gap-2 h-full overflow-hidden">
-          {!isSmallScreen && commonHeader}
-          <div className="grid grid-cols-1 gap-2 flex-1 overflow-y-auto pr-1">
-            {/* Header and Summary in single row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              <Card className="border-0 bg-white overflow-hidden">
-                <div className="p-2 border-b">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-sm font-semibold text-foreground">Header</h2>
-                    {isSmallScreen && (
-                      <div className="flex items-center gap-1">
-                        <FileUpload />
-                      </div>
-                    )}
                   </div>
-                </div>
-                <div className="p-2">
-                  <Textarea
-                    value={header}
-                    onChange={(e) => setHeader(e.target.value)}
-                    className={`${isSmallScreen ? 'h-[50px]' : 'h-[80px]'} w-full resize-none overflow-y-auto text-sm`}
-                    placeholder="# Name | title | email | phone"
-                  />
-                </div>
-              </Card>
-              <Card className="border-0 bg-white overflow-hidden">
-                <div className="p-2 border-b">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-sm font-semibold text-foreground">Summary</h2>
-                    {isSmallScreen && (
-                      <div className="flex items-center gap-1">
-                        <TipTooltip type="two-column" />
-                      </div>
-                    )}
+                ) : (
+                  <div className="flex-1 min-h-0">
+                    <Textarea
+                      value={markdown}
+                      onChange={(e) => setMarkdown(e.target.value)}
+                      className="h-full resize-none"
+                      placeholder="Enter your markdown content..."
+                    />
                   </div>
-                </div>
-                <div className="p-2">
-                  <Textarea
-                    value={summary}
-                    onChange={(e) => setSummary(e.target.value)}
-                    className={`${isSmallScreen ? 'h-[50px]' : 'h-[80px]'} w-full resize-none overflow-y-auto text-sm`}
-                    placeholder="Brief professional summary..."
-                  />
-                </div>
-              </Card>
-            </div>
-
-            {/* Left and Right Columns */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              <Card className="border-0 bg-white overflow-hidden">
-                <div className="p-2 border-b">
-                  <h2 className="text-sm font-semibold text-foreground">Left Column</h2>
-                </div>
-                <div className="p-2">
-                  <Textarea
-                    value={leftColumn}
-                    onChange={(e) => setLeftColumn(e.target.value)}
-                    className={`${isSmallScreen ? 'h-[70px]' : 'h-[220px]'} w-full resize-none overflow-y-auto text-sm`}
-                    placeholder="Skills, contact, education..."
-                  />
-                </div>
-              </Card>
-              <Card className="border-0 bg-white overflow-hidden">
-                <div className="p-2 border-b">
-                  <h2 className="text-sm font-semibold text-foreground">Right Column</h2>
-                </div>
-                <div className="p-2">
-                  <Textarea
-                    value={rightColumn}
-                    onChange={(e) => setRightColumn(e.target.value)}
-                    className={`${isSmallScreen ? 'h-[70px]' : 'h-[220px]'} w-full resize-none overflow-y-auto text-sm`}
-                    placeholder="Experience, projects..."
-                  />
-                </div>
-              </Card>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    // Single column mode - integrate with common header
-    return (
-      <div className="flex flex-col gap-2 h-full overflow-hidden">
-        {isSmallScreen ? (
-          <Card className="border-0 bg-white overflow-hidden flex flex-col flex-1">
-            <div className="p-2 border-b shrink-0">
-              <div className="flex items-center justify-between">
-                <h2 className="text-sm font-semibold text-foreground">Main Content</h2>
-                <div className="flex items-center gap-1">
-                  <FileUpload />
-                  <TipTooltip type="markdown" />
-                </div>
+                )}
               </div>
-            </div>
-            <div className="flex-1 p-2 flex flex-col" style={{ height: 'calc(100% - 37px)' }}>
-              <Textarea
-                value={markdown}
-                onChange={(e) => setMarkdown(e.target.value)}
-                className="w-full resize-none overflow-y-auto text-sm"
-                style={{ height: '100%', paddingBottom: '8px' }}
-                placeholder="Enter your resume in Markdown format..."
+            </TabsContent>
+
+            <TabsContent value="css" className="h-[calc(100%-40px)] mt-0">
+              <CSSEditor
+                selectedTemplate={selectedTemplate}
+                onTemplateChange={setSelectedTemplate}
+                onCSSChange={handleCSSChange}
+                debugCSS={debugCSS}
               />
-            </div>
-          </Card>
-        ) : (
-          <>
-            {commonHeader}
-            <Card className="border-0 bg-white overflow-hidden flex flex-col flex-1">
-              <div className="p-3 border-b">
-                <h2 className="text-sm font-semibold text-foreground">Main Content</h2>
-              </div>
-              <div className="flex-1 p-3 flex flex-col">
-                <Textarea
-                  value={markdown}
-                  onChange={(e) => setMarkdown(e.target.value)}
-                  className="flex-1 w-full resize-none overflow-y-auto text-sm"
-                  placeholder="Enter your resume in Markdown format..."
-                />
-              </div>
-            </Card>
-          </>
-        )}
-      </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </Card>
     );
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b app-header">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 sm:py-6 gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-600 rounded-lg flex items-center justify-center">
-                <FileText className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-                  Markdown Resume Editor
-                </h1>
-                <p className="text-xs sm:text-sm text-gray-600">
-                  Transform markdown into professional resumes
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-              {/* Home Button */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    aria-label="Home"
-                    onClick={() => navigate("/")}
-                    className="bg-white hover:bg-gray-50 hover:text-gray-900 hidden sm:flex items-center gap-2 font-medium"
-                  >
-                    <Home className="h-4 w-4" />
-                    <span>Home</span>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Go to Home</TooltipContent>
-              </Tooltip>
+      <EditorHeader
+        title="Markdown Resume Editor"
+        description="Transform markdown into professional resumes"
+        icon={<FileText className="h-6 w-6 text-white" />}
+        iconBgColor="bg-gradient-to-br from-green-500 to-teal-600"
+        alternateEditorPath="/html"
+        alternateEditorIcon={<Code className="h-4 w-4" />}
+        alternateEditorLabel="HTML Editor"
+      >
+        <PaperSizeSelector
+          selectedPaperSize={paperSize}
+          onPaperSizeChange={handlePaperSizeChange}
+        />
+        <PrintPreview
+          markdown={markdown}
+          leftColumn={leftColumn}
+          rightColumn={rightColumn}
+          header={header}
+          summary={summary}
+          template={selectedTemplate}
+          isTwoColumn={isTwoColumn}
+          paperSize={paperSize}
+          uploadedFileUrl={uploadedFileUrl}
+          uploadedFileName={uploadedFileName}
+        />
+      </EditorHeader>
 
-              {/* Mobile Home Button */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    aria-label="Home"
-                    onClick={() => navigate("/")}
-                    className="bg-white hover:bg-gray-50 hover:text-gray-900 sm:hidden font-medium"
-                  >
-                    <Home className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Go to Home</TooltipContent>
-              </Tooltip>
-
-              {/* Switch to HTML Button */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    aria-label="Switch to HTML"
-                    onClick={() => navigate("/html")}
-                    className="bg-white hover:bg-gray-50 hover:text-gray-900 hidden sm:flex items-center gap-2 font-medium"
-                  >
-                    <Code className="h-4 w-4" />
-                    <span>HTML Editor</span>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Switch to HTML Editor</TooltipContent>
-              </Tooltip>
-
-              {/* Mobile HTML Button */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    aria-label="Switch to HTML"
-                    onClick={() => navigate("/html")}
-                    className="bg-white hover:bg-gray-50 hover:text-gray-900 sm:hidden font-medium"
-                  >
-                    <Code className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Switch to HTML Editor</TooltipContent>
-              </Tooltip>
-              <PaperSizeSelector
-                selectedPaperSize={paperSize}
-                onPaperSizeChange={handlePaperSizeChange}
-              />
-              <PrintPreview
-                markdown={markdown}
-                leftColumn={leftColumn}
-                rightColumn={rightColumn}
-                header={header}
-                summary={summary}
-                firstPage={firstPage}
-                secondPage={secondPage}
-                template={selectedTemplate}
-                isTwoColumn={isTwoColumn}
-                isTwoPage={isTwoPage}
-                paperSize={paperSize}
-                uploadedFileUrl={uploadedFileUrl}
-                uploadedFileName={uploadedFileName}
-              />
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {isSmallScreen ? (
-          <div className="flex flex-col gap-6">
-            {/* Editor Section - Small Screen */}
-            <div className="w-full h-[400px]">
-              <div className="flex flex-col h-full overflow-hidden">
-                {/* Control Bar */}
-                <div className="flex flex-wrap items-center justify-center gap-4 w-full mb-2 py-1 shrink-0">
-                  <div className="flex items-center gap-2">
-                    <Columns2 className="h-4 w-4" />
-                    <span className="text-xs sm:text-sm">Two Column</span>
-                    <Switch
-                      checked={isTwoColumn}
-                      onCheckedChange={handleTwoColumnToggle}
-                    />
+        <EditorLayout
+          leftPanel={renderInputSection()}
+          rightPanel={
+            <Card className="border-0 bg-white overflow-hidden flex flex-col h-full max-h-full">
+              <div className="p-4 border-b shrink-0">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <Eye className="h-4 w-4 text-primary shrink-0" />
+                    <h2 className="text-base font-semibold text-foreground truncate">
+                      Live Preview
+                    </h2>
                   </div>
-                  <TemplateSelector
-                    selectedTemplate={selectedTemplate}
-                    onTemplateChange={setSelectedTemplate}
+                  {renderPreviewBadge()}
+                </div>
+              </div>
+              <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 bg-gray-50">
+                <div className="w-full">
+                  <ResumePreview
+                    ref={previewRef}
+                    markdown={isTwoColumn ? "" : markdown}
+                    leftColumn={isTwoColumn ? leftColumn : ""}
+                    rightColumn={isTwoColumn ? rightColumn : ""}
+                    header={isTwoColumn ? header : ""}
+                    summary={isTwoColumn ? summary : ""}
+                    template={selectedTemplate}
+                    isTwoColumn={isTwoColumn}
+                    paperSize={paperSize}
+                    uploadedFileUrl={uploadedFileUrl}
+                    uploadedFileName={uploadedFileName}
+                    key={refreshTimestamp}
                   />
                 </div>
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="h-[calc(100%-40px)] flex flex-col overflow-hidden">
-                  <TabsList className="flex w-full mb-2 gap-1 p-1 bg-muted rounded-lg shrink-0">
-                    <TabsTrigger
-                      value="editor"
-                      className="flex-1 flex items-center justify-center gap-1 text-xs sm:text-sm py-1.5 px-2 rounded-md h-8 data-[state=active]:bg-white data-[state=active]:shadow-sm"
-                    >
-                      <FileText className="h-3 w-3 sm:h-4 sm:w-4 mr-1 shrink-0" />
-                      <span className="truncate">Content Editor</span>
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="css"
-                      className="flex-1 flex items-center justify-center gap-1 text-xs sm:text-sm py-1.5 px-2 rounded-md h-8 data-[state=active]:bg-white data-[state=active]:shadow-sm"
-                    >
-                      <Code className="h-3 w-3 sm:h-4 sm:w-4 mr-1 shrink-0" />
-                      <span className="truncate">CSS Editor</span>
-                    </TabsTrigger>
-                  </TabsList>
-
-                  <TabsContent value="editor" className="flex-1 overflow-y-auto">
-                    {renderInputSection()}
-                  </TabsContent>
-
-                  <TabsContent value="css" className="flex-1 overflow-hidden">
-                    <CSSEditor
-                      selectedTemplate={selectedTemplate}
-                      onTemplateChange={setSelectedTemplate}
-                      onCSSChange={handleCSSChange}
-                      debugCSS={debugCSS}
-                    />
-                  </TabsContent>
-                </Tabs>
               </div>
-            </div>
-
-            {/* Preview Section - Small Screen */}
-            <div className="w-full h-[350px]">
-              <Card className="border-0 bg-white overflow-hidden flex flex-col h-full">
-                <div className="p-4 border-b shrink-0">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <Eye className="h-4 w-4 text-primary shrink-0" />
-                      <h2 className="text-base font-semibold text-foreground truncate">
-                        Live Preview
-                      </h2>
-                    </div>
-                    {renderPreviewBadge()}
-                  </div>
-                </div>
-                <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 bg-gray-50">
-                  <div className="w-full">
-                    <ResumePreview
-                      ref={previewRef}
-                      markdown={isTwoColumn || isTwoPage ? "" : markdown}
-                      leftColumn={isTwoColumn ? leftColumn : ""}
-                      rightColumn={isTwoColumn ? rightColumn : ""}
-                      header={isTwoColumn ? header : ""}
-                      summary={isTwoColumn ? summary : ""}
-                      firstPage={firstPage}
-                      secondPage={secondPage}
-                      template={selectedTemplate}
-                      isTwoColumn={isTwoColumn}
-                      isTwoPage={isTwoPage}
-                      paperSize={paperSize}
-                      uploadedFileUrl={uploadedFileUrl}
-                      uploadedFileName={uploadedFileName}
-                      key={refreshTimestamp}
-                    />
-                  </div>
-                </div>
-              </Card>
-            </div>
-          </div>
-        ) : (
-          <ResizablePanelGroup
-            direction="horizontal"
-            className="h-[calc(100vh-220px)] max-h-[calc(100vh-220px)]"
-            onLayout={handlePanelResize}
-          >
-            {/* Left Panel - Tabs for Editor and CSS */}
-            <ResizablePanel defaultSize={leftPanelSize} minSize={30}>
-              <div className="flex flex-col h-full max-h-full overflow-hidden">
-                {/* Control Bar: moved from header */}
-                <div className="flex flex-wrap items-center justify-center gap-4 w-full mb-4 py-1">
-                  <div className="flex items-center gap-2">
-                    <Columns2 className="h-4 w-4" />
-                    <span className="text-xs sm:text-sm">Two Column</span>
-                    <Switch
-                      checked={isTwoColumn}
-                      onCheckedChange={handleTwoColumnToggle}
-                    />
-                  </div>
-                  <TemplateSelector
-                    selectedTemplate={selectedTemplate}
-                    onTemplateChange={setSelectedTemplate}
-                  />
-                </div>
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col overflow-hidden">
-                  <TabsList className="flex w-full mb-4 gap-1 p-1 bg-muted rounded-lg shrink-0">
-                    <TabsTrigger
-                      value="editor"
-                      className="flex-1 flex items-center justify-center gap-1 text-xs sm:text-sm py-1.5 px-2 rounded-md h-8 data-[state=active]:bg-white data-[state=active]:shadow-sm"
-                    >
-                      <FileText className="h-3 w-3 sm:h-4 sm:w-4 mr-1 shrink-0" />
-                      <span className="truncate">Content Editor</span>
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="css"
-                      className="flex-1 flex items-center justify-center gap-1 text-xs sm:text-sm py-1.5 px-2 rounded-md h-8 data-[state=active]:bg-white data-[state=active]:shadow-sm"
-                    >
-                      <Code className="h-3 w-3 sm:h-4 sm:w-4 mr-1 shrink-0" />
-                      <span className="truncate">CSS Editor</span>
-                    </TabsTrigger>
-                  </TabsList>
-
-                  <TabsContent value="editor" className="flex-1 overflow-y-auto">
-                    {renderInputSection()}
-                  </TabsContent>
-
-                  <TabsContent value="css" className="flex-1 overflow-hidden">
-                    <CSSEditor
-                      selectedTemplate={selectedTemplate}
-                      onTemplateChange={setSelectedTemplate}
-                      onCSSChange={handleCSSChange}
-                      debugCSS={debugCSS}
-                    />
-                  </TabsContent>
-                </Tabs>
-              </div>
-            </ResizablePanel>
-
-            <ResizableHandle withHandle />
-
-            {/* Right Panel - Preview */}
-            <ResizablePanel minSize={30}>
-              <Card className="border-0 bg-white overflow-hidden flex flex-col h-full max-h-full">
-                <div className="p-4 border-b shrink-0">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <Eye className="h-4 w-4 text-primary shrink-0" />
-                      <h2 className="text-base font-semibold text-foreground truncate">
-                        Live Preview
-                      </h2>
-                    </div>
-                    {renderPreviewBadge()}
-                  </div>
-                </div>
-                <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 bg-gray-50">
-                  <div className="w-full">
-                    <ResumePreview
-                      ref={previewRef}
-                      markdown={isTwoColumn || isTwoPage ? "" : markdown}
-                      leftColumn={isTwoColumn ? leftColumn : ""}
-                      rightColumn={isTwoColumn ? rightColumn : ""}
-                      header={isTwoColumn ? header : ""}
-                      summary={isTwoColumn ? summary : ""}
-                      firstPage={firstPage}
-                      secondPage={secondPage}
-                      template={selectedTemplate}
-                      isTwoColumn={isTwoColumn}
-                      isTwoPage={isTwoPage}
-                      paperSize={paperSize}
-                      uploadedFileUrl={uploadedFileUrl}
-                      uploadedFileName={uploadedFileName}
-                      key={refreshTimestamp}
-                    />
-                  </div>
-                </div>
-              </Card>
-            </ResizablePanel>
-          </ResizablePanelGroup>
-        )}
+            </Card>
+          }
+          leftPanelSize={leftPanelSize}
+          onPanelResize={handlePanelResize}
+          storageKey="markdown-editor"
+        />
       </div>
     </div>
   );
