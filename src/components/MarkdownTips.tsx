@@ -50,7 +50,7 @@ export const TipTooltip: React.FC<TipTooltipProps> = ({ type, customContent, cla
 
     case 'css':
       content = (
-        <div className="space-y-2 text-sm">
+        <div className="space-y-1 text-sm">
           <p className="font-medium">💡 CSS Editor Tips:</p>
           <div><strong>CSS Variables:</strong> Use --resume-font-family, --resume-font-size, --resume-h1-font-size for easy customization</div>
           <div><strong>Colors:</strong> Target .template-{selectedTemplate} for template-specific styling</div>

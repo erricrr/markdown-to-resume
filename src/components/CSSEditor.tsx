@@ -102,10 +102,10 @@ export const CSSEditor = ({ selectedTemplate, onTemplateChange, onCSSChange }: C
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <Code className="h-4 w-4 text-primary" />
-            <h2 className="text-sm font-semibold text-foreground">
+            <h2 className="text-sm font-semibold text-foreground truncate">
               CSS Editor ({selectedTemplate})
             </h2>
-            <span className="text-xs text-gray-500">Auto-saved</span>
+            <span className="text-xs text-gray-500 truncate">Auto-saved</span>
           </div>
 
           <div className="flex items-center gap-2">

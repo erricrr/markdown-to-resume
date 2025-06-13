@@ -278,6 +278,20 @@ export const useDynamicCSS = () => {
 }
 `;
 
+    // Utility helper to automatically append !important to every declaration (except ones that already have it).
+    // This guarantees that user-supplied rules from the CSS editor always win, even against
+    // high-specificity defaults that already carry !important (e.g. background, line-height).
+    // We purposely leave the property/value pair untouched if it already includes !important
+    // to avoid duplication like "; !important !important".
+    const addImportantToCSS = (raw: string): string => {
+      return raw.replace(/([^{};]*?):([^;]*?);/g, (full, prop, value) => {
+        // Skip rules that already contain !important
+        if (/!important/i.test(value)) return full;
+        // Preserve whitespace around the colon and before the semicolon
+        return `${prop.trim()}: ${value.trim()} !important;`;
+      });
+    };
+
     // Build template CSS but only include the high-specificity (scoped) version to
     // prevent it from unintentionally overriding global application styles.
     const templateCSS = Object.entries(templateCSSRef.current)
@@ -295,6 +309,9 @@ export const useDynamicCSS = () => {
           /^\.resume-template(?!\\.template-)/gm,
           '.resume-template'
         );
+
+        // At this stage, ensure user rules always win over built-ins
+        processedCSS = addImportantToCSS(processedCSS);
 
         console.log(`✅ Processed CSS for template ${template}:`, processedCSS.substring(0, 100));
         return `/* TEMPLATE: ${template.toUpperCase()} */\n${processedCSS}\n`;
