@@ -28,6 +28,9 @@ import { useImageReferenceDetection } from '@/hooks/useImageReferenceDetection';
 const defaultMarkdown = `# Jane Doe
 **Software Engineer** | jane.doe@email.com | (555) 123-4567 | linkedin.com/in/janedoe
 
+## Summary
+Experienced software engineer with 5+ years developing scalable web applications and microservices architecture. Proven track record of leading high-impact projects serving 1M+ users, mentoring development teams, and implementing CI/CD solutions that improve deployment efficiency by 60%. Expertise in full-stack development with React, Node.js, and cloud technologies, combined with strong problem-solving skills and a passion for optimizing performance and user experience.
+
 ## Experience
 
 ### Senior Software Engineer | TechCorp Inc.
@@ -65,97 +68,33 @@ const defaultMarkdown = `# Jane Doe
 - Developed collaborative task management application
 - Technologies: Vue.js, Firebase, PWA`;
 
-const defaultHeader = `# Jane Doe
-**Software Engineer** | jane.doe@email.com | (555) 123-4567 | linkedin.com/in/janedoe`;
-
-const defaultSummary = `Experienced software engineer with 5+ years developing scalable web applications. Passionate about clean code, user experience, and mentoring junior developers.`;
-
-const defaultLeftColumn = `## Contact
-- **Email:** jane.doe@email.com
-- **Phone:** (555) 123-4567
-- **LinkedIn:** linkedin.com/in/janedoe
-- **Location:** San Francisco, CA
-
-## Skills
-- **Languages:** JavaScript, TypeScript, Python
-- **Frontend:** React, Vue.js, HTML/CSS
-- **Backend:** Node.js, Express, Django
-- **Databases:** PostgreSQL, MongoDB
-- **Tools:** Git, Docker, AWS
-
-## Education
-### Bachelor of Science in Computer Science
-*University of Technology | 2015 - 2019*
-- GPA: 3.8/4.0`;
-
-const defaultRightColumn = `## Experience
-
-### Senior Software Engineer | TechCorp Inc.
-*January 2022 - Present*
-- Led development of microservices architecture serving 1M+ users
-- Mentored junior developers and conducted code reviews
-- Implemented CI/CD pipelines reducing deployment time by 60%
-
-### Software Engineer | StartupXYZ
-*June 2019 - December 2021*
-- Built responsive web applications using React and Node.js
-- Collaborated with design team to improve user experience
-- Optimized database queries improving performance by 40%
-
-## Projects
-
-### E-commerce Platform
-- Built full-stack e-commerce solution with payment integration
-- Technologies: React, Node.js, Stripe API, PostgreSQL
-
-### Task Management App
-- Developed collaborative task management application
-- Technologies: Vue.js, Firebase, PWA`;
-
 const MarkdownEditor = () => {
   const navigate = useNavigate();
   const [markdown, setMarkdown] = useState(() => {
     const saved = localStorage.getItem('markdown-editor-content');
     return saved || defaultMarkdown;
   });
-  const [header, setHeader] = useState(() => {
-    const saved = localStorage.getItem('markdown-editor-header');
-    return saved || defaultHeader;
-  });
-  const [summary, setSummary] = useState(() => {
-    const saved = localStorage.getItem('markdown-editor-summary');
-    return saved || defaultSummary;
-  });
-  const [leftColumn, setLeftColumn] = useState(() => {
-    const saved = localStorage.getItem('markdown-editor-left-column');
-    return saved || defaultLeftColumn;
-  });
-  const [rightColumn, setRightColumn] = useState(() => {
-    const saved = localStorage.getItem('markdown-editor-right-column');
-    return saved || defaultRightColumn;
-  });
-  const [selectedTemplate, setSelectedTemplate] = useState<string>(() => {
-    console.log('🔵 Initializing selectedTemplate with default value: professional');
-    return 'professional';
-  });
+
+  const [header, setHeader] = useState('');
+  const [summary, setSummary] = useState('');
+  const [leftColumn, setLeftColumn] = useState('');
+  const [rightColumn, setRightColumn] = useState('');
+  const [selectedTemplate, setSelectedTemplate] = useState<string>('professional');
   const [isTwoColumn, setIsTwoColumn] = useState(false);
   const [paperSize, setPaperSize] = useState<'A4' | 'US_LETTER'>('A4');
-  const [activeTab, setActiveTab] = useState("editor");
+  const [activeTab, setActiveTab] = useState('editor');
   const previewRef = useRef<HTMLDivElement>(null);
   const { addTemplateCSS, debugCSS } = useDynamicCSS();
-  const isSmallScreen = useMediaQuery("(max-width: 768px)");
+  const isSmallScreen = useMediaQuery('(max-width: 768px)');
 
-  // Use shared hooks
   const { leftPanelSize, handlePanelResize } = usePanelManagement('markdown-editor');
   const { uploadedFileUrl, uploadedFileName, refreshTimestamp, triggerRefresh } = useImageReferenceDetection(markdown, { detectMarkdown: true });
 
-  // Track previous uploadedFileUrl to detect changes
   const prevUploadedFileUrlRef = useRef(uploadedFileUrl);
   const prevUploadedFileNameRef = useRef(uploadedFileName);
 
   // Check for image references in markdown content
   const detectImageReferences = (content: string) => {
-    // Detect markdown image syntax: ![alt](url) or HTML img tags
     const markdownImageRegex = /!\[.*?\]\(.*?\)/;
     const htmlImageRegex = /<img.*?>/i;
     return markdownImageRegex.test(content) || htmlImageRegex.test(content);
@@ -164,61 +103,31 @@ const MarkdownEditor = () => {
   // Check all content sources for image references
   useEffect(() => {
     const checkForImageReferences = () => {
-      const sources = [
-        markdown,
-        header,
-        summary,
-        leftColumn,
-        rightColumn
-      ];
+      const sources = [markdown, header, summary, leftColumn, rightColumn];
 
-      const hasAnyImageReference = sources.some(content =>
-        content && detectImageReferences(content)
-      );
+      const hasAnyImageReference = sources.some((content) => content && detectImageReferences(content));
 
-      // If image reference exists but no image is uploaded yet, or if image was just removed,
-      // we need to refresh the preview to show the correct placeholder/empty state
       if (hasAnyImageReference && (!uploadedFileUrl || uploadedFileUrl !== prevUploadedFileUrlRef.current)) {
-        console.log('🖼️ Image reference detected with upload change - refreshing preview');
         triggerRefresh();
       }
 
-      // If image reference was just removed, refresh the preview
       if (!hasAnyImageReference && prevUploadedFileUrlRef.current && uploadedFileUrl) {
-        console.log('🖼️ Image reference removed but image still uploaded - refreshing preview');
         triggerRefresh();
       }
     };
 
     checkForImageReferences();
 
-    // Update refs after checking
     prevUploadedFileUrlRef.current = uploadedFileUrl;
     prevUploadedFileNameRef.current = uploadedFileName;
-  }, [
-    markdown,
-    header,
-    summary,
-    leftColumn,
-    rightColumn,
-    uploadedFileUrl,
-    uploadedFileName,
-    triggerRefresh
-  ]);
+  }, [markdown, header, summary, leftColumn, rightColumn, uploadedFileUrl, uploadedFileName, triggerRefresh]);
 
-  // Render the preview badge with consistent styling
   const renderPreviewBadge = () => (
     <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200 shrink-0">
       PDF-accurate preview
     </Badge>
   );
 
-  // Log when the selected template changes
-  useEffect(() => {
-    console.log('🔄 Selected template changed to:', selectedTemplate);
-  }, [selectedTemplate]);
-
-  // Auto-save effects
   useEffect(() => {
     localStorage.setItem('markdown-editor-content', markdown);
   }, [markdown]);
@@ -243,259 +152,85 @@ const MarkdownEditor = () => {
     window.print();
   };
 
-  const handleCSSChange = (template: string, css: string) => {
-    console.log(`🎨 Main component: CSS change for ${template}`);
-    addTemplateCSS(template, css);
-  };
-
-  const handlePaperSizeChange = (size: 'A4' | 'US_LETTER') => {
-    setPaperSize(size);
-  };
-
-  // Handle Two Column toggle with pre-filling functionality
   const handleTwoColumnToggle = (checked: boolean) => {
     setIsTwoColumn(checked);
 
-    if (checked) {
-      // Always try to pre-fill when switching to Two Column mode if there's meaningful content
-      if (markdown.trim() && markdown.length > 50) { // Simple check: has content and is substantial
-        console.log('🔄 Pre-filling two-column layout from markdown content');
-        console.log('📄 Markdown content length:', markdown.length);
-
+    if (checked && markdown.trim() && markdown.length > 50) {
+      import('@/utils/markdownParser').then(({ splitMarkdownForTwoColumn }) => {
         try {
           const splitContent = splitMarkdownForTwoColumn(markdown);
-
-          console.log('🔍 Split content results:', {
-            headerLength: splitContent.header.length,
-            summaryLength: splitContent.summary.length,
-            leftColumnLength: splitContent.leftColumn.length,
-            rightColumnLength: splitContent.rightColumn.length
-          });
-
-          // Always update with parsed content when switching to two-column
-          if (splitContent.header.trim()) {
-            setHeader(splitContent.header);
-            console.log('✅ Set header:', splitContent.header.substring(0, 50) + '...');
-          }
-          if (splitContent.summary.trim()) {
-            setSummary(splitContent.summary);
-            console.log('✅ Set summary:', splitContent.summary.substring(0, 50) + '...');
-          }
-          if (splitContent.leftColumn.trim()) {
-            setLeftColumn(splitContent.leftColumn);
-            console.log('✅ Set left column (first 50 chars):', splitContent.leftColumn.substring(0, 50) + '...');
-          }
-          if (splitContent.rightColumn.trim()) {
-            setRightColumn(splitContent.rightColumn);
-            console.log('✅ Set right column (first 50 chars):', splitContent.rightColumn.substring(0, 50) + '...');
-          }
-
-          console.log('✅ Successfully pre-filled two-column content');
+          setHeader(splitContent.header || '');
+          setSummary(splitContent.summary || '');
+          setLeftColumn(splitContent.leftColumn || '');
+          setRightColumn(splitContent.rightColumn || '');
         } catch (error) {
-          console.warn('⚠️ Error parsing markdown for two-column layout:', error);
-        }
-      } else {
-        console.log('ℹ️ No substantial markdown content to pre-fill');
-      }
-
-      console.log('🔄 Switched to two-column mode - re-applying CSS to fix template styling');
-    } else {
-      console.log('🔄 Switched back to single column mode');
-    }
-
-    // DRY SOLUTION: Re-apply current template CSS after layout change to ensure proper styling
-    // This fixes the H2 styling issues in Modern and Creative templates in two-column mode
-    console.log('🎨 Applying default template CSS after layout change:', selectedTemplate);
-    const savedCSS = localStorage.getItem(`css-editor-${selectedTemplate}`);
-    if (savedCSS) {
-      console.log('📝 Re-applying saved CSS for template:', selectedTemplate);
-      addTemplateCSS(selectedTemplate, savedCSS);
-    } else {
-      // Fall back to default template styles if no saved CSS exists
-      console.log('📝 No saved CSS found, applying default template styles for:', selectedTemplate);
-      import('@/styles/resumeTemplates').then(({ templateStyles, executiveSpecificStyles }) => {
-        let defaultCSS = templateStyles[selectedTemplate as keyof typeof templateStyles];
-        if (selectedTemplate === 'executive') {
-          defaultCSS += executiveSpecificStyles;
-        }
-        if (defaultCSS) {
-          addTemplateCSS(selectedTemplate, defaultCSS);
-          console.log('✅ Applied default template CSS for:', selectedTemplate);
+          console.warn('Error parsing markdown for two-column layout:', error);
         }
       });
     }
   };
 
-  // Force re-render when template changes to ensure CSS is applied
-  useEffect(() => {
-    console.log(`📋 Template changed to: ${selectedTemplate}`);
-    // Re-apply the CSS from localStorage when template changes
-    const savedCSS = localStorage.getItem(`css-editor-${selectedTemplate}`);
-
-    // Special handling for executive template to ensure font changes take effect
-    if (selectedTemplate === 'executive') {
-      console.log('🎨 Applying updated Executive template CSS with new fonts');
-      // Force a refresh of the executive template CSS
-      import('@/styles/resumeTemplates').then(({ templateStyles, executiveSpecificStyles }) => {
-        const executiveCSS = templateStyles.executive + executiveSpecificStyles;
-        // Update the localStorage cache
-        localStorage.setItem(`css-editor-executive`, executiveCSS);
-        // Apply the updated CSS
-        addTemplateCSS('executive', executiveCSS);
-        // Apply high-priority font fixes
-        debugCSS();
-      });
-    } else if (savedCSS) {
-      console.log('🎨 Re-applying saved CSS after template change:', selectedTemplate);
-      addTemplateCSS(selectedTemplate, savedCSS);
-    }
-  }, [selectedTemplate, addTemplateCSS, debugCSS]);
-
-  // Re-apply CSS when component mounts or returns from another editor
-  useEffect(() => {
-    console.log('🔄 MarkdownEditor mounted, re-applying current template CSS');
-    // Get the current template's CSS from localStorage and re-apply it
-    const savedCSS = localStorage.getItem(`css-editor-${selectedTemplate}`);
-    if (savedCSS) {
-      console.log('🎨 Re-applying saved CSS for template:', selectedTemplate);
-      addTemplateCSS(selectedTemplate, savedCSS);
-    }
-  }, []); // Run only on mount
-
-  // Re-apply CSS when switching back to the Content Editor tab
-  useEffect(() => {
-    if (activeTab === "editor") {
-      console.log('🔄 Switched to Content Editor tab, re-applying CSS');
-      const savedCSS = localStorage.getItem(`css-editor-${selectedTemplate}`);
-      if (savedCSS) {
-        console.log('🎨 Re-applying saved CSS for Content Editor tab:', selectedTemplate);
-        addTemplateCSS(selectedTemplate, savedCSS);
-      }
-    }
-  }, [activeTab, selectedTemplate, addTemplateCSS]);
-
-  const getInputMode = () => {
-    if (isTwoColumn) return "twoColumn";
-    return "single";
-  };
-
-  const renderInputSection = () => {
-    return (
-      <Card className="border-0 bg-white overflow-hidden flex flex-col h-full max-h-full">
-        <div className="pl-4 pt-3 -mb-1 px-1">
-          <div className="flex items-center justify-between gap-4 mb-3">
-            <div className="flex items-center gap-2">
-              <FileText className="h-4 w-4 text-primary shrink-0" />
-              <h2 className="text-base font-semibold text-foreground truncate">
-                Markdown Editor
-              </h2>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <FileUpload />
-              </div>
-              <TipTooltip type="markdown" />
-            </div>
+  const renderInputSection = () => (
+    <Card className="border-0 bg-white overflow-hidden flex flex-col h-full max-h-full">
+      <div className="pl-4 pt-3 -mb-1 px-1">
+        <div className="flex items-center justify-between gap-4 mb-3">
+          <div className="flex items-center gap-2">
+            <FileText className="h-4 w-4 text-primary shrink-0" />
+            <h2 className="text-base font-semibold text-foreground truncate">Markdown Editor</h2>
+          </div>
+          <div className="flex items-center gap-3">
+            <FileUpload />
+            <TipTooltip type="markdown" />
           </div>
         </div>
-
-        <div className="flex-1 overflow-hidden">
-          <Tabs defaultValue="editor" value={activeTab} onValueChange={setActiveTab} className="h-full">
-            <div className="px-4 border-b">
-              <TabsList className="w-full justify-start">
-                <TabsTrigger value="editor" className="flex-1">Editor</TabsTrigger>
-                <TabsTrigger value="css" className="flex-1">CSS</TabsTrigger>
-              </TabsList>
-            </div>
-
-            <TabsContent value="editor" className="h-[calc(100%-40px)] mt-0">
-              <div className="p-4 h-full flex flex-col">
-                <div className="flex items-center justify-between mb-4 shrink-0">
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2">
-                      <Switch
-                        id="two-column"
-                        checked={isTwoColumn}
-                        onCheckedChange={handleTwoColumnToggle}
-                      />
-                      <label htmlFor="two-column" className="text-sm font-medium">
-                        Two Column
-                      </label>
-                    </div>
+      </div>
+      <div className="flex-1 overflow-hidden">
+        <Tabs defaultValue="editor" value={activeTab} onValueChange={setActiveTab} className="h-full">
+          <div className="px-4 border-b">
+            <TabsList className="w-full justify-start">
+              <TabsTrigger value="editor" className="flex-1">
+                Editor
+              </TabsTrigger>
+              <TabsTrigger value="css" className="flex-1">
+                CSS
+              </TabsTrigger>
+            </TabsList>
+          </div>
+          <TabsContent value="editor" className="h-[calc(100%-40px)] mt-0">
+            <div className="p-4 h-full flex flex-col">
+              <div className="flex items-center justify-between mb-4 shrink-0">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Switch id="two-column" checked={isTwoColumn} onCheckedChange={handleTwoColumnToggle} />
+                    <label htmlFor="two-column" className="text-sm font-medium">
+                      Two Column
+                    </label>
                   </div>
-                  <TemplateSelector
-                    selectedTemplate={selectedTemplate}
-                    onTemplateChange={setSelectedTemplate}
-                  />
                 </div>
-
-                {isTwoColumn ? (
-                  <div className="grid grid-cols-2 gap-4 flex-1 min-h-0">
-                    <div className="flex flex-col gap-4 min-h-0">
-                      <div className="shrink-0">
-                        <label className="text-sm font-medium mb-2 block">Header</label>
-                        <Textarea
-                          value={header}
-                          onChange={(e) => setHeader(e.target.value)}
-                          className="h-24 resize-none"
-                          placeholder="Enter header content..."
-                        />
-                      </div>
-                      <div className="shrink-0">
-                        <label className="text-sm font-medium mb-2 block">Summary</label>
-                        <Textarea
-                          value={summary}
-                          onChange={(e) => setSummary(e.target.value)}
-                          className="h-24 resize-none"
-                          placeholder="Enter summary content..."
-                        />
-                      </div>
-                      <div className="flex-1 min-h-0">
-                        <label className="text-sm font-medium mb-2 block">Left Column</label>
-                        <Textarea
-                          value={leftColumn}
-                          onChange={(e) => setLeftColumn(e.target.value)}
-                          className="h-full resize-none"
-                          placeholder="Enter left column content..."
-                        />
-                      </div>
-                    </div>
-                    <div className="flex-1 min-h-0">
-                      <label className="text-sm font-medium mb-2 block">Right Column</label>
-                      <Textarea
-                        value={rightColumn}
-                        onChange={(e) => setRightColumn(e.target.value)}
-                        className="h-full resize-none"
-                        placeholder="Enter right column content..."
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex-1 min-h-0">
-                    <Textarea
-                      value={markdown}
-                      onChange={(e) => setMarkdown(e.target.value)}
-                      className="h-full resize-none"
-                      placeholder="Enter your markdown content..."
-                    />
-                  </div>
-                )}
+                <TemplateSelector selectedTemplate={selectedTemplate} onTemplateChange={setSelectedTemplate} />
               </div>
-            </TabsContent>
-
-            <TabsContent value="css" className="h-[calc(100%-40px)] mt-0">
-              <CSSEditor
-                selectedTemplate={selectedTemplate}
-                onTemplateChange={setSelectedTemplate}
-                onCSSChange={handleCSSChange}
-                debugCSS={debugCSS}
-              />
-            </TabsContent>
-          </Tabs>
-        </div>
-      </Card>
-    );
-  };
+              <div className="flex-1 min-h-0">
+                <Textarea
+                  value={markdown}
+                  onChange={(e) => setMarkdown(e.target.value)}
+                  className="h-full resize-none"
+                  placeholder="Enter your markdown content..."
+                />
+              </div>
+            </div>
+          </TabsContent>
+          <TabsContent value="css" className="h-[calc(100%-40px)] mt-0">
+            <CSSEditor
+              selectedTemplate={selectedTemplate}
+              onTemplateChange={setSelectedTemplate}
+              onCSSChange={(template, css) => addTemplateCSS(template, css)}
+              debugCSS={debugCSS}
+            />
+          </TabsContent>
+        </Tabs>
+      </div>
+    </Card>
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -508,10 +243,7 @@ const MarkdownEditor = () => {
         alternateEditorIcon={<Code className="h-4 w-4" />}
         alternateEditorLabel="HTML Editor"
       >
-        <PaperSizeSelector
-          selectedPaperSize={paperSize}
-          onPaperSizeChange={handlePaperSizeChange}
-        />
+        <PaperSizeSelector selectedPaperSize={paperSize} onPaperSizeChange={setPaperSize} />
         <PrintPreview
           markdown={markdown}
           leftColumn={leftColumn}
@@ -525,7 +257,6 @@ const MarkdownEditor = () => {
           uploadedFileName={uploadedFileName}
         />
       </EditorHeader>
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <EditorLayout
           leftPanel={renderInputSection()}
@@ -535,9 +266,7 @@ const MarkdownEditor = () => {
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2 min-w-0">
                     <Eye className="h-4 w-4 text-primary shrink-0" />
-                    <h2 className="text-base font-semibold text-foreground truncate">
-                      Live Preview
-                    </h2>
+                    <h2 className="text-base font-semibold text-foreground truncate">Live Preview</h2>
                   </div>
                   {renderPreviewBadge()}
                 </div>
@@ -546,11 +275,11 @@ const MarkdownEditor = () => {
                 <div className="w-full">
                   <ResumePreview
                     ref={previewRef}
-                    markdown={isTwoColumn ? "" : markdown}
-                    leftColumn={isTwoColumn ? leftColumn : ""}
-                    rightColumn={isTwoColumn ? rightColumn : ""}
-                    header={isTwoColumn ? header : ""}
-                    summary={isTwoColumn ? summary : ""}
+                    markdown={isTwoColumn ? '' : markdown}
+                    leftColumn={isTwoColumn ? leftColumn : ''}
+                    rightColumn={isTwoColumn ? rightColumn : ''}
+                    header={isTwoColumn ? header : ''}
+                    summary={isTwoColumn ? summary : ''}
                     template={selectedTemplate}
                     isTwoColumn={isTwoColumn}
                     paperSize={paperSize}
