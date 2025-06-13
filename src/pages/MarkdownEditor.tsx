@@ -160,7 +160,7 @@ const MarkdownEditor = () => {
 
   const renderInputSection = () => (
     <Card className="border-0 bg-white overflow-hidden flex flex-col h-full max-h-full">
-      <div className="pl-4 pt-3 -mb-1 px-1">
+      <div className="p-4 border-b">
         <div className="flex items-center justify-between gap-4 mb-3">
           <div className="flex items-center gap-2">
             <FileText className="h-4 w-4 text-primary shrink-0" />
@@ -171,6 +171,18 @@ const MarkdownEditor = () => {
             <TipTooltip type="markdown" />
           </div>
         </div>
+        <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+            <Switch
+              id="two-column"
+              checked={isTwoColumn}
+              onCheckedChange={handleTwoColumnToggle}
+              className="h-4 w-8 sm:h-5 sm:w-10"
+            />
+                <label htmlFor="two-column" className="text-xs md:text-sm font-medium pl-1">Two Column</label>
+            </div>
+            <TemplateSelector selectedTemplate={selectedTemplate} onTemplateChange={setSelectedTemplate} />
+        </div>
       </div>
       <div className="flex-1 overflow-hidden">
         <Tabs defaultValue="editor" value={activeTab} onValueChange={setActiveTab} className="h-full">
@@ -180,26 +192,13 @@ const MarkdownEditor = () => {
               <TabsTrigger value="css" className="flex-1">CSS</TabsTrigger>
             </TabsList>
           </div>
-          <TabsContent value="editor" className="h-[calc(100%-40px)] mt-0">
-            <div className="p-4 h-full flex flex-col">
-              <div className="flex items-center justify-between mb-4 shrink-0">
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <Switch id="two-column" checked={isTwoColumn} onCheckedChange={handleTwoColumnToggle} />
-                    <label htmlFor="two-column" className="text-sm font-medium">Two Column</label>
-                  </div>
-                </div>
-                <TemplateSelector selectedTemplate={selectedTemplate} onTemplateChange={setSelectedTemplate} />
-              </div>
-              <div className="flex-1 min-h-0">
-                <Textarea
-                  value={markdown}
-                  onChange={(e) => setMarkdown(e.target.value)}
-                  className="h-full resize-none"
-                  placeholder="Enter your markdown content..."
-                />
-              </div>
-            </div>
+          <TabsContent value="editor" className="h-[calc(100%-40px)] mt-0 p-4">
+            <Textarea
+              value={markdown}
+              onChange={(e) => setMarkdown(e.target.value)}
+              className="h-full resize-none"
+              placeholder="Enter your markdown content..."
+            />
           </TabsContent>
           <TabsContent value="css" className="h-[calc(100%-40px)] mt-0">
             <CSSEditor
