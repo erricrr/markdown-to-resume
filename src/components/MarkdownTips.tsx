@@ -3,7 +3,7 @@ import { Info } from 'lucide-react';
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 interface TipTooltipProps {
-  type: 'markdown' | 'html' | 'css' | 'custom';
+  type: 'markdown' | 'html' | 'css' | 'two-column' | 'custom';
   customContent?: React.ReactNode;
   className?: string;
   selectedTemplate?: string;
@@ -46,6 +46,18 @@ export const TipTooltip: React.FC<TipTooltipProps> = ({ type, customContent, cla
           <div><strong>Priority:</strong> Add !important if styles aren't applying</div>
           <div><strong>Live Updates:</strong> Changes apply immediately to preview and PDF</div>
           <div><strong>Learn CSS:</strong> <a href="https://www.w3schools.com/css/" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">W3Schools CSS Tutorial</a></div>
+        </div>
+      );
+      break;
+
+    case 'two-column':
+      content = (
+        <div className="space-y-1">
+          <p className="font-medium">💡 Two-Column Tips:</p>
+          <p>• Header and summary appear at the top spanning both columns</p>
+          <p>• Left column is ideal for contact info, skills, education</p>
+          <p>• Right column works best for experience and projects</p>
+          <p>• Content is automatically balanced between columns</p>
         </div>
       );
       break;

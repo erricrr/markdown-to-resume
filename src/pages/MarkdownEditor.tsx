@@ -353,8 +353,32 @@ const MarkdownEditor = () => {
       } else {
         console.log('ℹ️ No substantial markdown content to pre-fill');
       }
+
+      console.log('🔄 Switched to two-column mode - re-applying CSS to fix template styling');
     } else {
       console.log('🔄 Switched back to single column mode');
+    }
+
+    // DRY SOLUTION: Re-apply current template CSS after layout change to ensure proper styling
+    // This fixes the H2 styling issues in Modern and Creative templates in two-column mode
+    console.log('🎨 Applying default template CSS after layout change:', selectedTemplate);
+    const savedCSS = localStorage.getItem(`css-editor-${selectedTemplate}`);
+    if (savedCSS) {
+      console.log('📝 Re-applying saved CSS for template:', selectedTemplate);
+      addTemplateCSS(selectedTemplate, savedCSS);
+    } else {
+      // Fall back to default template styles if no saved CSS exists
+      console.log('📝 No saved CSS found, applying default template styles for:', selectedTemplate);
+      import('@/styles/resumeTemplates').then(({ templateStyles, executiveSpecificStyles }) => {
+        let defaultCSS = templateStyles[selectedTemplate as keyof typeof templateStyles];
+        if (selectedTemplate === 'executive') {
+          defaultCSS += executiveSpecificStyles;
+        }
+        if (defaultCSS) {
+          addTemplateCSS(selectedTemplate, defaultCSS);
+          console.log('✅ Applied default template CSS for:', selectedTemplate);
+        }
+      });
     }
   };
 
