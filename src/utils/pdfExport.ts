@@ -1,6 +1,5 @@
-import { marked } from 'marked';
-import DOMPurify from 'dompurify';
 import { getCompleteCSS } from '../styles/resumeTemplates';
+import { generateCompleteResumeHTML, type ResumeContentData } from './resumeContentGenerator';
 
 interface ResumeData {
   markdown: string;
@@ -19,406 +18,111 @@ interface ResumeData {
 }
 
 export const exportToPDF = async (resumeData: ResumeData) => {
-  const parseMarkdown = (md: string) => {
-    try {
-      marked.setOptions({
-        breaks: true,
-        gfm: true,
-      });
+  // Use the shared utility to generate the resume's body HTML
+  const bodyHtml = generateCompleteResumeHTML(resumeData as ResumeContentData);
 
-      const html = marked.parse(md) as string;
+  // Get all <link> and <style> tags from the main document's head
+  const headContent = document.head.innerHTML;
 
-      // Add resume classes to the HTML elements
-      let processedHtml = html
-        .replace(/<h1([^>]*)>/g, '<h1$1 class="resume-heading-1">')
-        .replace(/<h2([^>]*)>/g, '<h2$1 class="resume-heading-2">')
-        .replace(/<h3([^>]*)>/g, '<h3$1 class="resume-heading-3">')
-        .replace(/<h4([^>]*)>/g, '<h4$1 class="resume-heading-4">')
-        .replace(/<h5([^>]*)>/g, '<h5$1 class="resume-heading-5">')
-        .replace(/<h6([^>]*)>/g, '<h6$1 class="resume-heading-6">')
-        .replace(/<p([^>]*)>/g, '<p$1 class="resume-paragraph">')
-        .replace(/<ul([^>]*)>/g, '<ul$1 class="resume-list">')
-        .replace(/<ol([^>]*)>/g, '<ol$1 class="resume-list">')
-        .replace(/<li([^>]*)>/g, '<li$1 class="resume-list-item">')
-        .replace(/<table([^>]*)>/g, '<table$1 class="resume-table">')
-        .replace(/<thead([^>]*)>/g, '<thead$1 class="resume-table-head">')
-        .replace(/<tbody([^>]*)>/g, '<tbody$1 class="resume-table-body">')
-        .replace(/<tr([^>]*)>/g, '<tr$1 class="resume-table-row">')
-        .replace(/<th([^>]*)>/g, '<th$1 class="resume-table-header">')
-        .replace(/<td([^>]*)>/g, '<td$1 class="resume-table-cell">')
-        .replace(/<hr([^>]*)>/g, '<hr$1 class="resume-hr">')
-        .replace(/<strong([^>]*)>/g, '<strong$1 class="resume-strong">')
-        .replace(/<em([^>]*)>/g, '<em$1 class="resume-emphasis">')
-        .replace(/<a([^>]*)>/g, '<a$1 class="resume-link">')
-        .replace(/<code([^>]*)>/g, '<code$1 class="resume-code">')
-        .replace(/<pre([^>]*)>/g, '<pre$1 class="resume-code-block">')
-        .replace(/<br([^>]*)>/g, '<br$1 class="resume-br">')
-        // Same fix: ensure relative image paths resolve from public root.
-        .replace(/<img([^>]*)src="([^\"]+)"([^>]*)>/g, (match, before, src, after) => {
-          if (/^(https?:|data:|\/)/.test(src)) {
-            return match;
-          }
-          return `<img${before}src="/${src}"${after}>`;
-        });
-
-      // Handle bullet points in table cells (content starting with "- " at the beginning)
-      processedHtml = processedHtml.replace(
-        /<td([^>]*class="resume-table-cell"[^>]*)>\s*-\s+([^<]*)<\/td>/g,
-        '<td$1><span class="resume-table-bullet-item">$2</span></td>'
-      );
-
-      // Handle bullet points within paragraph tags in table cells (starting with "- ")
-      processedHtml = processedHtml.replace(
-        /<td([^>]*class="resume-table-cell"[^>]*)><p([^>]*)>\s*-\s+([^<]*)<\/p><\/td>/g,
-        '<td$1><p$2><span class="resume-table-bullet-item">$3</span></p></td>'
-      );
-
-      // Allow inline style attributes so the generated PDF matches the live preview when users add custom styles.
-      // @ts-ignore – ADD_ATTR may not exist on older DOMPurify typings but is supported at runtime.
-      return DOMPurify.sanitize(processedHtml, { ADD_ATTR: ['style'] });
-    } catch (error) {
-      console.error('Error parsing markdown:', error);
-      return '<p>Error parsing markdown content</p>';
-    }
-  };
-
-  // Helper to build a structured header with contact items (relies on parseMarkdown above)
-  const processHeaderMarkdown = (headerMd: string): string => {
-    if (!headerMd) return '';
-
-    const lines = headerMd.trim().split('\n');
-    const titleLine = lines[0] || '';
-    const remaining = lines.slice(1).join(' ').trim();
-
-    const titleHtml = parseMarkdown(titleLine);
-
-    let contactInfoHtml = '';
-    if (remaining) {
-      const items = remaining.split('|').map((it) => it.trim()).filter(Boolean);
-      if (items.length) {
-        const itemsHtml = items
-          .map((it) => `<span class="resume-contact-item">${parseMarkdown(it)}</span>`)
-          .join('<span class="resume-contact-separator">|</span>');
-        contactInfoHtml = `<div class="resume-contact-info">${itemsHtml}</div>`;
-      }
-    }
-
-    return `${titleHtml}${contactInfoHtml}`;
-  };
-
-  const getHtmlContent = () => {
-    const { markdown, leftColumn = '', rightColumn = '', header = '', summary = '', firstPage = '', secondPage = '', isTwoColumn = false, isTwoPage = false, uploadedFileUrl = '', uploadedFileName = '' } = resumeData;
-
-    if (isTwoPage && isTwoColumn) {
-      // Combined mode: Two pages with two columns each
-      const headerHtml = header ? processHeaderMarkdown(header) : '';
-      const summaryHtml = summary ? `<p class="resume-paragraph resume-summary">${summary}</p>` : '';
-      const leftHtml = parseMarkdown(leftColumn);
-      const rightHtml = parseMarkdown(rightColumn);
-      const secondPageLeftHtml = parseMarkdown(firstPage);
-      const secondPageRightHtml = parseMarkdown(secondPage);
-
-      return `
-        <div class="resume-two-page">
-          <div class="resume-page-first">
-            <div class="resume-two-column">
-              ${headerHtml ? `<div class="resume-header">${headerHtml}</div>` : ''}
-              ${summaryHtml ? `<div class="resume-summary-section">${summaryHtml}</div>` : ''}
-              <div class="resume-columns">
-                <div class="resume-column-left">
-                  ${leftHtml}
-                </div>
-                <div class="resume-column-right">
-                  ${rightHtml}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="resume-page-second">
-            <div class="resume-two-column">
-              <div class="resume-columns">
-                <div class="resume-column-left">
-                  ${secondPageLeftHtml}
-                </div>
-                <div class="resume-column-right">
-                  ${secondPageRightHtml}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-    } else if (isTwoPage) {
-      const firstPageHtml = parseMarkdown(firstPage);
-      const secondPageHtml = parseMarkdown(secondPage);
-      return `
-        <div class="resume-two-page">
-          <div class="resume-page-first">
-            ${firstPageHtml}
-          </div>
-          <div class="resume-page-second">
-            ${secondPageHtml}
-          </div>
-        </div>
-      `;
-    } else if (isTwoColumn) {
-      const headerHtml = header ? processHeaderMarkdown(header) : '';
-      const summaryHtml = summary ? `<p class="resume-paragraph resume-summary">${summary}</p>` : '';
-      const leftHtml = parseMarkdown(leftColumn);
-      const rightHtml = parseMarkdown(rightColumn);
-      return `
-        <div class="resume-two-column">
-          ${headerHtml ? `<div class="resume-header">${headerHtml}</div>` : ''}
-          ${summaryHtml ? `<div class="resume-summary-section">${summaryHtml}</div>` : ''}
-          <div class="resume-columns">
-            <div class="resume-column-left">
-              ${leftHtml}
-            </div>
-            <div class="resume-column-right">
-              ${rightHtml}
-            </div>
-          </div>
-        </div>
-      `;
-    } else {
-      const parsed = parseMarkdown(markdown);
-      return parsed; // no bottom injection here; handled later
-    }
-  };
-
-  const getTemplateClasses = () => {
-    const { template, isTwoColumn = false, isTwoPage = false, paperSize = 'A4' } = resumeData;
-    let baseClass = '';
-    if (isTwoPage && isTwoColumn) {
-      baseClass = 'resume-two-page-layout resume-two-column-layout';
-    } else if (isTwoPage) {
-      baseClass = 'resume-two-page-layout';
-    } else if (isTwoColumn) {
-      baseClass = 'resume-two-column-layout';
-    }
-
-    // Add paper size class
-    const paperSizeClass = paperSize === 'A4' ? 'a4-paper' : '';
-    if (paperSizeClass) {
-      baseClass = baseClass ? `${baseClass} ${paperSizeClass}` : paperSizeClass;
-    }
-
-    switch (template) {
-      case 'professional':
-        return `${baseClass} template-professional`;
-      case 'modern':
-        return `${baseClass} template-modern`;
-      case 'minimalist':
-        return `${baseClass} template-minimalist`;
-      case 'creative':
-        return `${baseClass} template-creative`;
-      case 'executive':
-        return `${baseClass} template-executive`;
-      default:
-        return `${baseClass} template-professional`;
-    }
-  };
-
-  // Get any custom CSS that has been applied via the CSS editor
+  // Get any dynamic CSS that has been applied via the CSS editor
   const getDynamicCSS = () => {
     const dynamicStyleElement = document.getElementById('dynamic-template-css') as HTMLStyleElement;
-    if (dynamicStyleElement && dynamicStyleElement.textContent) {
-      console.log('🎨 Found dynamic CSS for PDF export:', dynamicStyleElement.textContent.length, 'characters');
-      return dynamicStyleElement.textContent;
-    } else {
-      console.warn('⚠️ No dynamic CSS found, using fallback styles');
-      return '';
-    }
+    return dynamicStyleElement ? dynamicStyleElement.textContent : '';
   };
 
-  // NEW: Get ALL styles from the live preview to ensure exact consistency
-  const getAllLivePreviewStyles = () => {
-    console.log('🔍 Capturing ALL live preview styles for PDF consistency...');
-
-    // Get custom CSS from CSS editor first as it has highest priority
-    const customCSS = getDynamicCSS();
-    let allCSS = customCSS ? `\n/* CUSTOM CSS FROM TEMPLATE EDITOR */\n${customCSS}\n` : '';
-
-    // Get all style elements from the page
-    const allStyleElements = Array.from(document.querySelectorAll('style'));
-
-    allStyleElements.forEach((styleEl, index) => {
-      if (styleEl.id !== 'dynamic-template-css' && styleEl.textContent) { // Skip the custom CSS we already captured
-        const source = styleEl.id || styleEl.getAttribute('data-source') || `style-${index}`;
-        allCSS += `\n/* CAPTURED FROM: ${source} */\n${styleEl.textContent}\n`;
-      }
-    });
-
-    // Also capture any inline styles from stylesheet links (though these should be in CSS files)
-    const linkElements = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
-    linkElements.forEach((link) => {
-      const href = (link as HTMLLinkElement).href;
-      allCSS += `\n/* EXTERNAL STYLESHEET: ${href} */\n`;
-    });
-
-    console.log('📊 Captured total CSS for PDF:', allCSS.length, 'characters');
-    return allCSS;
-  };
-
-  const htmlContent = getHtmlContent();
-
-  /*
-   * Similar logic to ResumePreview: intelligently insert uploaded images near the header
-   * while leaving other file types untouched (still appended at bottom if single column).
-   */
-  const { uploadedFileUrl = '', uploadedFileName = '' } = resumeData;
-  const imageRegex = /\.(jpe?g|png|gif|webp)$/i;
-  const isImageFile = (!!uploadedFileUrl && imageRegex.test(uploadedFileUrl)) || (!!uploadedFileName && imageRegex.test(uploadedFileName));
-
-  let finalHtmlContent = htmlContent;
-
-  if (uploadedFileUrl && uploadedFileName) {
-    const escapedName = uploadedFileName.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
-    const regex = new RegExp(`src=([\"\'])([^\"\']*${escapedName})\\1`, 'g');
-    finalHtmlContent = finalHtmlContent.replace(regex, (_m: string, quote: string) => `src=${quote}${uploadedFileUrl}${quote}`);
-  }
-
-  // Only append at bottom for non-image assets and avoid duplicates
-  if (uploadedFileUrl && !isImageFile && !finalHtmlContent.includes(uploadedFileUrl)) {
-    finalHtmlContent += `\n<div class="resume-uploaded-file"><img src="${uploadedFileUrl}" alt="Uploaded file" style="max-width: 100%; max-height: 300px; display: block; margin: 0.5rem 0;" /></div>`;
-  }
-
-  const templateClasses = getTemplateClasses();
-
-  // Build CSS once, from a single source of truth
   const baseCSS = getCompleteCSS(resumeData.template);
   const dynamicCSS = getDynamicCSS();
-
-  console.log('📄 PDF Export Info:');
-  console.log('- Template:', resumeData.template);
-  console.log('- Classes:', templateClasses);
-  console.log('- Two Column:', resumeData.isTwoColumn);
-  console.log('- Two Page:', resumeData.isTwoPage);
-
-  // Get the page size from the resumeData or default to A4
   const { paperSize = 'A4' } = resumeData;
 
-  console.log(`PDF Export: Using paper size ${paperSize}`);
+  // Combine base styles with dynamic (user-edited) styles
+  const fullCss = `
+    ${baseCSS}
+    ${dynamicCSS}
 
-  // ONE consolidated CSS string – base styles + user overrides + minimal PDF adjustments
-  const cssContent = `
-${baseCSS}
+    /* PDF-specific overrides */
+    @page {
+      size: ${paperSize === 'A4' ? 'A4' : 'letter'};
+      margin: 0;
+    }
+    body {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
+    }
+    /* Critical fixes for two-page layouts */
+    .resume-two-page-layout {
+      overflow: visible !important;
+    }
+    .resume-two-page-layout .resume-page-first {
+      page-break-after: always !important;
+      break-after: page !important;
+      min-height: ${paperSize === 'A4' ? '11.69in' : '11in'} !important;
+    }
+    .resume-two-page-layout .resume-page-second {
+      page-break-before: always !important;
+      break-before: page !important;
+      min-height: ${paperSize === 'A4' ? '11.69in' : '11in'} !important;
+    }
+  `;
 
-/* USER CUSTOM CSS (from in-app CSS editor) */
-${dynamicCSS}
+  const templateClasses = getTemplateClasses(resumeData);
 
-/* PDF page setup */
-@page { size: ${paperSize === 'A4' ? 'A4' : 'letter'}; margin: 0; }
-
-/* Hide application chrome */
-header, footer, .header, .footer { display: none !important; }
-
-body { margin: 0; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
-`;
-
-  // Create the complete HTML document with embedded CSS
+  // Create the complete HTML document for the new window
   const fullHtml = `
     <!DOCTYPE html>
     <html lang="en">
     <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      ${headContent}
       <title>Resume - ${paperSize === 'A4' ? 'A4' : 'US Letter'} Format</title>
-      <style>
-        /* ========================================
-           COMPLETE CSS FROM SINGLE SOURCE OF TRUTH
-           ======================================== */
-        ${cssContent}
-
-        /* CRITICAL FIXES FOR TWO-PAGE LAYOUT */
-        .resume-two-page-layout {
-          overflow: visible !important;
-        }
-
-        .resume-two-page-layout .resume-page-first {
-          page-break-after: always !important;
-          break-after: page !important;
-          min-height: ${paperSize === 'A4' ? '11.69in' : '11in'} !important;
-        }
-
-        .resume-two-page-layout .resume-page-second {
-          page-break-before: always !important;
-          break-before: page !important;
-          min-height: ${paperSize === 'A4' ? '11.69in' : '11in'} !important;
-        }
-
-        /* Ensure page content is visible */
-        .resume-two-page-layout .resume-page-first,
-        .resume-two-page-layout .resume-page-second {
-          display: block !important;
-          overflow: visible !important;
-          box-sizing: border-box !important;
-          width: 100% !important;
-        }
-
-        /* Ensure proper PDF page count */
-        @page {
-          size: ${paperSize === 'A4' ? 'A4' : 'letter'};
-          margin: 0;
-        }
+      <style id="pdf-styles">
+        ${fullCss}
       </style>
     </head>
     <body>
       <div class="resume-template ${templateClasses}" data-paper-size="${paperSize}">
-        ${finalHtmlContent}
+        ${bodyHtml}
       </div>
       <script>
-        // Auto-open print dialog after page loads
         window.onload = function() {
-          console.log("PDF document loaded with paper size: ${paperSize}");
-          document.title = "Resume - ${paperSize === 'A4' ? 'A4' : 'US Letter'} Format";
-
-          // Force paper size in print dialog
-          const style = document.createElement('style');
-          style.textContent = '@page { size: ${paperSize === 'A4' ? 'A4' : 'letter'}; margin: 0; }';
-          document.head.appendChild(style);
-
-          // For two-page layout, ensure the second page is properly displayed
-          const twoPageLayout = document.querySelector('.resume-two-page-layout');
-          if (twoPageLayout) {
-            console.log("Two-page layout detected. Configuring page breaks...");
-            const firstPage = document.querySelector('.resume-page-first');
-            const secondPage = document.querySelector('.resume-page-second');
-
-            if (firstPage && secondPage) {
-              // Force proper page breaks
-              firstPage.style.pageBreakAfter = 'always';
-              firstPage.style.breakAfter = 'page';
-              secondPage.style.pageBreakBefore = 'always';
-              secondPage.style.breakBefore = 'page';
-
-              console.log("Page breaks configured for two-page layout");
-            }
-          }
-
-          // Wait until all web fonts have loaded before printing
-          if (document.fonts && document.fonts.ready) {
-            document.fonts.ready.then(function() {
+          // Wait for all resources, including fonts, to load before printing
+          Promise.all(Array.from(document.fonts).map(font => font.load())).then(() => {
+            setTimeout(() => {
               window.print();
-            });
-          } else {
-            // Fallback: delay slightly if the Font API is not available
-            setTimeout(function() {
-              window.print();
-            }, 800);
-          }
+            }, 800); // A small delay ensures rendering completes
+          }).catch(err => {
+            console.error('Error loading fonts:', err);
+            window.print(); // Print anyway on error
+          });
         };
       </script>
     </body>
     </html>
   `;
 
-  // Open in new window
+  // Open the HTML in a new window and trigger the print dialog
   const printWindow = window.open('', '_blank');
   if (printWindow) {
     printWindow.document.write(fullHtml);
     printWindow.document.close();
   } else {
-    throw new Error('Could not open print window. Please check your popup blocker settings.');
+    alert('Could not open print window. Please disable your popup blocker and try again.');
   }
+};
+
+// Helper function to get template classes (moved outside the main function)
+const getTemplateClasses = (resumeData: ResumeData) => {
+  const { template, isTwoColumn = false, isTwoPage = false, paperSize = 'A4' } = resumeData;
+  let baseClass = '';
+  if (isTwoPage && isTwoColumn) {
+    baseClass = 'resume-two-page-layout resume-two-column-layout';
+  } else if (isTwoPage) {
+    baseClass = 'resume-two-page-layout';
+  } else if (isTwoColumn) {
+    baseClass = 'resume-two-column-layout';
+  }
+
+  const paperSizeClass = paperSize === 'A4' ? 'a4-paper' : '';
+  const templateClass = `template-${template}`;
+
+  return `${baseClass} ${paperSizeClass} ${templateClass}`.trim();
 };

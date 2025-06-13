@@ -30,10 +30,10 @@ export const useDynamicCSS = () => {
       if (savedCSS) {
         console.log(`📝 Loading saved CSS for ${templateName}`);
         templateCSSRef.current[templateName] = savedCSS;
-      } else {
+    } else {
         console.log(`🎨 Using default CSS for ${templateName}`);
         templateCSSRef.current[templateName] = templateCSS;
-      }
+    }
     });
 
     // Apply initial CSS with all templates loaded

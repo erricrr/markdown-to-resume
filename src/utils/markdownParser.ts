@@ -62,37 +62,40 @@ const RIGHT_COLUMN_SECTIONS = [
 export const extractHeader = (markdown: string): string => {
   const lines = markdown.split('\n');
   const headerLines: string[] = [];
+  let headerStarted = false;
 
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
+  for (const line of lines) {
+    const trimmedLine = line.trim();
 
-    // Stop at the first ## heading (section start)
-    if (line.startsWith('## ')) {
+    // Stop at any H2+ heading, as that's definitely not the header
+    if (trimmedLine.startsWith('##')) {
       break;
     }
 
-    // Include main heading (# Name) and contact info lines
-    if (line.startsWith('# ') ||
-        line.includes('@') ||
-        line.toLowerCase().includes('phone') ||
-        line.toLowerCase().includes('linkedin') ||
-        line.toLowerCase().includes('github') ||
-        line.toLowerCase().includes('website') ||
-        line.toLowerCase().includes('portfolio') ||
-        line.startsWith('**') ||
-        (line.includes('|') && (line.includes('@') || line.includes('(') || line.includes('+'))) ||
-        line.match(/^\*.*\*|\*\*.*\*\*/) ||
-        line.match(/\(\d{3}\)|\d{3}-\d{3}-\d{4}|\+\d+/) || // Phone number patterns
-        line.match(/https?:\/\//) || // URLs
-        (line && i < 5 && !line.startsWith('#'))) { // First few non-heading lines
-      headerLines.push(line);
-    } else if (line === '' && headerLines.length > 0) {
-      // Include empty lines within header section for formatting
+    if (trimmedLine.startsWith('# ')) {
+      headerStarted = true;
+    }
+
+    if (headerStarted) {
+      // The header is the contiguous block of text after the H1.
+      // The first blank line signifies the end of the header/contact block.
+      if (trimmedLine === '' && headerLines.length > 0) {
+        const lastLine = headerLines[headerLines.length - 1].trim();
+        if (lastLine !== '') {
+          // Break only if the blank line follows a non-blank line.
+          break;
+        }
+      }
       headerLines.push(line);
     }
   }
 
-  return headerLines.join('\n').trim();
+  // Clean up any trailing blank lines that might have been captured
+  while (headerLines.length > 0 && headerLines[headerLines.length - 1].trim() === '') {
+    headerLines.pop();
+  }
+
+  return headerLines.join('\n');
 };
 
 /**
@@ -166,21 +169,53 @@ export const extractSummary = (markdown: string): string => {
 };
 
 /**
- * Parses markdown into sections
+ * Parses markdown into sections, excluding summary content that's already been extracted
  */
-export const parseMarkdownSections = (markdown: string): ParsedSection[] => {
+export const parseMarkdownSections = (markdown: string, extractedSummary?: string): ParsedSection[] => {
   const lines = markdown.split('\n');
   const sections: ParsedSection[] = [];
   let currentSection: ParsedSection | null = null;
   let currentContent: string[] = [];
+  let skipSummaryContent = false;
+  let afterHeader = false;
+  let headerEnded = false;
+  let inImplicitSummary = false;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
+
+    // Track if we're past the header
+    if (line.startsWith('# ')) {
+      afterHeader = true;
+      continue;
+    }
+
+    // Header content patterns
+    const isHeaderContent = line.includes('@') ||
+        line.toLowerCase().includes('phone') ||
+        line.toLowerCase().includes('linkedin') ||
+        line.startsWith('**') ||
+        line.match(/\(\d{3}\)|\d{3}-\d{3}-\d{4}|\+\d+/) ||
+        line.match(/https?:\/\//) ||
+        (line.includes('|') && (line.includes('@') || line.includes('(') || line.includes('+')));
+
+    if (afterHeader && !isHeaderContent && !headerEnded) {
+      headerEnded = true;
+      // If we have an extracted summary, we should skip content until the first ## section
+      if (extractedSummary && extractedSummary.trim()) {
+        inImplicitSummary = true;
+      }
+    }
 
     // Check for heading
     const headingMatch = line.match(/^(#{1,6})\s+(.+)$/);
 
     if (headingMatch) {
+      // End implicit summary when we hit a real section
+      if (inImplicitSummary) {
+        inImplicitSummary = false;
+      }
+
       // Save previous section
       if (currentSection) {
         currentSection.content = currentContent.join('\n').trim();
@@ -198,20 +233,34 @@ export const parseMarkdownSections = (markdown: string): ParsedSection[] => {
         continue;
       }
 
+      // Check if this is a summary section that we should skip (to avoid duplication)
+      const isSummarySection = line.match(/^##?\s*(summary|professional summary|about|profile|objective|overview|bio|introduction)/i);
+      if (isSummarySection && extractedSummary && extractedSummary.trim()) {
+        skipSummaryContent = true;
+        currentSection = null;
+        currentContent = [];
+        continue;
+      } else {
+        skipSummaryContent = false;
+      }
+
       currentSection = {
         type: title.toLowerCase(),
         content: line, // Include the heading in content
         level: level
       };
       currentContent = [line];
-    } else if (currentSection) {
-      // Add content to current section
+    } else if (currentSection && !skipSummaryContent && !inImplicitSummary) {
+      // Add content to current section (skip if we're in a summary section or implicit summary)
       currentContent.push(line);
+    } else if (skipSummaryContent && line.startsWith('#')) {
+      // End of summary section, stop skipping
+      skipSummaryContent = false;
     }
   }
 
   // Add final section
-  if (currentSection) {
+  if (currentSection && !skipSummaryContent && !inImplicitSummary) {
     currentSection.content = currentContent.join('\n').trim();
     sections.push(currentSection);
   }
@@ -254,7 +303,7 @@ export const splitMarkdownForTwoColumn = (markdown: string): SplitContent => {
 
   const header = extractHeader(markdown);
   const summary = extractSummary(markdown);
-  const sections = parseMarkdownSections(markdown);
+  const sections = parseMarkdownSections(markdown, summary);
 
   const leftSections: string[] = [];
   const rightSections: string[] = [];
