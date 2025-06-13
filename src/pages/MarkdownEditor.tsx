@@ -101,7 +101,9 @@ const MarkdownEditor = () => {
 
   const [selectedTemplate, setSelectedTemplate] = useState<string>(() => localStorage.getItem('selected-template') || 'professional');
   const [isTwoColumn, setIsTwoColumn] = useState(false);
-  const [paperSize, setPaperSize] = useState<'A4' | 'US_LETTER'>('A4');
+  const [paperSize, setPaperSize] = useState<'A4' | 'US_LETTER'>(() => {
+    return (localStorage.getItem('paper-size') as 'A4' | 'US_LETTER') || 'A4';
+  });
   const [activeTab, setActiveTab] = useState('editor');
   const previewRef = useRef<HTMLDivElement>(null);
 
@@ -135,6 +137,9 @@ const MarkdownEditor = () => {
    useEffect(() => {
     localStorage.setItem('selected-template', selectedTemplate);
   }, [selectedTemplate]);
+  useEffect(() => {
+    localStorage.setItem('paper-size', paperSize);
+  }, [paperSize]);
 
   const handleTwoColumnToggle = (checked: boolean) => {
     setIsTwoColumn(checked);

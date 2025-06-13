@@ -420,7 +420,9 @@ const HtmlEditor = () => {
     const saved = localStorage.getItem('html-editor-content');
     return saved || defaultHtml;
   });
-  const [paperSize, setPaperSize] = useState<'A4' | 'US_LETTER'>('A4');
+  const [paperSize, setPaperSize] = useState<'A4' | 'US_LETTER'>(() => {
+    return (localStorage.getItem('paper-size') as 'A4' | 'US_LETTER') || 'A4';
+  });
   const previewRef = useRef<HTMLDivElement>(null);
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
 
@@ -432,6 +434,10 @@ const HtmlEditor = () => {
   useEffect(() => {
     localStorage.setItem('html-editor-content', html);
   }, [html]);
+
+  useEffect(() => {
+    localStorage.setItem('paper-size', paperSize);
+  }, [paperSize]);
 
   const handlePaperSizeChange = (size: 'A4' | 'US_LETTER') => {
     setPaperSize(size);
