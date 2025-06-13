@@ -13,7 +13,7 @@ import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/componen
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useFileUpload } from '@/contexts/FileUploadContext';
-import { TipTooltip } from '@/components/MarkdownTips';
+import { TipTooltip } from '@/components/UsageTips';
 
 const defaultHtml = `<!DOCTYPE html>
 <html lang="en">
