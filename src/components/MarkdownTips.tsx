@@ -3,7 +3,7 @@ import { Info } from 'lucide-react';
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 interface TipTooltipProps {
-  type: 'markdown' | 'html' | 'two-column' | 'css' | 'custom';
+  type: 'markdown' | 'html' | 'css' | 'custom';
   customContent?: React.ReactNode;
   className?: string;
   selectedTemplate?: string;
@@ -37,20 +37,9 @@ export const TipTooltip: React.FC<TipTooltipProps> = ({ type, customContent, cla
       );
       break;
 
-    case 'two-column':
-      content = (
-        <div className="space-y-1">
-          <p className="font-medium">💡 Two-Column Tips:</p>
-          <p>• Content is automatically arranged in two columns</p>
-          <p>• Left column is typically for skills, contact, education</p>
-          <p>• Right column is typically for experience, projects</p>
-        </div>
-      );
-      break;
-
     case 'css':
       content = (
-        <div className="space-y-1 text-sm">
+        <div className="space-y-1">
           <p className="font-medium">💡 CSS Editor Tips:</p>
           <div><strong>CSS Variables:</strong> Use --resume-font-family, --resume-font-size, --resume-h1-font-size for easy customization</div>
           <div><strong>Colors:</strong> Target .template-{selectedTemplate} for template-specific styling</div>
@@ -77,7 +66,7 @@ export const TipTooltip: React.FC<TipTooltipProps> = ({ type, customContent, cla
           <span className="text-xs text-blue-700 font-medium">Tips</span>
         </div>
       </TooltipTrigger>
-      <TooltipContent className="max-w-md p-3 text-sm">
+      <TooltipContent className="max-w-2xl p-3 text-sm">
         {content}
       </TooltipContent>
     </Tooltip>
