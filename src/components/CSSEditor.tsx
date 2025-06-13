@@ -5,7 +5,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Code, Download, RotateCcw, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { templateStyles } from '../styles/resumeTemplates';
-import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { TipTooltip } from '@/components/UsageTips';
 
 export interface CSSEditorProps {

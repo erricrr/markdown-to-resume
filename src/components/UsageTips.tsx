@@ -15,7 +15,7 @@ export const TipTooltip: React.FC<TipTooltipProps> = ({ type, customContent, cla
   switch (type) {
     case 'markdown':
       content = (
-        <div className="space-y-1">
+        <div className="space-y-0">
           <p className="font-medium">💡 Markdown Tips:</p>
           <p>• Use Markdown formatting for rich text (# for headings, ** for bold, etc.)</p>
           <p>• Two-column mode will intelligently parse your content</p>
@@ -27,7 +27,7 @@ export const TipTooltip: React.FC<TipTooltipProps> = ({ type, customContent, cla
 
     case 'html':
       content = (
-        <div className="space-y-1">
+        <div className="space-y-0">
           <p className="font-medium">💡 HTML Tips:</p>
           <p>• Create interactive resumes with HTML, CSS, and JavaScript</p>
           <p>• Use semantic HTML elements for better structure</p>
@@ -39,7 +39,7 @@ export const TipTooltip: React.FC<TipTooltipProps> = ({ type, customContent, cla
 
     case 'css':
       content = (
-        <div className="space-y-1">
+        <div className="space-y-0">
           <p className="font-medium">💡 CSS Editor Tips:</p>
           <div><strong>CSS Variables:</strong> Use --resume-font-family, --resume-font-size, --resume-h1-font-size for easy customization</div>
           <div><strong>Colors:</strong> Target .template-{selectedTemplate} for template-specific styling</div>
@@ -52,7 +52,7 @@ export const TipTooltip: React.FC<TipTooltipProps> = ({ type, customContent, cla
 
     case 'two-column':
       content = (
-        <div className="space-y-1">
+        <div className="space-y-0">
           <p className="font-medium">💡 Two-Column Tips:</p>
           <p>• Header and summary appear at the top spanning both columns</p>
           <p>• Left column is ideal for contact info, skills, education</p>
@@ -78,7 +78,7 @@ export const TipTooltip: React.FC<TipTooltipProps> = ({ type, customContent, cla
           <span className="text-xs text-blue-700 font-medium">Tips</span>
         </div>
       </TooltipTrigger>
-      <TooltipContent className="max-w-2xl p-3 text-sm">
+      <TooltipContent className="max-w-lg lg::max-w-3xl p-3 text-sm">
         {content}
       </TooltipContent>
     </Tooltip>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Printer, Download } from "lucide-react";
+import { Download } from "lucide-react";
 
 interface HtmlPrintPreviewProps {
   html: string;
