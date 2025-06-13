@@ -21,14 +21,23 @@ export const useDynamicCSS = () => {
     document.head.appendChild(styleElementRef.current);
     console.log('✅ Dynamic CSS style element created and added to head');
 
-    // Initialize with default Professional template CSS
-    if (templateStyles.professional) {
-      console.log('🎨 Initializing with default Professional template CSS');
-      templateCSSRef.current.professional = templateStyles.professional;
-      updateAllCSS();
-    } else {
-      console.error('❌ Default Professional template CSS not found in templateStyles');
-    }
+    // CRITICAL FIX: Initialize templateCSSRef with ALL default template styles
+    // This ensures templates work correctly regardless of selection order
+    console.log('🎨 Initializing templateCSSRef with all default template styles');
+    Object.entries(templateStyles).forEach(([templateName, templateCSS]) => {
+      // Check if we have saved CSS for this template
+      const savedCSS = localStorage.getItem(`css-editor-${templateName}`);
+      if (savedCSS) {
+        console.log(`📝 Loading saved CSS for ${templateName}`);
+        templateCSSRef.current[templateName] = savedCSS;
+      } else {
+        console.log(`🎨 Using default CSS for ${templateName}`);
+        templateCSSRef.current[templateName] = templateCSS;
+      }
+    });
+
+    // Apply initial CSS with all templates loaded
+    updateAllCSS();
 
     // Add a special style element for executive template fonts
     ensureExecutiveFontsApplied();
@@ -58,11 +67,8 @@ export const useDynamicCSS = () => {
     // Start with base resume styles (includes bullets, layout, etc.)
     let allCSS = `/* BASE RESUME STYLES */\n${baseResumeStyles}\n\n`;
 
-    // Add all default template styles from single source of truth
-    allCSS += `/* DEFAULT TEMPLATE STYLES FROM SINGLE SOURCE OF TRUTH */\n`;
-    Object.entries(templateStyles).forEach(([templateName, templateCSS]) => {
-      allCSS += `\n/* ${templateName.toUpperCase()} TEMPLATE */\n${templateCSS}\n`;
-    });
+    // REMOVED: Don't add default template styles here since they're now in templateCSSRef.current
+    // This prevents duplicate styles and ensures user customizations take precedence
 
     // NEW: Add print styles directly to live preview for perfect PDF consistency
     // Extract print styles and apply them directly (not wrapped in @media print)
@@ -209,56 +215,36 @@ export const useDynamicCSS = () => {
   margin-top: 0.5rem !important;
 }
 
-/* FIX: Modern and Executive templates H2 background elements in two-column layout */
-/* Ensure background elements are not cut off by adding proper top spacing */
+/* FIX: Adjust spacing for templates with background elements in two-column layout */
+/* Only adjust spacing - preserve all template-specific styling */
 .resume-template.resume-two-column-layout.template-modern .resume-heading-2,
 .resume-template.resume-two-column-layout.template-modern h2,
+.resume-template.resume-two-column-layout.template-creative .resume-heading-2,
+.resume-template.resume-two-column-layout.template-creative h2,
 .resume-template.resume-two-column-layout.template-executive .resume-heading-2,
 .resume-template.resume-two-column-layout.template-executive h2 {
   margin-top: 1rem !important;
   overflow: visible !important;
-  /* Ensure background extends fully */
-  display: block !important;
-  width: 100% !important;
+  /* Don't override display or width - let templates handle their own styling */
 }
 
-/* CREATIVE TEMPLATE: Preserve inline-block display for clip-path arrow shape */
-.resume-template.resume-two-column-layout.template-creative .resume-heading-2,
-.resume-template.resume-two-column-layout.template-creative h2 {
-  margin-top: 1rem !important;
-  overflow: visible !important;
-  /* Keep inline-block for Creative template's arrow design */
-  display: inline-block !important;
-  /* Ensure full width while maintaining inline-block behavior */
-  width: calc(100% - 0.5rem) !important;
-  box-sizing: border-box !important;
-}
-
-/* Specific fixes for first H2 elements in columns - SEPARATED BY TEMPLATE */
-/* Modern and Executive templates: Use block display */
+/* Specific spacing adjustments for first H2 elements in columns */
+/* Only adjust spacing - preserve all template-specific styling */
 .resume-template.resume-two-column-layout.template-modern .resume-column-left > .resume-heading-2:first-child,
 .resume-template.resume-two-column-layout.template-modern .resume-column-right > .resume-heading-2:first-child,
 .resume-template.resume-two-column-layout.template-modern .resume-column-left > h2:first-child,
 .resume-template.resume-two-column-layout.template-modern .resume-column-right > h2:first-child,
+.resume-template.resume-two-column-layout.template-creative .resume-column-left > .resume-heading-2:first-child,
+.resume-template.resume-two-column-layout.template-creative .resume-column-right > .resume-heading-2:first-child,
+.resume-template.resume-two-column-layout.template-creative .resume-column-left > h2:first-child,
+.resume-template.resume-two-column-layout.template-creative .resume-column-right > h2:first-child,
 .resume-template.resume-two-column-layout.template-executive .resume-column-left > .resume-heading-2:first-child,
 .resume-template.resume-two-column-layout.template-executive .resume-column-right > .resume-heading-2:first-child,
 .resume-template.resume-two-column-layout.template-executive .resume-column-left > h2:first-child,
 .resume-template.resume-two-column-layout.template-executive .resume-column-right > h2:first-child {
   margin-top: 0.75rem !important;
   padding-top: 0.5rem !important;
-}
-
-/* Creative template: Preserve inline-block display for first H2 elements */
-.resume-template.resume-two-column-layout.template-creative .resume-column-left > .resume-heading-2:first-child,
-.resume-template.resume-two-column-layout.template-creative .resume-column-right > .resume-heading-2:first-child,
-.resume-template.resume-two-column-layout.template-creative .resume-column-left > h2:first-child,
-.resume-template.resume-two-column-layout.template-creative .resume-column-right > h2:first-child {
-  margin-top: 0.75rem !important;
-  padding-top: 0.5rem !important;
-  /* Preserve inline-block for Creative template's arrow design */
-  display: inline-block !important;
-  width: calc(100% - 0.5rem) !important;
-  box-sizing: border-box !important;
+  /* Don't override display properties - let templates handle their own styling */
 }
 
 /* UNIFIED SUMMARY SECTION SPACING FOR LIVE PREVIEW - MATCHES PDF */
