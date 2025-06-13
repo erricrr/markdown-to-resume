@@ -68,93 +68,76 @@ Experienced software engineer with 5+ years developing scalable web applications
 - Developed collaborative task management application
 - Technologies: Vue.js, Firebase, PWA`;
 
+const defaultInitialCSS = `/*
+ * Welcome to the Custom CSS Editor!
+ *
+ * You can style standard HTML elements like h1, p, a, etc.
+ * Your styles will be applied only to the resume preview.
+ *
+ * Example: Make all links red
+ * a {
+ *   color: red;
+ * }
+ */
+
+h1, h2, h3 {
+  font-family: 'Merriweather', serif;
+}
+
+body {
+  font-family: 'Lato', sans-serif;
+  line-height: 1.6;
+}
+`;
+
 const MarkdownEditor = () => {
   const navigate = useNavigate();
-  const [markdown, setMarkdown] = useState(() => {
-    const saved = localStorage.getItem('markdown-editor-content');
-    return saved || defaultMarkdown;
-  });
+  const [markdown, setMarkdown] = useState(() => localStorage.getItem('markdown-editor-content') || defaultMarkdown);
 
-  const [header, setHeader] = useState('');
-  const [summary, setSummary] = useState('');
-  const [leftColumn, setLeftColumn] = useState('');
-  const [rightColumn, setRightColumn] = useState('');
-  const [selectedTemplate, setSelectedTemplate] = useState<string>('professional');
+  const [header, setHeader] = useState(() => localStorage.getItem('markdown-editor-header') || '');
+  const [summary, setSummary] = useState(() => localStorage.getItem('markdown-editor-summary') || '');
+  const [leftColumn, setLeftColumn] = useState(() => localStorage.getItem('markdown-editor-left-column') || '');
+  const [rightColumn, setRightColumn] = useState(() => localStorage.getItem('markdown-editor-right-column') || '');
+
+  const [selectedTemplate, setSelectedTemplate] = useState<string>(() => localStorage.getItem('selected-template') || 'professional');
   const [isTwoColumn, setIsTwoColumn] = useState(false);
   const [paperSize, setPaperSize] = useState<'A4' | 'US_LETTER'>('A4');
   const [activeTab, setActiveTab] = useState('editor');
   const previewRef = useRef<HTMLDivElement>(null);
-  const { addTemplateCSS, debugCSS } = useDynamicCSS();
-  const isSmallScreen = useMediaQuery('(max-width: 768px)');
+
+  const [customCSS, setCustomCSS] = useState(() => localStorage.getItem('custom-css-content') || defaultInitialCSS);
+
+  // The hook now manages template styles and custom overrides
+  useDynamicCSS(selectedTemplate, customCSS);
 
   const { leftPanelSize, handlePanelResize } = usePanelManagement('markdown-editor');
-  const { uploadedFileUrl, uploadedFileName, refreshTimestamp, triggerRefresh } = useImageReferenceDetection(markdown, { detectMarkdown: true });
+  const { uploadedFileUrl, uploadedFileName, refreshTimestamp } = useImageReferenceDetection(markdown, { detectMarkdown: true });
 
-  const prevUploadedFileUrlRef = useRef(uploadedFileUrl);
-  const prevUploadedFileNameRef = useRef(uploadedFileName);
-
-  // Check for image references in markdown content
-  const detectImageReferences = (content: string) => {
-    const markdownImageRegex = /!\[.*?\]\(.*?\)/;
-    const htmlImageRegex = /<img.*?>/i;
-    return markdownImageRegex.test(content) || htmlImageRegex.test(content);
-  };
-
-  // Check all content sources for image references
-  useEffect(() => {
-    const checkForImageReferences = () => {
-      const sources = [markdown, header, summary, leftColumn, rightColumn];
-
-      const hasAnyImageReference = sources.some((content) => content && detectImageReferences(content));
-
-      if (hasAnyImageReference && (!uploadedFileUrl || uploadedFileUrl !== prevUploadedFileUrlRef.current)) {
-        triggerRefresh();
-      }
-
-      if (!hasAnyImageReference && prevUploadedFileUrlRef.current && uploadedFileUrl) {
-        triggerRefresh();
-      }
-    };
-
-    checkForImageReferences();
-
-    prevUploadedFileUrlRef.current = uploadedFileUrl;
-    prevUploadedFileNameRef.current = uploadedFileName;
-  }, [markdown, header, summary, leftColumn, rightColumn, uploadedFileUrl, uploadedFileName, triggerRefresh]);
-
-  const renderPreviewBadge = () => (
-    <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200 shrink-0">
-      PDF-accurate preview
-    </Badge>
-  );
-
+  // Persist state to localStorage
   useEffect(() => {
     localStorage.setItem('markdown-editor-content', markdown);
   }, [markdown]);
-
   useEffect(() => {
     localStorage.setItem('markdown-editor-header', header);
   }, [header]);
-
   useEffect(() => {
     localStorage.setItem('markdown-editor-summary', summary);
   }, [summary]);
-
   useEffect(() => {
     localStorage.setItem('markdown-editor-left-column', leftColumn);
   }, [leftColumn]);
-
   useEffect(() => {
     localStorage.setItem('markdown-editor-right-column', rightColumn);
   }, [rightColumn]);
-
-  const handlePrintPDF = () => {
-    window.print();
-  };
+  useEffect(() => {
+    localStorage.setItem('custom-css-content', customCSS);
+  }, [customCSS]);
+   useEffect(() => {
+    localStorage.setItem('selected-template', selectedTemplate);
+  }, [selectedTemplate]);
 
   const handleTwoColumnToggle = (checked: boolean) => {
     setIsTwoColumn(checked);
-
     if (checked && markdown.trim() && markdown.length > 50) {
       import('@/utils/markdownParser').then(({ splitMarkdownForTwoColumn }) => {
         try {
@@ -188,12 +171,8 @@ const MarkdownEditor = () => {
         <Tabs defaultValue="editor" value={activeTab} onValueChange={setActiveTab} className="h-full">
           <div className="px-4 border-b">
             <TabsList className="w-full justify-start">
-              <TabsTrigger value="editor" className="flex-1">
-                Editor
-              </TabsTrigger>
-              <TabsTrigger value="css" className="flex-1">
-                CSS
-              </TabsTrigger>
+              <TabsTrigger value="editor" className="flex-1">Editor</TabsTrigger>
+              <TabsTrigger value="css" className="flex-1">CSS</TabsTrigger>
             </TabsList>
           </div>
           <TabsContent value="editor" className="h-[calc(100%-40px)] mt-0">
@@ -202,9 +181,7 @@ const MarkdownEditor = () => {
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
                     <Switch id="two-column" checked={isTwoColumn} onCheckedChange={handleTwoColumnToggle} />
-                    <label htmlFor="two-column" className="text-sm font-medium">
-                      Two Column
-                    </label>
+                    <label htmlFor="two-column" className="text-sm font-medium">Two Column</label>
                   </div>
                 </div>
                 <TemplateSelector selectedTemplate={selectedTemplate} onTemplateChange={setSelectedTemplate} />
@@ -221,10 +198,8 @@ const MarkdownEditor = () => {
           </TabsContent>
           <TabsContent value="css" className="h-[calc(100%-40px)] mt-0">
             <CSSEditor
-              selectedTemplate={selectedTemplate}
-              onTemplateChange={setSelectedTemplate}
-              onCSSChange={(template, css) => addTemplateCSS(template, css)}
-              debugCSS={debugCSS}
+              initialCSS={customCSS}
+              onCSSChange={setCustomCSS}
             />
           </TabsContent>
         </Tabs>
@@ -268,7 +243,9 @@ const MarkdownEditor = () => {
                     <Eye className="h-4 w-4 text-primary shrink-0" />
                     <h2 className="text-base font-semibold text-foreground truncate">Live Preview</h2>
                   </div>
-                  {renderPreviewBadge()}
+                   <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200 shrink-0">
+                      PDF-accurate preview
+                    </Badge>
                 </div>
               </div>
               <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 bg-gray-50">
