@@ -1,5 +1,28 @@
-import { getCompleteCSS } from '../styles/resumeTemplates';
+import { getCompleteCSS, baseResumeStyles, templateStyles } from '../styles/resumeTemplates';
 import { generateCompleteResumeHTML, type ResumeContentData } from './resumeContentGenerator';
+
+// This function scopes user CSS to reliably override template styles
+const processAndScopeUserCSS = (css: string): string => {
+  if (!css) return '';
+  try {
+    return css.replace(/(^|}|,)\s*([^{}]+)\s*(?={)/g, (match, prefix, selector) => {
+      const scopedSelector = selector
+        .split(',')
+        .map(part => {
+          const trimmedPart = part.trim();
+          if (trimmedPart.startsWith('@') || trimmedPart.startsWith(':') || trimmedPart.startsWith('from') || trimmedPart.startsWith('to')) {
+            return trimmedPart;
+          }
+          return `.resume-template ${trimmedPart}`;
+        })
+        .join(', ');
+      return `${prefix} ${scopedSelector}`;
+    });
+  } catch (error) {
+    console.error("Failed to scope custom CSS for PDF, applying it directly:", error);
+    return css;
+  }
+};
 
 interface ResumeData {
   markdown: string;
@@ -18,29 +41,31 @@ interface ResumeData {
 }
 
 export const exportToPDF = async (resumeData: ResumeData) => {
-  // Use the shared utility to generate the resume's body HTML
   const bodyHtml = generateCompleteResumeHTML(resumeData as ResumeContentData);
 
-  // Get all <link> and <style> tags from the main document's head, excluding the original title
-  const headContent = Array.from(document.head.children)
-    .filter(el => el.tagName.toLowerCase() !== 'title')
+  // Get all <link> tags from the main document's head, excluding title and styles we'll replace
+  const headLinks = Array.from(document.head.children)
+    .filter(el => el.tagName.toLowerCase() === 'link')
     .map(el => el.outerHTML)
     .join('\n');
 
-  // Get any dynamic CSS that has been applied via the CSS editor
-  const getDynamicCSS = () => {
-    const dynamicStyleElement = document.getElementById('dynamic-template-css') as HTMLStyleElement;
-    return dynamicStyleElement ? dynamicStyleElement.textContent : '';
-  };
+  // Retrieve the user's custom CSS from localStorage
+  const customCSS = localStorage.getItem('custom-css-content') || '';
+  const { paperSize = 'A4', template } = resumeData;
 
-  const baseCSS = getCompleteCSS(resumeData.template);
-  const dynamicCSS = getDynamicCSS();
-  const { paperSize = 'A4' } = resumeData;
+  // --- Replicate the exact style generation logic from useDynamicCSS ---
+  // 1. Start with the base styles for all resumes.
+  const baseCSS = baseResumeStyles;
+  // 2. Add the styles for the currently selected template.
+  const selectedTemplateCSS = templateStyles[template] || '';
+  // 3. Add the user's custom CSS, processed to have higher specificity.
+  const scopedUserCSS = processAndScopeUserCSS(customCSS);
+  // --- End of replicated logic ---
 
-  // Combine base styles with dynamic (user-edited) styles
   const fullCss = `
     ${baseCSS}
-    ${dynamicCSS}
+    ${selectedTemplateCSS}
+    ${scopedUserCSS}
 
     /* PDF-specific overrides */
     @page {
@@ -50,59 +75,37 @@ export const exportToPDF = async (resumeData: ResumeData) => {
     body {
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
-      color-adjust: exact !important;
-    }
-    /* Critical fixes for two-page layouts */
-    .resume-two-page-layout {
-      overflow: visible !important;
     }
     .resume-two-page-layout .resume-page-first {
       page-break-after: always !important;
-      break-after: page !important;
-      min-height: ${paperSize === 'A4' ? '11.69in' : '11in'} !important;
-    }
-    .resume-two-page-layout .resume-page-second {
-      page-break-before: always !important;
-      break-before: page !important;
-      min-height: ${paperSize === 'A4' ? '11.69in' : '11in'} !important;
     }
   `;
 
   const templateClasses = getTemplateClasses(resumeData);
 
-  // Create the complete HTML document for the new window
   const fullHtml = `
     <!DOCTYPE html>
     <html lang="en">
     <head>
-      ${headContent}
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      ${headLinks}
       <title>Resume - ${paperSize === 'A4' ? 'A4' : 'US Letter'} Format</title>
-      <style id="pdf-styles">
-        ${fullCss}
-      </style>
+      <style id="pdf-styles">${fullCss}</style>
     </head>
     <body>
       <div class="resume-template ${templateClasses}" data-paper-size="${paperSize}">
         ${bodyHtml}
       </div>
       <script>
-        window.onload = function() {
-          // Wait for all resources, including fonts, to load before printing
-          Promise.all(Array.from(document.fonts).map(font => font.load())).then(() => {
-            setTimeout(() => {
-              window.print();
-            }, 800); // A small delay ensures rendering completes
-          }).catch(err => {
-            console.error('Error loading fonts:', err);
-            window.print(); // Print anyway on error
-          });
+        window.onload = () => {
+          setTimeout(() => window.print(), 500); // Delay to ensure fonts and styles render
         };
       </script>
     </body>
     </html>
   `;
 
-  // Open the HTML in a new window and trigger the print dialog
   const printWindow = window.open('', '_blank');
   if (printWindow) {
     printWindow.document.write(fullHtml);
@@ -112,19 +115,14 @@ export const exportToPDF = async (resumeData: ResumeData) => {
   }
 };
 
-// Helper function to get template classes (moved outside the main function)
+// Helper function to get template classes
 const getTemplateClasses = (resumeData: ResumeData) => {
   const { template, isTwoColumn = false, isTwoPage = false, paperSize = 'A4' } = resumeData;
   let baseClass = '';
-  if (isTwoPage && isTwoColumn) {
-    baseClass = 'resume-two-page-layout resume-two-column-layout';
-  } else if (isTwoPage) {
-    baseClass = 'resume-two-page-layout';
-  } else if (isTwoColumn) {
-    baseClass = 'resume-two-column-layout';
-  }
+  if (isTwoPage) baseClass += ' resume-two-page-layout';
+  if (isTwoColumn) baseClass += ' resume-two-column-layout';
 
-  const paperSizeClass = paperSize === 'A4' ? 'a4-paper' : '';
+  const paperSizeClass = paperSize === 'A4' ? 'a4-paper' : 'us-letter-paper';
   const templateClass = `template-${template}`;
 
   return `${baseClass} ${paperSizeClass} ${templateClass}`.trim();

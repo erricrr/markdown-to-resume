@@ -5,12 +5,29 @@ import { baseResumeStyles, templateStyles } from '../styles/resumeTemplates';
 // so it can reliably override the base template styles.
 const processAndScopeUserCSS = (css: string): string => {
   if (!css) return '';
-  // By wrapping the user's CSS in a selector that targets the resume container,
-  // we increase its specificity. The ":is" pseudo-class is a modern way
-  // to apply this scope without breaking selectors.
-  return `.resume-template {
-    ${css}
-  }`;
+  try {
+    // This regex finds all CSS selectors and prepends the scope.
+    // It's designed to avoid scoping @-rules like @keyframes or @media.
+    return css.replace(/(^|}|,)\s*([^{}]+)\s*(?={)/g, (match, prefix, selector) => {
+      const scopedSelector = selector
+        .split(',')
+        .map(part => {
+          const trimmedPart = part.trim();
+          if (trimmedPart.startsWith('@') || trimmedPart.startsWith(':') || trimmedPart.startsWith('from') || trimmedPart.startsWith('to')) {
+            // Don't scope @-rules, pseudo-classes, or keyframe selectors
+            return trimmedPart;
+          }
+          // Prepend the scope to make the selector more specific
+          return `.resume-template ${trimmedPart}`;
+        })
+        .join(', ');
+      return `${prefix} ${scopedSelector}`;
+    });
+  } catch (error) {
+    console.error("Failed to scope custom CSS, applying it directly:", error);
+    // Fallback to applying CSS without scoping if regex fails
+    return css;
+  }
 };
 
 export const useDynamicCSS = (template: string, customCSS: string) => {
