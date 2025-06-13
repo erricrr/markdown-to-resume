@@ -224,11 +224,17 @@ export const useDynamicCSS = () => {
   width: 100% !important;
 }
 
-/* Specific fixes for first H2 elements in columns */
+/* Specific fixes for first H2 elements in columns - CONSISTENT WITH RESUMETEMPLATES.TS */
+.resume-template.resume-two-column-layout.template-modern .resume-column-left > .resume-heading-2:first-child,
+.resume-template.resume-two-column-layout.template-modern .resume-column-right > .resume-heading-2:first-child,
 .resume-template.resume-two-column-layout.template-modern .resume-column-left > h2:first-child,
 .resume-template.resume-two-column-layout.template-modern .resume-column-right > h2:first-child,
+.resume-template.resume-two-column-layout.template-creative .resume-column-left > .resume-heading-2:first-child,
+.resume-template.resume-two-column-layout.template-creative .resume-column-right > .resume-heading-2:first-child,
 .resume-template.resume-two-column-layout.template-creative .resume-column-left > h2:first-child,
 .resume-template.resume-two-column-layout.template-creative .resume-column-right > h2:first-child,
+.resume-template.resume-two-column-layout.template-executive .resume-column-left > .resume-heading-2:first-child,
+.resume-template.resume-two-column-layout.template-executive .resume-column-right > .resume-heading-2:first-child,
 .resume-template.resume-two-column-layout.template-executive .resume-column-left > h2:first-child,
 .resume-template.resume-two-column-layout.template-executive .resume-column-right > h2:first-child {
   margin-top: 0.75rem !important;

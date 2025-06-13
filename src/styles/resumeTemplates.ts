@@ -248,6 +248,8 @@ body {
   margin-top: 0.5rem !important;
 }
 
+
+
 /* FIX: Modern, Creative, and Executive templates H2 background elements in two-column layout */
 /* Ensure background elements are not cut off by adding proper top spacing */
 .resume-two-column-layout .template-modern .resume-heading-2,
@@ -263,17 +265,17 @@ body {
   width: 100% !important;
 }
 
-/* Specific fixes for first H2 elements in columns */
-.resume-two-column-layout .resume-column-left > .template-modern.resume-heading-2:first-child,
-.resume-two-column-layout .resume-column-right > .template-modern.resume-heading-2:first-child,
-.resume-two-column-layout .resume-column-left > .template-creative.resume-heading-2:first-child,
-.resume-two-column-layout .resume-column-right > .template-creative.resume-heading-2:first-child,
-.resume-two-column-layout .resume-column-left > .template-executive.resume-heading-2:first-child,
-.resume-two-column-layout .resume-column-right > .template-executive.resume-heading-2:first-child,
+/* Specific fixes for first H2 elements in columns - CONSOLIDATED */
+.resume-two-column-layout.template-modern .resume-column-left > .resume-heading-2:first-child,
+.resume-two-column-layout.template-modern .resume-column-right > .resume-heading-2:first-child,
 .resume-two-column-layout.template-modern .resume-column-left > h2:first-child,
 .resume-two-column-layout.template-modern .resume-column-right > h2:first-child,
+.resume-two-column-layout.template-creative .resume-column-left > .resume-heading-2:first-child,
+.resume-two-column-layout.template-creative .resume-column-right > .resume-heading-2:first-child,
 .resume-two-column-layout.template-creative .resume-column-left > h2:first-child,
 .resume-two-column-layout.template-creative .resume-column-right > h2:first-child,
+.resume-two-column-layout.template-executive .resume-column-left > .resume-heading-2:first-child,
+.resume-two-column-layout.template-executive .resume-column-right > .resume-heading-2:first-child,
 .resume-two-column-layout.template-executive .resume-column-left > h2:first-child,
 .resume-two-column-layout.template-executive .resume-column-right > h2:first-child {
   margin-top: 0.75rem !important;
