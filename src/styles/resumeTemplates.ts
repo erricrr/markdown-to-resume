@@ -16,9 +16,9 @@ export const baseResumeStyles = `
   --resume-h3-font-size: 12pt;
   --resume-h4-font-size: 11pt;
   --resume-section-spacing: 8pt;
-  --resume-summary-spacing: 0.75rem;
+  --resume-summary-spacing: 0;
   --resume-header-spacing: 0.125rem;
-  --resume-contact-spacing: 0.375rem; /* Increased spacing between H1 and contact info */
+  --resume-contact-spacing: 0.2rem; /* Increased spacing between H1 and contact info */
 
   /* UNIFIED SPACING VARIABLES FOR CONSISTENCY */
   --resume-h1-margin-top: 0.5rem;
@@ -35,7 +35,7 @@ export const baseResumeStyles = `
   --resume-ul-margin-bottom: 0.5rem;
 
   /* UNIFIED SUMMARY SECTION SPACING FOR TWO-COLUMN LAYOUTS */
-  --resume-summary-margin-top: 0.75rem;
+  --resume-summary-margin-top: 0;
   --resume-summary-margin-bottom: 0.75rem;
 }
 
