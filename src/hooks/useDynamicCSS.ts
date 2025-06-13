@@ -12,13 +12,21 @@ const processAndScopeUserCSS = (css: string): string => {
       const scopedSelector = selector
         .split(',')
         .map(part => {
-          const trimmedPart = part.trim();
-          if (trimmedPart.startsWith('@') || trimmedPart.startsWith(':') || trimmedPart.startsWith('from') || trimmedPart.startsWith('to')) {
+          let trimmedPart = part.trim();
+
+          // Convert :root to the template scope for variable definitions
+          if (trimmedPart === ':root') {
+            return '.resume-template';
+          }
+
+          if (trimmedPart.startsWith('@') || trimmedPart.startsWith('from') || trimmedPart.startsWith('to') || trimmedPart.startsWith(':')) {
             // Don't scope @-rules, pseudo-classes, or keyframe selectors
             return trimmedPart;
           }
+
           // Prepend the scope to make the selector more specific
-          return `.resume-template ${trimmedPart}`;
+          // Using :is() ensures we don't break complex selectors and increases specificity.
+          return `:is(.resume-template) ${trimmedPart}`;
         })
         .join(', ');
       return `${prefix} ${scopedSelector}`;
