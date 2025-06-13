@@ -250,12 +250,10 @@ body {
 
 
 
-/* FIX: Modern, Creative, and Executive templates H2 background elements in two-column layout */
+/* FIX: Modern and Executive templates H2 background elements in two-column layout */
 /* Ensure background elements are not cut off by adding proper top spacing */
 .resume-two-column-layout .template-modern .resume-heading-2,
 .resume-two-column-layout .template-modern h2,
-.resume-two-column-layout .template-creative .resume-heading-2,
-.resume-two-column-layout .template-creative h2,
 .resume-two-column-layout .template-executive .resume-heading-2,
 .resume-two-column-layout .template-executive h2 {
   margin-top: 1rem !important;
@@ -265,21 +263,43 @@ body {
   width: 100% !important;
 }
 
-/* Specific fixes for first H2 elements in columns - CONSOLIDATED */
+/* CREATIVE TEMPLATE: Preserve inline-block display for clip-path arrow shape */
+.resume-two-column-layout .template-creative .resume-heading-2,
+.resume-two-column-layout .template-creative h2 {
+  margin-top: 1rem !important;
+  overflow: visible !important;
+  /* Keep inline-block for Creative template's arrow design */
+  display: inline-block !important;
+  /* Ensure full width while maintaining inline-block behavior */
+  width: calc(100% - 0.5rem) !important;
+  box-sizing: border-box !important;
+}
+
+/* Specific fixes for first H2 elements in columns - SEPARATED BY TEMPLATE */
+/* Modern and Executive templates: Use block display */
 .resume-two-column-layout.template-modern .resume-column-left > .resume-heading-2:first-child,
 .resume-two-column-layout.template-modern .resume-column-right > .resume-heading-2:first-child,
 .resume-two-column-layout.template-modern .resume-column-left > h2:first-child,
 .resume-two-column-layout.template-modern .resume-column-right > h2:first-child,
-.resume-two-column-layout.template-creative .resume-column-left > .resume-heading-2:first-child,
-.resume-two-column-layout.template-creative .resume-column-right > .resume-heading-2:first-child,
-.resume-two-column-layout.template-creative .resume-column-left > h2:first-child,
-.resume-two-column-layout.template-creative .resume-column-right > h2:first-child,
 .resume-two-column-layout.template-executive .resume-column-left > .resume-heading-2:first-child,
 .resume-two-column-layout.template-executive .resume-column-right > .resume-heading-2:first-child,
 .resume-two-column-layout.template-executive .resume-column-left > h2:first-child,
 .resume-two-column-layout.template-executive .resume-column-right > h2:first-child {
   margin-top: 0.75rem !important;
   padding-top: 0.5rem !important;
+}
+
+/* Creative template: Preserve inline-block display for first H2 elements */
+.resume-two-column-layout.template-creative .resume-column-left > .resume-heading-2:first-child,
+.resume-two-column-layout.template-creative .resume-column-right > .resume-heading-2:first-child,
+.resume-two-column-layout.template-creative .resume-column-left > h2:first-child,
+.resume-two-column-layout.template-creative .resume-column-right > h2:first-child {
+  margin-top: 0.75rem !important;
+  padding-top: 0.5rem !important;
+  /* Preserve inline-block for Creative template's arrow design */
+  display: inline-block !important;
+  width: calc(100% - 0.5rem) !important;
+  box-sizing: border-box !important;
 }
 
 /* UNIFIED SUMMARY SECTION SPACING - DRY SOLUTION FOR ALL TEMPLATES */
