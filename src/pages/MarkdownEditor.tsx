@@ -179,7 +179,7 @@ const MarkdownEditor = () => {
               onCheckedChange={handleTwoColumnToggle}
               className="h-4 w-8 sm:h-5 sm:w-10 data-[state=unchecked]:bg-gray-200"
             />
-                <label htmlFor="two-column" className="text-xs md:text-sm font-medium pl-1 pr-2 md:pl-0 truncate">Two Column</label>
+                <label htmlFor="two-column" className="text-xs sm:text-sm font-medium pl-1 pr-2 sm:pl-0 truncate">Two Column</label>
             </div>
             <TemplateSelector selectedTemplate={selectedTemplate} onTemplateChange={setSelectedTemplate} />
         </div>
