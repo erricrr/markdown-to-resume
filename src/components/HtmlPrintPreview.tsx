@@ -12,6 +12,9 @@ interface HtmlPrintPreviewProps {
 export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '', uploadedFileName = '' }: HtmlPrintPreviewProps) => {
   const [isExporting, setIsExporting] = useState(false);
 
+  // Create a title variable that includes the paper size
+  const documentTitle = `Resume - ${paperSize === 'A4' ? 'A4' : 'US Letter'} Format`;
+
   // Preconnect and Google Fonts links for print window
   const fontLinks = `
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,6 +37,9 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
     // Create a new window for printing
     const printWindow = window.open("", "_blank");
     if (printWindow) {
+      // Set the document title for the print window
+      printWindow.document.title = documentTitle;
+
       // Add uploaded file to the HTML if available
       let processedHtml = html;
       const imageRegex = /\.(jpe?g|png|gif|webp)$/i;
@@ -261,11 +267,8 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
         </style>
 
         <script>
-          window.addEventListener('beforeprint', function() {
-            document.title = 'Resume';
-          });
-
           window.onload = function() {
+            document.title = "${documentTitle}";
             setTimeout(() => {
               window.print();
             }, 500);
@@ -282,7 +285,7 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Resume</title>
+  <title>${documentTitle}</title>
   ${fontLinks}
   ${printStyles}
 </head>
