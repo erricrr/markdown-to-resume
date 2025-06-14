@@ -216,25 +216,32 @@ export const parseMarkdownSections = (markdown: string, extractedSummary?: strin
         inImplicitSummary = false;
       }
 
-      // Save previous section
-      if (currentSection) {
-        currentSection.content = currentContent.join('\n').trim();
-        sections.push(currentSection);
-      }
-
-      // Start new section
       const level = headingMatch[1].length;
       const title = headingMatch[2].trim();
 
       // Skip main title (# Name)
       if (level === 1) {
-        currentSection = null;
-        currentContent = [];
         continue;
       }
 
+      // If heading level is greater than 2, keep it within current section
+      if (level > 2) {
+        if (currentSection) {
+          currentContent.push(line);
+        }
+        continue;
+      }
+
+      // For level 2 headings => new section
+
+      // Save previous section before starting new one
+      if (currentSection) {
+        currentSection.content = currentContent.join('\n').trim();
+        sections.push(currentSection);
+      }
+
       // Check if this is a summary section that we should skip (to avoid duplication)
-      const isSummarySection = line.match(/^##?\s*(summary|professional summary|about|profile|objective|overview|bio|introduction)/i);
+      const isSummarySection = line.match(/^##\s*(summary|professional summary|about|profile|objective|overview|bio|introduction)/i);
       if (isSummarySection && extractedSummary && extractedSummary.trim()) {
         skipSummaryContent = true;
         currentSection = null;
@@ -246,7 +253,7 @@ export const parseMarkdownSections = (markdown: string, extractedSummary?: strin
 
       currentSection = {
         type: title.toLowerCase(),
-        content: line, // Include the heading in content
+        content: line, // Include heading
         level: level
       };
       currentContent = [line];
@@ -303,6 +310,8 @@ export const splitMarkdownForTwoColumn = (markdown: string): SplitContent => {
 
   const header = extractHeader(markdown);
   const summary = extractSummary(markdown);
+
+  // Parse sections directly, but internal logic will now keep h3+ headings within their parent section.
   const sections = parseMarkdownSections(markdown, summary);
 
   const leftSections: string[] = [];

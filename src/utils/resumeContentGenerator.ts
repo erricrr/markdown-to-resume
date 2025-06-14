@@ -76,6 +76,12 @@ export const parseMarkdown = (md: string): string => {
       '<td$1><p$2><span class="resume-table-bullet-item">$3</span></p></td>'
     );
 
+    // Fix h3 headings in two-column layout to ensure proper alignment
+    processedHtml = processedHtml.replace(
+      /<h3([^>]*class="resume-heading-3"[^>]*)>([^<]*)<\/h3>/g,
+      '<div class="resume-subheading-container"><h3$1>$2</h3></div>'
+    );
+
     // Allow inline style attributes for custom spacing/sizing
     // @ts-ignore – ADD_ATTR may not exist on older DOMPurify typings but is supported at runtime.
     return DOMPurify.sanitize(processedHtml, { ADD_ATTR: ['style'] });

@@ -187,6 +187,22 @@ body {
   line-height: 1.3;
 }
 
+/* Fix for h3 headings in two-column layout */
+.resume-subheading-container {
+  display: block;
+  width: 100%;
+  clear: both;
+  margin-top: var(--resume-h3-margin-top);
+  margin-bottom: var(--resume-h3-margin-bottom);
+}
+
+.resume-two-column-layout .resume-column-left .resume-subheading-container,
+.resume-two-column-layout .resume-column-right .resume-subheading-container {
+  width: 100%;
+  clear: both;
+  display: block;
+}
+
 .resume-heading-4,
 .resume-template h4 {
   font-size: var(--resume-h4-font-size);
