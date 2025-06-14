@@ -427,7 +427,7 @@ const HtmlEditor = () => {
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
 
   // Use shared hooks
-  const { leftPanelSize, handlePanelResize } = usePanelManagement('html-editor');
+  const { leftPanelSize, handlePanelResize, shouldUseCompactUI } = usePanelManagement('html-editor');
   const { uploadedFileUrl, uploadedFileName, refreshTimestamp } = useImageReferenceDetection(html, { detectHtml: true });
 
   // Auto-save effect
@@ -455,9 +455,9 @@ const HtmlEditor = () => {
           </div>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <FileUpload />
+              <FileUpload compact={shouldUseCompactUI} />
             </div>
-            <TipTooltip type="html" />
+            <TipTooltip type="html" compact={shouldUseCompactUI} />
           </div>
         </div>
       </div>

@@ -112,7 +112,7 @@ const MarkdownEditor = () => {
   // The hook now manages template styles and custom overrides
   useDynamicCSS(selectedTemplate, customCSS);
 
-  const { leftPanelSize, handlePanelResize } = usePanelManagement('markdown-editor');
+  const { leftPanelSize, handlePanelResize, shouldUseCompactUI } = usePanelManagement('markdown-editor');
   const { uploadedFileUrl, uploadedFileName, refreshTimestamp } = useImageReferenceDetection(markdown, { detectMarkdown: true });
 
   // Persist state to localStorage
@@ -167,8 +167,8 @@ const MarkdownEditor = () => {
             <h2 className="text-base font-semibold text-foreground truncate">Markdown Editor</h2>
           </div>
           <div className="flex items-center gap-3">
-            <FileUpload />
-            <TipTooltip type="markdown" />
+            <FileUpload compact={shouldUseCompactUI} />
+            <TipTooltip type="markdown" compact={shouldUseCompactUI} />
           </div>
         </div>
         <div className="flex items-center justify-between">

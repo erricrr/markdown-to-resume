@@ -5,12 +5,14 @@ import { Upload, File as FileIcon, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { useFileUpload } from '@/contexts/FileUploadContext';
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 interface FileUploadProps {
   onFileUploaded?: (fileUrl: string, fileName: string) => void;
+  compact?: boolean;
 }
 
-export const FileUpload = ({ onFileUploaded }: FileUploadProps) => {
+export const FileUpload = ({ onFileUploaded, compact = false }: FileUploadProps) => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const { toast } = useToast();
@@ -74,46 +76,97 @@ export const FileUpload = ({ onFileUploaded }: FileUploadProps) => {
     });
   };
 
-  return (
-    <div className="flex flex-col gap-3 w-full">
-      {!uploadedFileName ? (
-        <div className="flex items-center gap-2">
-          <Input
-            type="file"
-            id="file-upload"
-            className="hidden"
-            onChange={handleFileChange}
-            accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
-            disabled={isUploading}
-          />
+  const renderCompactUploadButton = () => (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => document.getElementById('file-upload')?.click()}
+          disabled={isUploading}
+          className="h-8 w-8"
+        >
+          <Upload className="h-4 w-4" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>Upload Image (Max 5MB)</TooltipContent>
+    </Tooltip>
+  );
+
+  const renderFullUploadButton = () => (
+    <div className="flex items-center gap-2">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => document.getElementById('file-upload')?.click()}
+        disabled={isUploading}
+        className="flex items-center gap-1 text-xs"
+      >
+        <Upload className="h-3 w-3" />
+        {isUploading ? 'Uploading...' : 'Upload Image'}
+      </Button>
+      <span className="text-xs text-muted-foreground">Max 5MB</span>
+    </div>
+  );
+
+  const renderCompactFileInfo = () => (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div className="flex items-center">
           <Button
             variant="outline"
-            size="sm"
-            onClick={() => document.getElementById('file-upload')?.click()}
-            disabled={isUploading}
-            className="flex items-center gap-1 text-xs"
+            size="icon"
+            className="h-8 w-8 relative"
           >
-            <Upload className="h-3 w-3" />
-            {isUploading ? 'Uploading...' : 'Upload Image'}
+            <FileIcon className="h-4 w-4 text-primary" />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleRemoveFile}
+              className="h-4 w-4 p-0 absolute -top-1 -right-1 rounded-full bg-background border"
+            >
+              <X className="h-3 w-3" />
+            </Button>
           </Button>
-          <span className="text-xs text-muted-foreground">Max 5MB</span>
         </div>
+      </TooltipTrigger>
+      <TooltipContent>{uploadedFileName} ({uploadedFileSize > 0 ? (uploadedFileSize / 1024).toFixed(0) + ' KB' : 'File'})</TooltipContent>
+    </Tooltip>
+  );
+
+  const renderFullFileInfo = () => (
+    <div className="flex items-center gap-2 bg-muted/30 rounded-md p-2">
+      <FileIcon className="h-4 w-4 text-primary" />
+      <div className="flex-1 truncate text-xs">{uploadedFileName}</div>
+      <Badge variant="outline" className="text-xs flex items-center gap-1">
+        {uploadedFileSize > 0 ? (uploadedFileSize / 1024).toFixed(0) + ' KB' : 'File'}
+      </Badge>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={handleRemoveFile}
+        className="h-6 w-6 p-0 rounded-full"
+      >
+        <X className="h-3 w-3" />
+      </Button>
+    </div>
+  );
+
+  return (
+    <div className="flex flex-col gap-3 w-full">
+      <Input
+        type="file"
+        id="file-upload"
+        className="hidden"
+        onChange={handleFileChange}
+        accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+        disabled={isUploading}
+      />
+
+      {!uploadedFileName ? (
+        compact ? renderCompactUploadButton() : renderFullUploadButton()
       ) : (
-        <div className="flex items-center gap-2 bg-muted/30 rounded-md p-2">
-          <FileIcon className="h-4 w-4 text-primary" />
-          <div className="flex-1 truncate text-xs">{uploadedFileName}</div>
-          <Badge variant="outline" className="text-xs flex items-center gap-1">
-            {uploadedFileSize > 0 ? (uploadedFileSize / 1024).toFixed(0) + ' KB' : 'File'}
-          </Badge>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleRemoveFile}
-            className="h-6 w-6 p-0 rounded-full"
-          >
-            <X className="h-3 w-3" />
-          </Button>
-        </div>
+        compact ? renderCompactFileInfo() : renderFullFileInfo()
       )}
     </div>
   );

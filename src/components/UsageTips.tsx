@@ -7,9 +7,16 @@ interface TipTooltipProps {
   customContent?: React.ReactNode;
   className?: string;
   selectedTemplate?: string;
+  compact?: boolean;
 }
 
-export const TipTooltip: React.FC<TipTooltipProps> = ({ type, customContent, className = "", selectedTemplate = "professional" }) => {
+export const TipTooltip: React.FC<TipTooltipProps> = ({
+  type,
+  customContent,
+  className = "",
+  selectedTemplate = "professional",
+  compact = false
+}) => {
   let content;
 
   switch (type) {
@@ -73,10 +80,16 @@ export const TipTooltip: React.FC<TipTooltipProps> = ({ type, customContent, cla
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <div className={`flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded-md cursor-help ${className}`}>
-          <Info className="h-3 w-3 text-blue-600" />
-          <span className="text-xs text-blue-700 font-medium">Tips</span>
-        </div>
+        {compact ? (
+          <div className={`flex items-center justify-center h-8 w-8 bg-blue-50 border border-blue-200 rounded-md cursor-help ${className}`}>
+            <Info className="h-4 w-4 text-blue-600" />
+          </div>
+        ) : (
+          <div className={`flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded-md cursor-help ${className}`}>
+            <Info className="h-3 w-3 text-blue-600" />
+            <span className="text-xs text-blue-700 font-medium">Tips</span>
+          </div>
+        )}
       </TooltipTrigger>
       <TooltipContent className="max-w-lg lg::max-w-3xl p-3 text-sm">
         {content}
