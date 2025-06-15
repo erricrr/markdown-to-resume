@@ -139,7 +139,7 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
           @media print {
             @page {
               margin: 0;
-              size: auto;
+              size: ${paperSize === 'A4' ? 'A4 portrait' : 'letter portrait'};
               /* Hide header/footer margin boxes */
               @top-left { content: none; }
               @top-center { content: none; }
@@ -152,6 +152,14 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
               margin: 0 !important;
               padding: 0 !important;
               transform: none !important;
+            }
+
+            /* Ensure explicit page dimensions across all browsers */
+            html, body {
+              width: ${paperSize === 'A4' ? '210mm' : '8.5in'};
+              height: ${paperSize === 'A4' ? '297mm' : '11in'};
+              max-width: ${paperSize === 'A4' ? '210mm' : '8.5in'};
+              max-height: ${paperSize === 'A4' ? '297mm' : '11in'};
             }
           }
 
