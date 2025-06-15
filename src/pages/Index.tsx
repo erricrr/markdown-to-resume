@@ -18,11 +18,10 @@ const Index = () => {
               </div>
               <div>
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-                PastePrint
+                Paste to PDF
                 </h1>
                 <p className="text-xs sm:text-sm text-gray-600">
-                  Create professional resumes with Markdown or HTML
-                </p>
+                Create resumes with Markdown or HTML                </p>
               </div>
             </div>
           </div>
@@ -36,7 +35,7 @@ const Index = () => {
           Choose Your Editor
         </h2>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Got a resume from AI in Markdown or HTML? Paste it, tweak it, and export a polished PDF — no fuss, no formatting headaches.
+        Got a resume from AI in Markdown or HTML? Paste it in, polish it up, and export a clean PDF — while learning how the code shapes your layout.
         </p>
         </div>
 
@@ -57,11 +56,11 @@ const Index = () => {
               <div className="space-y-4 mb-8">
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-sm text-gray-700">Professional templates with CSS customization</span>
+                  <span className="text-sm text-gray-700">Resume templates with CSS customization</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-sm text-gray-700">Two-column and multi-page layouts</span>
+                  <span className="text-sm text-gray-700">Two-column layouts made easy</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
