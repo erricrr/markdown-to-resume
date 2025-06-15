@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
+import { processHtmlForDisplay } from "./HtmlPreview";
 
 interface HtmlPrintPreviewProps {
   html: string;
@@ -33,77 +34,13 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
       // Set the document title for the print window
       printWindow.document.title = documentTitle;
 
-      // Add uploaded file to the HTML if available
-      let processedHtml = html;
-      const imageRegex = /\.(jpe?g|png|gif|webp)$/i;
-      const isImageFile = (!!uploadedFileUrl && imageRegex.test(uploadedFileUrl)) || (!!uploadedFileName && imageRegex.test(uploadedFileName));
-
-      if (uploadedFileUrl && !isImageFile && !processedHtml.includes(uploadedFileUrl)) {
-        const uploadedFileHtml = `
-<div style="margin-top: 20px; margin-bottom: 20px;">
-  <img src="${uploadedFileUrl}" alt="Uploaded file" style="max-width: 100%; max-height: 300px; display: block; margin: 0 auto;">
-</div>`;
-
-        if (processedHtml.indexOf('</body>') !== -1) {
-          processedHtml = processedHtml.replace('</body>', `${uploadedFileHtml}</body>`);
-        } else {
-          processedHtml = processedHtml + uploadedFileHtml;
-        }
-      }
-
-      // Swap filename references to blob URL for inline images
-      if (uploadedFileUrl && uploadedFileName) {
-        const escapedName = uploadedFileName.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
-        const regex = new RegExp(`src=([\"\'])([^\"\']*${escapedName})\\1`, 'g');
-        processedHtml = processedHtml.replace(regex, (_m: string, quote: string) => `src=${quote}${uploadedFileUrl}${quote}`);
-      }
-
-      // Ensure relative image sources work
-      processedHtml = processedHtml.replace(/<img([^>]*)src="([^\"\']+)"([^>]*)>/g, (match: string, before: string, src: string, after: string) => {
-        if (/^(https?:|data:|blob:|\/)/i.test(src)) return match;
-        return `<img${before}src="/${src}"${after}>`;
+      // Process HTML with the shared function, enabling print-specific enhancements
+      const processedHtml = processHtmlForDisplay(html, {
+        paperSize,
+        uploadedFileUrl,
+        uploadedFileName,
+        forPrint: true // Enable print-specific enhancements
       });
-
-      // Aggressive approach - force background colors to work in print
-      let enhancedHtml = processedHtml;
-
-      // More comprehensive background color preservation - catch ALL patterns
-      enhancedHtml = enhancedHtml.replace(
-        /(background(?:-color|-image)?:\s*[^;]+;)/gi,
-        (match) => {
-          return `${match} -webkit-print-color-adjust: exact !important; color-adjust: exact !important;`;
-        }
-      );
-
-      // Catch inline styles in HTML elements
-      enhancedHtml = enhancedHtml.replace(
-        /style="([^"]*background[^"]*)"/gi,
-        (match, styleContent) => {
-          return `style="${styleContent}; -webkit-print-color-adjust: exact !important; color-adjust: exact !important;"`;
-        }
-      );
-
-      // Add color preservation to ALL CSS rules that contain background
-      enhancedHtml = enhancedHtml.replace(
-        /([.#]?[a-zA-Z0-9_-]+[^{]*{[^}]*background[^}]*})/gi,
-        (match) => {
-          if (!match.includes('print-color-adjust')) {
-            return match.replace('}', ' -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }');
-          }
-          return match;
-        }
-      );
-
-      // Catch body/html styles specifically
-      enhancedHtml = enhancedHtml.replace(
-        /((?:body|html)\s*{[^}]*})/gi,
-        (match) => {
-          if (!match.includes('print-color-adjust')) {
-            return match.replace('}', ' -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }');
-          }
-          return match;
-        }
-      );
 
       // Detect browser for specific fixes
       const browserDetection = `
@@ -337,69 +274,67 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
               content: "" !important;
               display: none !important;
             }
-          }
-        </style>
+          </style>
 
-        <script>
-          window.onload = function() {
-            document.title = "${documentTitle}";
+          <script>
+            window.onload = function() {
+              // Detect browser and apply specific fixes
+              const browser = detectBrowser();
 
-            // Detect browser and apply specific fixes
-            const browser = detectBrowser();
+              // Firefox-specific fixes
+              if (browser.isFirefox) {
+                // Apply Firefox-specific adjustments
+                const resumeContainer = document.querySelector('.resume-container') ||
+                                       document.querySelector('[class*="resume"]') ||
+                                       document.querySelector('[id*="resume"]') ||
+                                       document.body;
 
-            // Firefox-specific fixes
-            if (browser.isFirefox) {
-              // Apply Firefox-specific adjustments
-              const resumeContainer = document.querySelector('.resume-container') ||
-                                     document.querySelector('[class*="resume"]') ||
-                                     document.querySelector('[id*="resume"]') ||
-                                     document.body;
-
-              if (resumeContainer) {
-                resumeContainer.style.height = '${paperSize === 'A4' ? '297mm' : '11in'}';
-                resumeContainer.style.width = '${paperSize === 'A4' ? '210mm' : '8.5in'}';
-                resumeContainer.style.maxHeight = '${paperSize === 'A4' ? '297mm' : '11in'}';
-                resumeContainer.style.maxWidth = '${paperSize === 'A4' ? '210mm' : '8.5in'}';
-                resumeContainer.style.overflow = 'hidden';
-              }
-            }
-
-            // Safari-specific fixes
-            if (browser.isSafari) {
-              // Apply Safari-specific adjustments
-              const style = document.createElement('style');
-              style.textContent = \`
-                @media print {
-                  @page { margin: 0; padding: 0; }
-                  body { margin: 0 !important; padding: 0 !important; transform: none !important; }
-                  #safari-print-header-fix {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    height: 0;
-                    background: transparent;
-                    z-index: 9999;
-                  }
+                if (resumeContainer) {
+                  resumeContainer.style.height = '${paperSize === 'A4' ? '297mm' : '11in'}';
+                  resumeContainer.style.width = '${paperSize === 'A4' ? '210mm' : '8.5in'}';
+                  resumeContainer.style.maxHeight = '${paperSize === 'A4' ? '297mm' : '11in'}';
+                  resumeContainer.style.maxWidth = '${paperSize === 'A4' ? '210mm' : '8.5in'}';
+                  resumeContainer.style.overflow = 'hidden';
                 }
-              \`;
-              document.head.appendChild(style);
+              }
 
-              // Add invisible element to prevent Safari header/footer
-              const headerFix = document.createElement('div');
-              headerFix.id = 'safari-print-header-fix';
-              document.body.prepend(headerFix);
-            }
+              // Safari-specific fixes
+              if (browser.isSafari) {
+                // Apply Safari-specific adjustments
+                const style = document.createElement('style');
+                style.textContent = \`
+                  @media print {
+                    @page { margin: 0; padding: 0; }
+                    body { margin: 0 !important; padding: 0 !important; transform: none !important; }
+                    #safari-print-header-fix {
+                      position: fixed;
+                      top: 0;
+                      left: 0;
+                      right: 0;
+                      height: 0;
+                      background: transparent;
+                      z-index: 9999;
+                    }
+                  }
+                \`;
+                document.head.appendChild(style);
 
-            // Delay printing slightly to ensure all styles are applied
-            setTimeout(() => {
-              window.print();
-            }, 800);
-          };
-        </script>
-      `;
+                // Add invisible element to prevent Safari header/footer
+                const headerFix = document.createElement('div');
+                headerFix.id = 'safari-print-header-fix';
+                document.body.prepend(headerFix);
+              }
+
+              // Delay printing slightly to ensure all styles are applied
+              setTimeout(() => {
+                window.print();
+              }, 800);
+            };
+          </script>
+        `;
 
       // Insert the print styles before closing head tag
+      let enhancedHtml = processedHtml;
       if (enhancedHtml.includes('</head>')) {
         enhancedHtml = enhancedHtml.replace('</head>', fontLinks + browserDetection + printStyles + '</head>');
       } else {
