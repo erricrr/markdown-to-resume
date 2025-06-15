@@ -139,7 +139,21 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
           @media print {
             @page {
               margin: 0;
+              size: auto;
+              /* Hide header/footer margin boxes */
+              @top-left { content: none; }
+              @top-center { content: none; }
+              @top-right { content: none; }
+              @bottom-left { content: none; }
+              @bottom-center { content: none; }
+              @bottom-right { content: none; }
             }
+            body {
+              margin: 0 !important;
+              padding: 0 !important;
+              transform: none !important;
+            }
+          }
 
             /* Base styles for all browsers */
             html, body {
@@ -188,17 +202,18 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
             }
 
             html[data-browser="safari"] body {
-              padding: 0 !important;
+              /* Remove all margins/padding to avoid clipping and disable scaling */
               margin: 0 !important;
-              height: 100% !important;
-              width: 100% !important;
+              padding: 0 !important;
+              transform: none !important;
             }
 
             /* Safari: Ensure content doesn't get cut off at the top */
             html[data-browser="safari"] .resume-container,
             html[data-browser="safari"] [class*="resume"],
             html[data-browser="safari"] [id*="resume"] {
-              padding-top: 5mm !important;
+              padding-top: 0 !important;
+              padding-bottom: 0 !important;
             }
 
             /* Force background colors specifically */
@@ -348,7 +363,7 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
               style.textContent = \`
                 @media print {
                   @page { margin: 0; padding: 0; }
-                  body { margin: 0 !important; padding: 0 !important; }
+                  body { margin: 0 !important; padding: 0 !important; transform: none !important; }
                   #safari-print-header-fix {
                     position: fixed;
                     top: 0;
