@@ -17,401 +17,350 @@ import { useImageReferenceDetection } from '@/hooks/useImageReferenceDetection';
 const defaultHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jane Doe - Resume</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .resume {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 40px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            border-radius: 8px;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #333;
-        }
-        .name {
-            font-size: 2.5em;
-            font-weight: bold;
-            margin: 0;
-            color: #333;
-        }
-        .title {
-            font-size: 1.2em;
-            color: #666;
-            margin: 5px 0;
-        }
-        .contact {
-            color: #666;
-            margin-top: 10px;
-        }
+  <meta charset="UTF-8">
+  <title>Jane Doe - Resume</title>
 
-                /* Two-column layout */
-        .content {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 40px;
-            margin-top: 15px;
-        }
+  <!-- Google Font: Work Sans -->
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: A4;
+      margin: 1.5cm 2cm;
+    }
 
-        .left-column {
-            background: #f8f9fa;
-            padding: 20px 25px 25px 25px;
-            border-radius: 8px;
-        }
+    * {
+      box-sizing: border-box;
+    }
 
-        .right-column {
-            padding: 0 20px;
-        }
+    body {
+      font-family: 'Work Sans', sans-serif;
+      color: #333;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
 
-        .section {
-            margin-bottom: 20px;
-        }
+    .resume {
+      display: flex;
+      max-width: 100%;
+      min-height: 100vh;
+      background: white;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      margin: auto;
+    }
 
-        .section:first-child {
-            margin-top: 0;
-            padding-top: 0;
-        }
+    .left-column {
+      flex: 0 0 35%;
+      max-width: 35%;
+      background-color: #f0f0f0;
+      padding: 40px 30px 40px 40px;
+      border-right: 4px solid #1976d2; /* Blue Accent */
+    }
 
-        .section:first-child h2 {
-            margin-top: 0;
-        }
-        .section h2 {
-            color: #333;
-            border-bottom: 2px solid #1976d2;
-            padding-bottom: 5px;
-            margin-bottom: 15px;
-            font-size: 1.3em;
-        }
-        .left-column .section h2 {
-            border-bottom: 2px solid #666;
-        }
+    .right-column {
+      flex: 0 0 65%;
+      max-width: 65%;
+      padding: 40px 40px;
+    }
 
-        .job {
-            margin-bottom: 25px;
-        }
-        .job-title {
-            font-weight: bold;
-            color: #333;
-            font-size: 1.1em;
-        }
-        .company {
-            color: #666;
-            font-style: italic;
-            margin: 5px 0;
-        }
-        .date {
-            color: #888;
-            font-size: 0.9em;
-        }
+    h1 {
+      margin-top: 5px;
+      font-size: 36px;
+      font-weight: 700;
+      color: #222;
+    }
 
-        .skills {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-        .skill {
-            background: #e3f2fd;
-            color: #1976d2;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 500;
-        }
+    h2 {
+      font-size: 18px;
+      margin-bottom: 8px;
+      color: #1976d2;
+      font-weight: 600;
+      border-bottom: 1px solid #1976d2;
+      padding-bottom: 4px;
+    }
 
-        .contact-item {
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+    h3 {
+      margin: 10px 0 4px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #333;
+    }
 
-        .contact-icon {
-            width: 16px;
-            height: 16px;
-            background: #1976d2;
-            border-radius: 50%;
-            display: inline-block;
-        }
+    .section {
+      margin-bottom: 30px;
+    }
 
-        .interactive-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 30px 0;
-            text-align: center;
-        }
+    .job-title {
+      font-style: italic;
+      color: #555;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
 
-        .interactive-button {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: 2px solid white;
-            padding: 10px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
+    ul {
+      margin: 5px 0 10px 20px;
+      padding-left: 0;
+    }
 
-        .interactive-button:hover {
-            background: white;
-            color: #667eea;
-        }
+    ul li {
+      margin-bottom: 5px;
+      font-size: 13px;
+    }
 
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .content {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            .resume {
-                padding: 20px;
-            }
-        }
+    p, li {
+      font-size: 14px;
+      line-height: 1.6;
+    }
 
-        @media print {
-            @page {
-                margin: 0.5in;
-                size: A4;
-            }
+    .subheading {
+      font-weight: 600;
+      margin-top: 15px;
+      margin-bottom: 8px;
+      color: #444;
+      font-size: 14px;
+    }
 
-            html, body {
-                padding: 0 !important;
-                margin: 0 !important;
-                -webkit-print-color-adjust: exact !important;
-                color-adjust: exact !important;
-            }
+    .contact-info {
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
 
-            .resume {
-                box-shadow: none;
-                border-radius: 0;
-                padding: 20px;
-                max-width: none;
-            }
+    .contact-info p {
+      margin-bottom: 8px;
+    }
 
-            .left-column {
-                -webkit-print-color-adjust: exact !important;
-                color-adjust: exact !important;
-            }
+    .skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
 
-            .skill {
-                -webkit-print-color-adjust: exact !important;
-                color-adjust: exact !important;
-            }
+    .skill {
+      background: #e3f2fd;
+      color: #1976d2;
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
 
-            .interactive-section {
-                display: none !important;
-            }
+    .interactive-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 30px 0;
+      text-align: center;
+    }
 
-            .content {
-                display: grid !important;
-                grid-template-columns: 1fr 2fr !important;
-                gap: 40px !important;
-            }
-        }
-    </style>
+    .interactive-button {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 2px solid white;
+      padding: 10px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .interactive-button:hover {
+      background: white;
+      color: #667eea;
+    }
+
+    @media print {
+      body {
+        background: none !important;
+      }
+
+      .resume {
+        box-shadow: none !important;
+        margin: 0 !important;
+      }
+
+      .interactive-section {
+        display: none !important;
+      }
+
+      .skill {
+        background: #e3f2fd !important;
+        color: #1976d2 !important;
+        -webkit-print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+
+      .left-column {
+        background-color: #f0f0f0 !important;
+        -webkit-print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="resume">
-        <div class="header">
-            <h1 class="name">Jane Doe</h1>
-            <div class="title">Senior Software Engineer</div>
-            <div class="contact">
-                jane.doe@email.com | (555) 123-4567 | linkedin.com/in/janedoe | San Francisco, CA
-            </div>
+  <div class="resume">
+    <!-- LEFT COLUMN -->
+    <div class="left-column">
+      <h1>Jane Doe</h1>
+      <div class="contact-info">
+        <p><strong>Email:</strong> <a href="mailto:jane.doe@email.com">jane.doe@email.com</a></p>
+        <p><strong>Phone:</strong> (555) 123-4567</p>
+        <p><strong>Location:</strong> San Francisco, CA</p>
+        <p><strong>LinkedIn:</strong> <a href="https://linkedin.com/in/janedoe" target="_blank">linkedin.com/in/janedoe</a></p>
+      </div>
+
+      <div class="section">
+        <h2>Skills</h2>
+        <div class="subheading">Technical</div>
+        <div class="skills">
+          <span class="skill">JavaScript</span>
+          <span class="skill">TypeScript</span>
+          <span class="skill">React</span>
+          <span class="skill">Node.js</span>
+          <span class="skill">Python</span>
+          <span class="skill">PostgreSQL</span>
+          <span class="skill">MongoDB</span>
         </div>
-
-        <div class="content">
-            <div class="left-column">
-                <section class="section">
-                    <h2>Contact</h2>
-                    <div class="contact-item">
-                        <span class="contact-icon"></span>
-                        <span>jane.doe@email.com</span>
-                    </div>
-                    <div class="contact-item">
-                        <span class="contact-icon"></span>
-                        <span>(555) 123-4567</span>
-                    </div>
-                    <div class="contact-item">
-                        <span class="contact-icon"></span>
-                        <span>San Francisco, CA</span>
-                    </div>
-                    <div class="contact-item">
-                        <span class="contact-icon"></span>
-                        <span>linkedin.com/in/janedoe</span>
-                    </div>
-                </section>
-
-                <section class="section">
-                    <h2>Skills</h2>
-                    <div class="skills">
-                        <span class="skill">JavaScript</span>
-                        <span class="skill">TypeScript</span>
-                        <span class="skill">React</span>
-                        <span class="skill">Node.js</span>
-                        <span class="skill">Python</span>
-                        <span class="skill">PostgreSQL</span>
-                        <span class="skill">Docker</span>
-                        <span class="skill">AWS</span>
-                        <span class="skill">Git</span>
-                        <span class="skill">MongoDB</span>
-                    </div>
-                </section>
-
-                <section class="section">
-                    <h2>Education</h2>
-                    <div class="job">
-                        <div class="job-title">Bachelor of Science</div>
-                        <div>Computer Science</div>
-                        <div class="company">University of Technology</div>
-                        <div class="date">2015 - 2019</div>
-                        <p style="margin-top: 10px; font-size: 0.9em;">GPA: 3.8/4.0</p>
-                    </div>
-                </section>
-
-                <section class="section">
-                    <h2>Languages</h2>
-                    <div style="margin-bottom: 10px;">
-                        <strong>English:</strong> Native
-                    </div>
-                    <div style="margin-bottom: 10px;">
-                        <strong>Spanish:</strong> Conversational
-                    </div>
-                    <div style="margin-bottom: 10px;">
-                        <strong>French:</strong> Basic
-                    </div>
-                </section>
-            </div>
-
-            <div class="right-column">
-                <section class="section">
-                    <h2>Professional Summary</h2>
-                    <p>Experienced software engineer with 5+ years developing scalable web applications. Passionate about clean code, user experience, and mentoring junior developers. Proven track record of leading teams and delivering high-impact projects.</p>
-                </section>
-
-                <section class="section">
-                    <h2>Experience</h2>
-                    <div class="job">
-                        <div class="job-title">Senior Software Engineer</div>
-                        <div class="company">TechCorp Inc. | <span class="date">January 2022 - Present</span></div>
-                        <ul>
-                            <li>Led development of microservices architecture serving 1M+ users</li>
-                            <li>Mentored junior developers and conducted code reviews</li>
-                            <li>Implemented CI/CD pipelines reducing deployment time by 60%</li>
-                            <li>Designed and built real-time analytics dashboard using React and WebSocket</li>
-                        </ul>
-                    </div>
-                    <div class="job">
-                        <div class="job-title">Software Engineer</div>
-                        <div class="company">StartupXYZ | <span class="date">June 2019 - December 2021</span></div>
-                        <ul>
-                            <li>Built responsive web applications using React and Node.js</li>
-                            <li>Collaborated with design team to improve user experience</li>
-                            <li>Optimized database queries improving performance by 40%</li>
-                            <li>Integrated payment systems and third-party APIs</li>
-                        </ul>
-                    </div>
-                </section>
-
-                <section class="section">
-                    <h2>Projects</h2>
-                    <div class="job">
-                        <div class="job-title">E-commerce Platform</div>
-                        <div class="date">2023</div>
-                        <p>Built full-stack e-commerce solution with payment integration. Technologies: React, Node.js, Stripe API, PostgreSQL. Served 10,000+ daily active users.</p>
-                    </div>
-                    <div class="job">
-                        <div class="job-title">Task Management App</div>
-                        <div class="date">2022</div>
-                        <p>Developed collaborative task management application with real-time sync. Technologies: Vue.js, Firebase, PWA. Featured offline capabilities.</p>
-                    </div>
-                </section>
-            </div>
+        <div class="subheading">Platforms & Tools</div>
+        <div class="skills">
+          <span class="skill">Docker</span>
+          <span class="skill">AWS</span>
+          <span class="skill">Git</span>
         </div>
+        <div class="subheading">Languages</div>
+        <p>English (Native), Spanish (Conversational), French (Basic)</p>
+      </div>
 
-        <div class="interactive-section">
-            <h3>Interactive Features Demo</h3>
-            <p>This resume demonstrates HTML, CSS, and JavaScript capabilities:</p>
-            <button class="interactive-button" onclick="toggleHighlight()">
-                Toggle Highlight Mode
-            </button>
-            <p id="demo-text" style="margin-top: 15px;">Click the button to see JavaScript in action!</p>
-        </div>
+      <div class="section">
+        <h2>Education</h2>
+        <p><strong>University of Technology</strong><br>Bachelor of Science in Computer Science – 2015-2019</p>
+        <p><strong>GPA:</strong> 3.8/4.0</p>
+      </div>
     </div>
 
-    <script>
-        // JavaScript functionality example
-        function toggleHighlight() {
-            const text = document.getElementById('demo-text');
-            const skills = document.querySelectorAll('.skill');
+    <!-- RIGHT COLUMN -->
+    <div class="right-column">
+      <div class="section">
+        <h2>Professional Summary</h2>
+        <p>
+          Experienced software engineer with 5+ years developing scalable web applications. Passionate about clean code, user experience, and mentoring junior developers. Proven track record of leading teams and delivering high-impact projects.
+        </p>
+      </div>
 
-            if (text.style.backgroundColor === 'yellow') {
-                text.style.backgroundColor = '';
-                text.textContent = 'Click the button to see JavaScript in action!';
-                skills.forEach(skill => {
-                    skill.style.background = '#e3f2fd';
-                    skill.style.transform = 'scale(1)';
-                });
-            } else {
-                text.style.backgroundColor = 'yellow';
-                text.style.color = '#333333';
-                text.style.padding = '10px';
-                text.style.borderRadius = '5px';
-                text.textContent = 'JavaScript is working! Skills are now highlighted and animated.';
-                skills.forEach(skill => {
-                    skill.style.background = 'linear-gradient(45deg, #ff6b6b, #4ecdc4)';
-                    skill.style.color = 'white';
-                    skill.style.transform = 'scale(1.1)';
-                    skill.style.transition = 'all 0.3s ease';
-                });
-            }
-        }
+      <div class="section">
+        <h2>Professional Experience</h2>
 
-        // Add some interactive features on load
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('HTML Resume loaded with JavaScript support!');
+        <h3>TechCorp Inc.</h3>
+        <div class="job-title">Senior Software Engineer | January 2022 - Present</div>
+        <ul>
+          <li>Led development of microservices architecture serving 1M+ users</li>
+          <li>Mentored junior developers and conducted code reviews</li>
+          <li>Implemented CI/CD pipelines reducing deployment time by 60%</li>
+          <li>Designed and built real-time analytics dashboard using React and WebSocket</li>
+        </ul>
 
-            // Add hover effects to skills
-            const skills = document.querySelectorAll('.skill');
-            skills.forEach(skill => {
-                skill.addEventListener('mouseenter', function() {
-                    this.style.transform = 'scale(1.05) translateY(-2px)';
-                    this.style.transition = 'transform 0.2s ease';
-                    this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
-                });
-                skill.addEventListener('mouseleave', function() {
-                    this.style.transform = 'scale(1) translateY(0)';
-                    this.style.boxShadow = 'none';
-                });
-            });
+        <h3>StartupXYZ</h3>
+        <div class="job-title">Software Engineer | June 2019 - December 2021</div>
+        <ul>
+          <li>Built responsive web applications using React and Node.js</li>
+          <li>Collaborated with design team to improve user experience</li>
+          <li>Optimized database queries improving performance by 40%</li>
+          <li>Integrated payment systems and third-party APIs</li>
+        </ul>
+      </div>
 
-            // Add smooth scroll animation for sections
-            const sections = document.querySelectorAll('.section');
-            sections.forEach((section, index) => {
-                section.style.opacity = '0';
-                section.style.transform = 'translateY(20px)';
-                setTimeout(() => {
-                    section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                    section.style.opacity = '1';
-                    section.style.transform = 'translateY(0)';
-                }, index * 100);
-            });
+      <div class="section">
+        <h2>Notable Projects</h2>
+        <h3>E-commerce Platform</h3>
+        <div class="job-title">2023</div>
+        <ul>
+          <li>Built full-stack e-commerce solution with payment integration</li>
+          <li>Technologies: React, Node.js, Stripe API, PostgreSQL</li>
+          <li>Served 10,000+ daily active users</li>
+        </ul>
+
+        <h3>Task Management App</h3>
+        <div class="job-title">2022</div>
+        <ul>
+          <li>Developed collaborative task management application with real-time sync</li>
+          <li>Technologies: Vue.js, Firebase, PWA</li>
+          <li>Featured offline capabilities</li>
+        </ul>
+      </div>
+
+      <div class="interactive-section">
+        <h3>Interactive Features Demo</h3>
+        <p>This resume demonstrates HTML, CSS, and JavaScript capabilities:</p>
+        <button class="interactive-button" onclick="toggleHighlight()">
+          Toggle Highlight Mode
+        </button>
+        <p id="demo-text" style="margin-top: 15px;">Click the button to see JavaScript in action!</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // JavaScript functionality example
+    function toggleHighlight() {
+      const text = document.getElementById('demo-text');
+      const skills = document.querySelectorAll('.skill');
+
+      if (text.style.backgroundColor === 'yellow') {
+        text.style.backgroundColor = '';
+        text.textContent = 'Click the button to see JavaScript in action!';
+        skills.forEach(skill => {
+          skill.style.background = '#e3f2fd';
+          skill.style.transform = 'scale(1)';
         });
-    </script>
+      } else {
+        text.style.backgroundColor = 'yellow';
+        text.style.color = '#333333';
+        text.style.padding = '10px';
+        text.style.borderRadius = '5px';
+        text.textContent = 'JavaScript is working! Skills are now highlighted and animated.';
+        skills.forEach(skill => {
+          skill.style.background = 'linear-gradient(45deg, #ff6b6b, #4ecdc4)';
+          skill.style.color = 'white';
+          skill.style.transform = 'scale(1.1)';
+          skill.style.transition = 'all 0.3s ease';
+        });
+      }
+    }
+
+    // Add some interactive features on load
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('HTML Resume loaded with JavaScript support!');
+
+      // Add hover effects to skills
+      const skills = document.querySelectorAll('.skill');
+      skills.forEach(skill => {
+        skill.addEventListener('mouseenter', function() {
+          this.style.transform = 'scale(1.05) translateY(-2px)';
+          this.style.transition = 'transform 0.2s ease';
+          this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+        });
+        skill.addEventListener('mouseleave', function() {
+          this.style.transform = 'scale(1) translateY(0)';
+          this.style.boxShadow = 'none';
+        });
+      });
+
+      // Add smooth scroll animation for sections
+      const sections = document.querySelectorAll('.section');
+      sections.forEach((section, index) => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+          section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+          section.style.opacity = '1';
+          section.style.transform = 'translateY(0)';
+        }, index * 100);
+      });
+    });
+  </script>
 </body>
 </html>`;
 
