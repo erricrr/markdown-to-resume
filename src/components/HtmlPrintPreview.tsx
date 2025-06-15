@@ -26,13 +26,6 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
   const handlePrint = () => {
     setIsExporting(true);
     console.log('Print function called with HTML length:', html.length);
-    console.log('HTML preview (first 200 chars):', html.substring(0, 200));
-
-    // Debug: Check if Contact section spacing is being modified
-    if (html.includes('.section {')) {
-      const sectionMatch = html.match(/\.section\s*{[^}]*}/);
-      console.log('Found .section CSS rule:', sectionMatch ? sectionMatch[0] : 'Not found');
-    }
 
     // Create a new window for printing
     const printWindow = window.open("", "_blank");
@@ -74,17 +67,10 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
       // Aggressive approach - force background colors to work in print
       let enhancedHtml = processedHtml;
 
-      // Don't modify the HTML - just rely on CSS overrides to preserve colors
-
-      // Debug: Log what CSS we're working with
-      console.log('HTML contains background styles:', html.includes('background'));
-      console.log('HTML contains CSS blocks:', html.includes('<style>'));
-
       // More comprehensive background color preservation - catch ALL patterns
       enhancedHtml = enhancedHtml.replace(
         /(background(?:-color|-image)?:\s*[^;]+;)/gi,
         (match) => {
-          console.log('Found background CSS:', match);
           return `${match} -webkit-print-color-adjust: exact !important; color-adjust: exact !important;`;
         }
       );
@@ -93,7 +79,6 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
       enhancedHtml = enhancedHtml.replace(
         /style="([^"]*background[^"]*)"/gi,
         (match, styleContent) => {
-          console.log('Found inline background style:', match);
           return `style="${styleContent}; -webkit-print-color-adjust: exact !important; color-adjust: exact !important;"`;
         }
       );
@@ -102,7 +87,6 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
       enhancedHtml = enhancedHtml.replace(
         /([.#]?[a-zA-Z0-9_-]+[^{]*{[^}]*background[^}]*})/gi,
         (match) => {
-          console.log('Found CSS rule with background:', match);
           if (!match.includes('print-color-adjust')) {
             return match.replace('}', ' -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }');
           }
@@ -114,7 +98,6 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
       enhancedHtml = enhancedHtml.replace(
         /((?:body|html)\s*{[^}]*})/gi,
         (match) => {
-          console.log('Found body/html CSS rule:', match);
           if (!match.includes('print-color-adjust')) {
             return match.replace('}', ' -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }');
           }
@@ -122,44 +105,100 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
         }
       );
 
-      // Add minimal print-specific CSS that preserves layouts
+      // Detect browser for specific fixes
+      const browserDetection = `
+        <script>
+          // Browser detection for specific print fixes
+          function detectBrowser() {
+            const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+            const isChrome = /chrome/i.test(navigator.userAgent) && !/edge|edg/i.test(navigator.userAgent);
+
+            document.documentElement.setAttribute('data-browser',
+              isFirefox ? 'firefox' : (isSafari ? 'safari' : (isChrome ? 'chrome' : 'other')));
+
+            return { isFirefox, isSafari, isChrome };
+          }
+
+          const browser = detectBrowser();
+          console.log('Detected browser:', browser);
+        </script>
+      `;
+
+      // Add cross-browser print-specific CSS that preserves layouts
       const printStyles = `
         <style>
+          /* Base page setup */
           @page {
+            size: ${paperSize === 'A4' ? 'A4 portrait' : 'letter portrait'};
             margin: 0;
-            size: ${paperSize === 'A4' ? 'A4' : 'letter'};
+            padding: 0;
           }
 
-          /* Force colors OUTSIDE of print media query */
-          html, body, * {
-            -webkit-print-color-adjust: exact !important;
-            color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            forced-color-adjust: none !important;
-          }
-
+          /* Safari-specific: Hide header and footer */
           @media print {
-            /* Override browser print defaults */
             @page {
-              color-adjust: exact;
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
+              margin: 0;
             }
 
-            /* FORCE color preservation - maximum browser support */
+            /* Base styles for all browsers */
             html, body {
+              margin: 0 !important;
+              padding: 0 !important;
+              height: 100% !important;
+              width: 100% !important;
+              overflow: hidden !important;
               -webkit-print-color-adjust: exact !important;
-              color-adjust: exact !important;
               print-color-adjust: exact !important;
-              forced-color-adjust: none !important;
+              color-adjust: exact !important;
             }
 
-            /* Preserve ALL colors and backgrounds exactly as designed */
+            body {
+              /* Ensure content fits within page boundaries */
+              box-sizing: border-box !important;
+              position: relative !important;
+            }
+
+            /* Force colors for ALL browsers */
             *, *::before, *::after {
               -webkit-print-color-adjust: exact !important;
-              color-adjust: exact !important;
               print-color-adjust: exact !important;
+              color-adjust: exact !important;
               forced-color-adjust: none !important;
+            }
+
+            /* Firefox-specific fixes - scale content properly */
+            html[data-browser="firefox"] {
+              transform-origin: top left !important;
+              transform: scale(1) !important;
+              height: 100% !important;
+            }
+
+            /* Firefox-specific: ensure content fits in page */
+            html[data-browser="firefox"] body {
+              height: ${paperSize === 'A4' ? '297mm' : '11in'} !important;
+              width: ${paperSize === 'A4' ? '210mm' : '8.5in'} !important;
+              max-height: ${paperSize === 'A4' ? '297mm' : '11in'} !important;
+              max-width: ${paperSize === 'A4' ? '210mm' : '8.5in'} !important;
+            }
+
+            /* Safari-specific fixes */
+            html[data-browser="safari"] {
+              -webkit-print-color-adjust: exact !important;
+            }
+
+            html[data-browser="safari"] body {
+              padding: 0 !important;
+              margin: 0 !important;
+              height: 100% !important;
+              width: 100% !important;
+            }
+
+            /* Safari: Ensure content doesn't get cut off at the top */
+            html[data-browser="safari"] .resume-container,
+            html[data-browser="safari"] [class*="resume"],
+            html[data-browser="safari"] [id*="resume"] {
+              padding-top: 5mm !important;
             }
 
             /* Force background colors specifically */
@@ -180,19 +219,6 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
               forced-color-adjust: none !important;
             }
 
-            /* Use box-shadow as backup for background colors */
-            [style*="background: #"], [style*="background-color: #"], [style*="background:#"], [style*="background-color:#"] {
-              box-shadow: inset 0 0 0 1000px currentColor !important;
-            }
-
-            /* Force specific problematic elements */
-            body * {
-              -webkit-print-color-adjust: exact !important;
-              color-adjust: exact !important;
-              print-color-adjust: exact !important;
-              forced-color-adjust: none !important;
-            }
-
             /* Remove animations and transitions for clean print */
             *, *::before, *::after {
               animation-duration: 0s !important;
@@ -205,6 +231,11 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
             .resume-container {
               display: grid !important;
               grid-template-columns: 350px 1fr !important;
+              width: 100% !important;
+              height: 100% !important;
+              overflow: hidden !important;
+              page-break-inside: avoid !important;
+              break-inside: avoid !important;
             }
 
             /* Fix for two-column layouts in print */
@@ -213,11 +244,15 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
               grid-template-columns: 1fr 2fr !important;
               gap: 20px !important;
               width: 100% !important;
+              page-break-inside: avoid !important;
+              break-inside: avoid !important;
             }
 
             .left-column, .right-column {
               width: 100% !important;
               overflow: hidden !important;
+              page-break-inside: avoid !important;
+              break-inside: avoid !important;
             }
 
             /* Support for flex-based column layouts */
@@ -229,6 +264,8 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
               grid-template-columns: 1fr 2fr !important;
               gap: 20px !important;
               width: 100% !important;
+              page-break-inside: avoid !important;
+              break-inside: avoid !important;
             }
 
             /* Ensure all column elements have proper display */
@@ -238,6 +275,8 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
             [class*="col-1"] {
               width: 100% !important;
               overflow: hidden !important;
+              page-break-inside: avoid !important;
+              break-inside: avoid !important;
             }
 
             [class*="column-right"],
@@ -246,6 +285,8 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
             [class*="col-2"] {
               width: 100% !important;
               overflow: hidden !important;
+              page-break-inside: avoid !important;
+              break-inside: avoid !important;
             }
 
             /* Preserve inline grid styles */
@@ -263,34 +304,95 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
             [class*="interactive"]:not([class*="print"]) {
               display: none !important;
             }
+
+            /* Hide URL display in Safari */
+            a {
+              text-decoration: none !important;
+            }
+
+            a::after {
+              content: "" !important;
+              display: none !important;
+            }
           }
         </style>
 
         <script>
           window.onload = function() {
             document.title = "${documentTitle}";
+
+            // Detect browser and apply specific fixes
+            const browser = detectBrowser();
+
+            // Firefox-specific fixes
+            if (browser.isFirefox) {
+              // Apply Firefox-specific adjustments
+              const resumeContainer = document.querySelector('.resume-container') ||
+                                     document.querySelector('[class*="resume"]') ||
+                                     document.querySelector('[id*="resume"]') ||
+                                     document.body;
+
+              if (resumeContainer) {
+                resumeContainer.style.height = '${paperSize === 'A4' ? '297mm' : '11in'}';
+                resumeContainer.style.width = '${paperSize === 'A4' ? '210mm' : '8.5in'}';
+                resumeContainer.style.maxHeight = '${paperSize === 'A4' ? '297mm' : '11in'}';
+                resumeContainer.style.maxWidth = '${paperSize === 'A4' ? '210mm' : '8.5in'}';
+                resumeContainer.style.overflow = 'hidden';
+              }
+            }
+
+            // Safari-specific fixes
+            if (browser.isSafari) {
+              // Apply Safari-specific adjustments
+              const style = document.createElement('style');
+              style.textContent = \`
+                @media print {
+                  @page { margin: 0; padding: 0; }
+                  body { margin: 0 !important; padding: 0 !important; }
+                  #safari-print-header-fix {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    height: 0;
+                    background: transparent;
+                    z-index: 9999;
+                  }
+                }
+              \`;
+              document.head.appendChild(style);
+
+              // Add invisible element to prevent Safari header/footer
+              const headerFix = document.createElement('div');
+              headerFix.id = 'safari-print-header-fix';
+              document.body.prepend(headerFix);
+            }
+
+            // Delay printing slightly to ensure all styles are applied
             setTimeout(() => {
               window.print();
-            }, 500);
+            }, 800);
           };
         </script>
       `;
 
       // Insert the print styles before closing head tag
       if (enhancedHtml.includes('</head>')) {
-        enhancedHtml = enhancedHtml.replace('</head>', fontLinks + printStyles + '</head>');
+        enhancedHtml = enhancedHtml.replace('</head>', fontLinks + browserDetection + printStyles + '</head>');
       } else {
         // Fallback if no head tag
         enhancedHtml = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${documentTitle}</title>
   ${fontLinks}
+  ${browserDetection}
   ${printStyles}
 </head>
 <body>
-  ${html}
+  ${enhancedHtml}
 </body>
 </html>`;
       }
