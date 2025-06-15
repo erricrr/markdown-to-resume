@@ -133,8 +133,8 @@ const defaultHtml = `<!DOCTYPE html>
     .skills {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 15px;
+      gap: 0.375rem;
+      margin: 0 0 0.9375rem -0.625rem;
     }
 
     .skill {
