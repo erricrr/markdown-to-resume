@@ -155,6 +155,21 @@ const MarkdownEditor = () => {
           console.warn('Error parsing markdown for two-column layout:', error);
         }
       });
+    } else if (!checked) {
+      // When switching back to single column, combine all content back into markdown
+      // Only if there's actual content in the two-column fields
+      if (header.trim() || summary.trim() || leftColumn.trim() || rightColumn.trim()) {
+        const combinedMarkdown = [
+          header.trim(),
+          summary.trim(),
+          leftColumn.trim(),
+          rightColumn.trim()
+        ].filter(Boolean).join('\n\n');
+
+        if (combinedMarkdown.trim()) {
+          setMarkdown(combinedMarkdown);
+        }
+      }
     }
   };
 
@@ -193,12 +208,63 @@ const MarkdownEditor = () => {
             </TabsList>
           </div>
           <TabsContent value="editor" className="h-[calc(100%-40px)] mt-0 p-4">
-            <Textarea
-              value={markdown}
-              onChange={(e) => setMarkdown(e.target.value)}
-              className="h-full resize-none"
-              placeholder="Enter your markdown content..."
-            />
+            {!isTwoColumn ? (
+              <Textarea
+                value={markdown}
+                onChange={(e) => setMarkdown(e.target.value)}
+                className="h-full resize-none"
+                placeholder="Enter your markdown content..."
+              />
+            ) : (
+              <div className="flex flex-col gap-3 h-full overflow-y-auto pb-2 pr-1">
+                <div className="flex items-center justify-between bg-blue-50 p-2.5 rounded-md border border-blue-100 text-blue-700">
+                  <div className="flex items-center gap-2">
+                    <Columns2 className="h-4 w-4" />
+                    <span className="text-sm font-medium">Two-Column Resume Editor</span>
+                  </div>
+                  <TipTooltip type="two-column" compact={shouldUseCompactUI} />
+                </div>
+
+                <div className="bg-gray-50 p-2.5 rounded-md border border-gray-100">
+                  <label className="text-sm font-medium mb-1.5 block text-gray-700">Header</label>
+                  <Textarea
+                    value={header}
+                    onChange={(e) => setHeader(e.target.value)}
+                    className="resize-y min-h-[70px] focus:ring-1 focus:ring-primary"
+                    placeholder="Enter header content (name, title, contact info)..."
+                  />
+                </div>
+                <div className="bg-gray-50 p-2.5 rounded-md border border-gray-100">
+                  <label className="text-sm font-medium mb-1.5 block text-gray-700">Summary</label>
+                  <Textarea
+                    value={summary}
+                    onChange={(e) => setSummary(e.target.value)}
+                    className="resize-y min-h-[70px] focus:ring-1 focus:ring-primary"
+                    placeholder="Enter summary or profile section..."
+                  />
+                </div>
+                <div className="flex-1 grid grid-cols-1 gap-3">
+                  <div className="bg-gray-50 p-2.5 rounded-md border border-gray-100">
+                    <label className="text-sm font-medium mb-1.5 block text-gray-700">Left Column</label>
+                    <Textarea
+                      value={leftColumn}
+                      onChange={(e) => setLeftColumn(e.target.value)}
+                      className="resize-y min-h-[170px] focus:ring-1 focus:ring-primary"
+                      placeholder="Enter left column content (skills, education, etc)..."
+                    />
+                  </div>
+                  <div className="bg-gray-50 p-2.5 rounded-md border border-gray-100">
+                    <label className="text-sm font-medium mb-1.5 block text-gray-700">Right Column</label>
+                    <Textarea
+                      value={rightColumn}
+                      onChange={(e) => setRightColumn(e.target.value)}
+                      className="resize-y min-h-[170px] focus:ring-1 focus:ring-primary"
+                      placeholder="Enter right column content (experience, projects, etc)..."
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
           </TabsContent>
           <TabsContent value="css" className="h-[calc(100%-40px)] mt-0">
             <CSSEditor
