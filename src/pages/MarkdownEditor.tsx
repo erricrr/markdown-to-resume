@@ -203,6 +203,7 @@ const MarkdownEditor = () => {
           <TabsContent value="css" className="h-[calc(100%-40px)] mt-0">
             <CSSEditor
               initialCSS={customCSS}
+              defaultCSS={defaultInitialCSS}
               onCSSChange={setCustomCSS}
             />
           </TabsContent>

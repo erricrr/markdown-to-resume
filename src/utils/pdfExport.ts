@@ -1,26 +1,45 @@
 import { getCompleteCSS, baseResumeStyles, templateStyles } from '../styles/resumeTemplates';
 import { generateCompleteResumeHTML, type ResumeContentData } from './resumeContentGenerator';
 
-// This function scopes user CSS to reliably override template styles
+// Helper to append !important to each declaration so user rules reliably override template styles
+const addImportantToDeclarations = (css: string): string => {
+  return css.replace(/:([^;{}]+);/g, (match, value) => {
+    if (value.includes('!important')) return match;
+    return `: ${value.trim()} !important;`;
+  });
+};
+
+// This function scopes user CSS to reliably override template styles for PDF
 const processAndScopeUserCSS = (css: string): string => {
   if (!css) return '';
   try {
-    return css.replace(/(^|}|,)\s*([^{}]+)\s*(?={)/g, (match, prefix, selector) => {
+    const scopedCss = css.replace(/(^|}|,)\s*([^{}]+)\s*(?=\{)/g, (match, prefix, selector) => {
       const scopedSelector = selector
         .split(',')
         .map(part => {
           const trimmedPart = part.trim();
+
+          // Map :root or body selectors appropriately for PDF
+          if (trimmedPart === ':root') {
+            return '.resume-template';
+          }
+          if (trimmedPart === 'body') {
+            return '.resume-template, .resume-template *';
+          }
+
           if (trimmedPart.startsWith('@') || trimmedPart.startsWith(':') || trimmedPart.startsWith('from') || trimmedPart.startsWith('to')) {
             return trimmedPart;
           }
-          return `.resume-template ${trimmedPart}`;
+          return `:is(.resume-template) ${trimmedPart}`;
         })
         .join(', ');
       return `${prefix} ${scopedSelector}`;
     });
+
+    return addImportantToDeclarations(scopedCss);
   } catch (error) {
     console.error("Failed to scope custom CSS for PDF, applying it directly:", error);
-    return css;
+    return addImportantToDeclarations(css);
   }
 };
 
@@ -75,6 +94,19 @@ export const exportToPDF = async (resumeData: ResumeData) => {
     body {
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
+    }
+
+    /* Guarantee background colors span all printed pages by using a fixed pseudo-element */
+    @media print {
+      .resume-template::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: inherit !important; /* inherit background from resume wrapper */
+        z-index: -1;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
     }
     .resume-two-page-layout .resume-page-first {
       page-break-after: always !important;

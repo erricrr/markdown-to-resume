@@ -8,9 +8,11 @@ import { Code } from "lucide-react";
 interface CSSEditorProps {
   onCSSChange: (css: string) => void;
   initialCSS: string;
+  /** The CSS string that represents your true default. Used for Reset button */
+  defaultCSS: string;
 }
 
-export const CSSEditor: React.FC<CSSEditorProps> = ({ onCSSChange, initialCSS }) => {
+export const CSSEditor: React.FC<CSSEditorProps> = ({ onCSSChange, initialCSS, defaultCSS }) => {
   const [css, setCss] = useState(initialCSS);
   const { toast } = useToast();
   const editorRef = useRef<any>(null);
@@ -32,8 +34,9 @@ export const CSSEditor: React.FC<CSSEditorProps> = ({ onCSSChange, initialCSS })
   };
 
   const handleReset = () => {
-    setCss(initialCSS);
-    onCSSChange(initialCSS);
+    // Revert to the base default CSS rather than whatever was last applied
+    setCss(defaultCSS);
+    onCSSChange(defaultCSS);
     toast({
       title: "CSS Reset",
       description: "The styles have been reset to their default values.",

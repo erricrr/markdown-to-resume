@@ -1,6 +1,15 @@
 import { useEffect, useCallback } from 'react';
 import { baseResumeStyles, templateStyles } from '../styles/resumeTemplates';
 
+// Helper to append !important to each declaration so user rules reliably override template styles
+const addImportantToDeclarations = (css: string): string => {
+  return css.replace(/:([^;{}]+);/g, (match, value) => {
+    // If declaration already has !important, leave it untouched
+    if (value.includes('!important')) return match;
+    return `: ${value.trim()} !important;`;
+  });
+};
+
 // This function takes user-provided CSS and makes it more specific
 // so it can reliably override the base template styles.
 const processAndScopeUserCSS = (css: string): string => {
@@ -8,15 +17,21 @@ const processAndScopeUserCSS = (css: string): string => {
   try {
     // This regex finds all CSS selectors and prepends the scope.
     // It's designed to avoid scoping @-rules like @keyframes or @media.
-    return css.replace(/(^|}|,)\s*([^{}]+)\s*(?={)/g, (match, prefix, selector) => {
+    const scopedCss = css.replace(/(^|}|,)\s*([^{}]+)\s*(?=\{)/g, (match, prefix, selector) => {
       const scopedSelector = selector
         .split(',')
         .map(part => {
           let trimmedPart = part.trim();
 
-          // Convert :root to the template scope for variable definitions
+          // Map :root directly to the resume container so users can easily target it
           if (trimmedPart === ':root') {
             return '.resume-template';
+          }
+
+          // When users target `body`, apply styles to the template wrapper and all its children so that
+          // global typography like font-family/line-height propagates even when inner elements define their own.
+          if (trimmedPart === 'body') {
+            return '.resume-template, .resume-template *';
           }
 
           if (trimmedPart.startsWith('@') || trimmedPart.startsWith('from') || trimmedPart.startsWith('to') || trimmedPart.startsWith(':')) {
@@ -31,10 +46,13 @@ const processAndScopeUserCSS = (css: string): string => {
         .join(', ');
       return `${prefix} ${scopedSelector}`;
     });
+
+    // Ensure user declarations win by adding !important where not already present
+    return addImportantToDeclarations(scopedCss);
   } catch (error) {
     console.error("Failed to scope custom CSS, applying it directly:", error);
     // Fallback to applying CSS without scoping if regex fails
-    return css;
+    return addImportantToDeclarations(css);
   }
 };
 
