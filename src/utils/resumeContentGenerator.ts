@@ -84,7 +84,11 @@ export const parseMarkdown = (md: string): string => {
 
     // Allow inline style attributes for custom spacing/sizing
     // @ts-ignore – ADD_ATTR may not exist on older DOMPurify typings but is supported at runtime.
-    return DOMPurify.sanitize(processedHtml, { ADD_ATTR: ['style'] });
+    return DOMPurify.sanitize(processedHtml, {
+      ADD_ATTR: ['style', 'target', 'rel'],
+      ADD_TAGS: ['iframe'],
+      ALLOW_UNKNOWN_PROTOCOLS: true
+    });
   } catch (error) {
     console.error('Error parsing markdown:', error);
     return '<p>Error parsing markdown content</p>';

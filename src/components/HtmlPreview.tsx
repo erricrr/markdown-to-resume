@@ -136,6 +136,14 @@ export function processHtmlForDisplay(html: string, options: {
         color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
+
+      /* Make sure links are clickable */
+      a, a:link, a:visited {
+        cursor: pointer;
+        pointer-events: auto !important;
+        text-decoration: underline;
+      }
+
       /* Ensure content fits within iframe */
       .resume, body > div {
         max-width: 100% !important;
@@ -501,7 +509,7 @@ export const HtmlPreview = forwardRef<HTMLDivElement, HtmlPreviewProps>(
             maxWidth: '100%',
             overflowX: 'hidden'
           }}
-          sandbox="allow-scripts allow-same-origin"
+          sandbox="allow-scripts allow-same-origin allow-popups allow-top-navigation"
           title="HTML Preview"
         />
         {/* Loading indicator that will be hidden when iframe becomes visible */}

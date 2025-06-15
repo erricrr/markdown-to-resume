@@ -19,6 +19,8 @@ export const baseResumeStyles = `
   --resume-summary-spacing: 0;
   --resume-header-spacing: 0.125rem;
   --resume-contact-spacing: 0.2rem;
+  --resume-bullet-size: 1.2em;      /* Increased bullet size */
+  --resume-bullet-offset: 0.15em; /* Adjusted bullet vertical alignment */
 
   /* UNIFIED SPACING VARIABLES FOR CONSISTENCY */
   --resume-margin-top: 0.5in;
@@ -227,7 +229,7 @@ body {
 .resume-template ul,
 .resume-template ol {
   list-style: none;
-  padding-left: 1.0rem;
+  padding-left: 1.25rem;  /* Increased padding to accommodate bullets */
   margin-top: var(--resume-ul-margin-top);
   margin-bottom: var(--resume-ul-margin-bottom);
 }
@@ -246,12 +248,15 @@ body {
 .resume-template li::before {
   content: "•";
   position: absolute;
-  left: -1.0rem;
-  font-size: 1.0em;
+  left: -1.25rem;  /* Adjusted position */
+  font-size: var(--resume-bullet-size);  /* Using variable */
   font-weight: normal;
   color: inherit;
   line-height: 1.0;
-  top: 0.1em;
+  top: var(--resume-bullet-offset);  /* Using variable for consistent alignment */
+  display: inline-block;  /* Ensures proper rendering */
+  width: 1em;  /* Fixed width */
+  text-align: center;  /* Center the bullet */
 }
 
 /* EXCEPTION: Header H1 elements need special spacing for contact info */
@@ -324,7 +329,12 @@ body {
 
 .resume-strong { font-weight: 600; color: #000; }
 .resume-emphasis { font-style: italic; color: #374151; text-align: left; }
-.resume-link { color: #374151; text-decoration: underline; }
+.resume-link {
+  color: #374151;
+  text-decoration: underline;
+  cursor: pointer;
+  pointer-events: auto !important;
+}
 .resume-hr { border: 0; border-top: 1px solid #d1d5db; margin: 1rem 0; }
 .resume-code { background-color: #f3f4f6; padding: 0.125rem 0.25rem; border-radius: 0.25rem; font-size: 0.875rem; font-family: monospace; }
 
@@ -392,18 +402,21 @@ body {
 /* Style for table-based bullet points */
 .resume-table-bullet-item {
   position: relative;
-  padding-left: 1rem;
+  padding-left: 1.25rem;  /* Increased padding to match list items */
 }
 
 .resume-table-bullet-item::before {
   content: "•";
   position: absolute;
   left: 0;
-  font-size: 1.0em;
+  font-size: var(--resume-bullet-size);  /* Using variable */
   font-weight: normal;
   color: inherit;
   line-height: 1.0;
-  top: 0.1em;
+  top: var(--resume-bullet-offset);  /* Using variable for consistent alignment */
+  display: inline-block;  /* Ensures proper rendering */
+  width: 1em;  /* Fixed width */
+  text-align: center;  /* Center the bullet */
 }
 
 /* Section spacing - add 8pt breathing room between sections */
@@ -636,6 +649,8 @@ export const templateStyles = {
   text-decoration: none;
   border-bottom: 1px solid #bbbbbb;
   transition: border-color 0.2s;
+  cursor: pointer;
+  pointer-events: auto !important;
 }
 
 .template-professional a:hover {
@@ -737,6 +752,8 @@ export const templateStyles = {
   transition: opacity 0.2s;
   border-bottom: 1px solid #dddddd;
   padding-bottom: 1px;
+  cursor: pointer;
+  pointer-events: auto !important;
 }
 
 .template-modern a:hover {
@@ -746,7 +763,7 @@ export const templateStyles = {
 
 .template-modern ul,
 .template-modern ol {
-  padding-left: 1.5rem;
+  padding-left: 1.25rem; /* Match the unified bullet point padding */
 }
 
 /* Hide HR in modern template */
@@ -814,6 +831,8 @@ export const templateStyles = {
   text-decoration: none;
   border-bottom: 1px solid #dddddd;
   transition: border-color 0.2s;
+  cursor: pointer;
+  pointer-events: auto !important;
 }
 
 .template-minimalist a:hover {
@@ -918,7 +937,7 @@ export const templateStyles = {
 /* Enhanced list styling */
 .template-creative ul,
 .template-creative ol {
-  padding-left: 1.5rem;
+  padding-left: 1.25rem; /* Match the unified bullet point padding */
 }
 
 /* Links with accent styling */
@@ -929,6 +948,8 @@ export const templateStyles = {
   border-bottom: 2px solid transparent;
   transition: all 0.2s ease;
   padding-bottom: 1px;
+  cursor: pointer;
+  pointer-events: auto !important;
 }
 
 .template-creative a:hover {
@@ -950,6 +971,49 @@ export const templateStyles = {
 
 /* Two-column specific adjustments - REMOVED CONFLICTING OVERRIDE */
 /* The Creative template now properly inherits two-column alignment from template-specific rules */
+
+/* Ensure consistent bullet rendering across all templates */
+.template-professional li::before,
+.template-modern li::before,
+.template-minimalist li::before,
+.template-creative li::before,
+.template-executive li::before {
+  font-size: var(--resume-bullet-size);
+  top: var(--resume-bullet-offset);
+  display: inline-block;
+  width: 1em;
+  text-align: center;
+}
+
+/* Ensure print styles maintain bullet point consistency */
+@media print {
+  /* Ensure bullet points match template size */
+  .resume-list-item::before,
+  .resume-template li::before {
+    font-size: var(--resume-bullet-size);
+    font-weight: normal;
+    color: inherit;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    display: inline-block;
+    width: 1em;
+    text-align: center;
+    top: var(--resume-bullet-offset);
+  }
+
+  /* Also ensure table bullet items are consistent */
+  .resume-table-bullet-item::before {
+    font-size: var(--resume-bullet-size);
+    font-weight: normal;
+    color: inherit;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    display: inline-block;
+    width: 1em;
+    text-align: center;
+    top: var(--resume-bullet-offset);
+  }
+}
 `,
 
   executive: `
@@ -1023,6 +1087,8 @@ export const templateStyles = {
   transition: opacity 0.2s;
   border-bottom: 1px solid #dddddd;
   padding-bottom: 1px;
+  cursor: pointer;
+  pointer-events: auto !important;
 }
 
 .template-executive a:hover {
@@ -1031,7 +1097,7 @@ export const templateStyles = {
 
 .template-executive ul,
 .template-executive ol {
-  padding-left: 1.5rem;
+  padding-left: 1.25rem; /* Match the unified bullet point padding */
   font-family: 'Ubuntu', sans-serif;
 }
 
@@ -1576,7 +1642,7 @@ export const printStyles = `
   .resume-two-column-layout ul,
   .resume-two-column-layout ol {
     margin: 0.5rem 0;
-    padding-left: 1rem;
+    padding-left: 1.25rem; /* Match the unified bullet point padding */
     max-width: 100%;
   }
 
@@ -1612,11 +1678,28 @@ export const printStyles = `
   /* Ensure bullet points match template size */
   .resume-list-item::before,
   .resume-template li::before {
-    font-size: 1.0em;
+    font-size: var(--resume-bullet-size);
     font-weight: normal;
     color: inherit;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+    display: inline-block;
+    width: 1em;
+    text-align: center;
+    top: var(--resume-bullet-offset);
+  }
+
+  /* Also ensure table bullet items are consistent */
+  .resume-table-bullet-item::before {
+    font-size: var(--resume-bullet-size);
+    font-weight: normal;
+    color: inherit;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    display: inline-block;
+    width: 1em;
+    text-align: center;
+    top: var(--resume-bullet-offset);
   }
 
   /* Force consistent font sizes across all templates in PDF */
@@ -1712,6 +1795,17 @@ export const printStyles = `
   .resume-template {
     word-spacing: normal;
     letter-spacing: normal;
+  }
+
+  /* Ensure all links are clickable in print preview */
+  .resume-link, a {
+    color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    color: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+    pointer-events: auto !important;
   }
 }
 `;
