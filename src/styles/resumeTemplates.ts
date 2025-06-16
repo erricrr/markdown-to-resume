@@ -1,6 +1,13 @@
 // Single source of truth for all resume template styles
 // This file is used by: Live Preview, PDF Export, and CSS Editor
 
+/* -------------------------------------------------------------------------- */
+/*  GLOBAL FONT IMPORTS                                                       */
+/* -------------------------------------------------------------------------- */
+// Centralized Google font import string so it can be reused by any consumer
+// (live preview, PDF generation, etc.) without duplication.
+export const fontImports = `@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Nunito:wght@300;400;600;700&family=Poppins:wght@400;500;600;700;800&family=Merriweather:wght@300;400;700&family=Ubuntu:wght@300;400;500;700&family=Work+Sans:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap');`;
+
 export const baseResumeStyles = `
 /* CSS Custom Properties for User Customization - Scoped to Resume Template Only */
 .resume-template {
@@ -19,8 +26,10 @@ export const baseResumeStyles = `
   --resume-summary-spacing: 0;
   --resume-header-spacing: 0.125rem;
   --resume-contact-spacing: 0.2rem;
-  --resume-bullet-size: 1.2em;      /* Increased bullet size */
-  --resume-bullet-offset: 0.15em; /* Adjusted bullet vertical alignment */
+  /* BULLET SIZING AND ALIGNMENT */
+  /* Unified across all templates for DRY maintenance */
+  --resume-bullet-size: 1.3em;      /* Slightly larger for better readability */
+  --resume-bullet-offset: 0.1em;    /* Fine-tuned vertical alignment */
 
   /* UNIFIED SPACING VARIABLES FOR CONSISTENCY */
   --resume-margin-top: 0.5in;
@@ -1859,9 +1868,6 @@ export const getTemplateStyles = (templateName: string): string => {
 
 // Function to get complete CSS for PDF export
 export const getCompleteCSS = (templateName?: string): string => {
-  const fontImports = `
-    @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Nunito:wght@300;400;600;700&family=Poppins:wght@400;500;600;700;800&family=Merriweather:wght@300;400;700&family=Ubuntu:wght@300;400;500;700&family=Work+Sans:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap');
-  `;
   let css = fontImports + baseResumeStyles;
 
   if (templateName) {

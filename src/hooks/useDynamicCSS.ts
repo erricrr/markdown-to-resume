@@ -1,5 +1,5 @@
 import { useEffect, useCallback } from 'react';
-import { baseResumeStyles, templateStyles } from '../styles/resumeTemplates';
+import { baseResumeStyles, templateStyles, fontImports } from '../styles/resumeTemplates';
 
 // Helper to append !important to each declaration so user rules reliably override template styles
 const addImportantToDeclarations = (css: string): string => {
@@ -77,6 +77,7 @@ export const useDynamicCSS = (template: string, customCSS: string) => {
 
     // Combine all styles. The order is crucial for correct cascading.
     styleElement.textContent = `
+      ${fontImports}
       ${baseCSS}
       ${selectedTemplateCSS}
       ${scopedUserCSS}

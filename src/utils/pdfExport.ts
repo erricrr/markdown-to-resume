@@ -1,4 +1,4 @@
-import { getCompleteCSS, baseResumeStyles, templateStyles } from '../styles/resumeTemplates';
+import { getCompleteCSS, baseResumeStyles, templateStyles, fontImports } from '../styles/resumeTemplates';
 import { generateCompleteResumeHTML, type ResumeContentData } from './resumeContentGenerator';
 
 // Helper to append !important to each declaration so user rules reliably override template styles
@@ -82,6 +82,7 @@ export const exportToPDF = async (resumeData: ResumeData) => {
   // --- End of replicated logic ---
 
   const fullCss = `
+    ${fontImports}
     ${baseCSS}
     ${selectedTemplateCSS}
     ${scopedUserCSS}
