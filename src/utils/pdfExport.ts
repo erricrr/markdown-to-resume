@@ -1,5 +1,8 @@
-import { getCompleteCSS, baseResumeStyles, templateStyles, fontImports } from '../styles/resumeTemplates';
-import { generateCompleteResumeHTML, type ResumeContentData } from './resumeContentGenerator';
+import { getCompleteCSS } from '../styles/resumeTemplates';
+import {
+  generateCompleteResumeHTML,
+  type ResumeContentData,
+} from './resumeContentGenerator';
 
 // Helper to append !important to each declaration so user rules reliably override template styles
 const addImportantToDeclarations = (css: string): string => {
@@ -72,14 +75,8 @@ export const exportToPDF = async (resumeData: ResumeData) => {
   const customCSS = localStorage.getItem('custom-css-content') || '';
   const { paperSize = 'A4', template } = resumeData;
 
-  // --- Replicate the exact style generation logic from useDynamicCSS ---
-  // 1. Start with the base styles for all resumes.
-  const baseCSS = baseResumeStyles;
-  // 2. Add the styles for the currently selected template.
-  const selectedTemplateCSS = templateStyles[template] || '';
-  // 3. Add the user's custom CSS, processed to have higher specificity.
-  const scopedUserCSS = processAndScopeUserCSS(customCSS);
-  // --- End of replicated logic ---
+  const processedUserCSS = processAndScopeUserCSS(customCSS);
+  const fullCss = getCompleteCSS(template) + processedUserCSS;
 
   // FONT LOADING FIX: Use explicit font links instead of @import to ensure reliable loading
   const fontLinks = `
@@ -89,10 +86,8 @@ export const exportToPDF = async (resumeData: ResumeData) => {
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Ubuntu:wght@300;400;500;700&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
   `;
 
-  const fullCss = `
-    ${baseCSS}
-    ${selectedTemplateCSS}
-    ${scopedUserCSS}
+  const finalCss = `
+    ${fullCss}
 
     /* PDF-specific overrides */
     @page {
@@ -131,7 +126,7 @@ export const exportToPDF = async (resumeData: ResumeData) => {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       ${fontLinks}
       <title>Resume - ${paperSize === 'A4' ? 'A4' : 'US Letter'} Format</title>
-      <style id="pdf-styles">${fullCss}</style>
+      <style id="pdf-styles">${finalCss}</style>
     </head>
     <body>
       <div class="resume-template ${templateClasses}" data-paper-size="${paperSize}">
