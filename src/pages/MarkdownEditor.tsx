@@ -68,6 +68,82 @@ Experienced software engineer with 5+ years developing scalable web applications
 - Developed collaborative task management application
 - Technologies: Vue.js, Firebase, PWA`;
 
+const getTemplateSpecificDefaultCSS = (template: string) => {
+  const templateDefaults = {
+    professional: `/*
+ * Professional Template Default Styles
+ * Clean, traditional fonts with Raleway headings and Roboto body text
+ */
+
+h1, h2, h3 {
+  font-family: 'Raleway', sans-serif;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  line-height: 1.6;
+}`,
+
+    modern: `/*
+ * Modern Template Default Styles
+ * Contemporary styling with Poppins font family
+ */
+
+h1, h2, h3 {
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  line-height: 1.6;
+}`,
+
+    minimalist: `/*
+ * Minimalist Template Default Styles
+ * Clean, lightweight design with Nunito font family
+ */
+
+h1, h2, h3 {
+  font-family: 'Nunito', sans-serif;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  line-height: 1.6;
+}`,
+
+    creative: `/*
+ * Creative Template Default Styles
+ * Modern, bold design with Work Sans font family
+ */
+
+h1, h2, h3 {
+  font-family: 'Work Sans', sans-serif;
+}
+
+body {
+  font-family: 'Work Sans', sans-serif;
+  line-height: 1.6;
+}`,
+
+    executive: `/*
+ * Executive Template Default Styles
+ * Professional serif headings with Merriweather, Ubuntu body text
+ */
+
+h1, h2, h3 {
+  font-family: 'Merriweather', serif;
+}
+
+body {
+  font-family: 'Ubuntu', sans-serif;
+  line-height: 1.6;
+}`
+  };
+
+  return templateDefaults[template as keyof typeof templateDefaults] || templateDefaults.professional;
+};
+
 const defaultInitialCSS = `/*
  * Welcome to the Custom CSS Editor!
  *
@@ -80,15 +156,7 @@ const defaultInitialCSS = `/*
  * }
  */
 
-h1, h2, h3 {
-  font-family: 'Merriweather', serif;
-}
-
-body {
-  font-family: 'Lato', sans-serif;
-  line-height: 1.6;
-}
-`;
+/* Template-specific fonts will be loaded based on your selected template */`;
 
 const MarkdownEditor = () => {
   const navigate = useNavigate();
@@ -107,13 +175,64 @@ const MarkdownEditor = () => {
   const [activeTab, setActiveTab] = useState('editor');
   const previewRef = useRef<HTMLDivElement>(null);
 
-  const [customCSS, setCustomCSS] = useState(() => localStorage.getItem('custom-css-content') || defaultInitialCSS);
+  const [customCSS, setCustomCSS] = useState(() => {
+    const savedCSS = localStorage.getItem('custom-css-content');
+    const savedTemplate = localStorage.getItem('selected-template') || 'professional';
+
+    // If no saved CSS exists, use template-specific default
+    if (!savedCSS) {
+      return getTemplateSpecificDefaultCSS(savedTemplate);
+    }
+
+    // If saved CSS is the old generic default, replace with template-specific
+    if (savedCSS.includes("font-family: 'Merriweather', serif") &&
+        savedCSS.includes("font-family: 'Lato', sans-serif")) {
+      return getTemplateSpecificDefaultCSS(savedTemplate);
+    }
+
+    return savedCSS;
+  });
 
   // The hook now manages template styles and custom overrides
   useDynamicCSS(selectedTemplate, customCSS);
 
   const { leftPanelSize, handlePanelResize, shouldUseCompactUI } = usePanelManagement('markdown-editor');
   const { uploadedFileUrl, uploadedFileName, refreshTimestamp } = useImageReferenceDetection(markdown, { detectMarkdown: true });
+
+  // Update CSS to template-specific default when template changes
+  useEffect(() => {
+    const currentCSS = customCSS;
+
+    // Get all template default CSS patterns to check against
+    const allTemplateDefaults = [
+      { name: 'professional', css: getTemplateSpecificDefaultCSS('professional') },
+      { name: 'modern', css: getTemplateSpecificDefaultCSS('modern') },
+      { name: 'minimalist', css: getTemplateSpecificDefaultCSS('minimalist') },
+      { name: 'creative', css: getTemplateSpecificDefaultCSS('creative') },
+      { name: 'executive', css: getTemplateSpecificDefaultCSS('executive') }
+    ];
+
+    // Check if current CSS is using generic fonts or is a template default (but not the current template)
+    const isGenericCSS = currentCSS.includes("font-family: 'Merriweather', serif") &&
+                        currentCSS.includes("font-family: 'Lato', sans-serif");
+    const isDefaultCSS = currentCSS === defaultInitialCSS;
+    const isEmpty = !currentCSS.trim();
+
+    // Check if current CSS matches any template default (including different templates)
+    const matchesOtherTemplateDefault = allTemplateDefaults.some(template =>
+      template.name !== selectedTemplate &&
+      currentCSS.trim() === template.css.trim()
+    );
+
+    // Check if current CSS already matches the selected template
+    const currentTemplateCSS = getTemplateSpecificDefaultCSS(selectedTemplate);
+    const alreadyMatchesCurrentTemplate = currentCSS.trim() === currentTemplateCSS.trim();
+
+    if ((isGenericCSS || isDefaultCSS || isEmpty || matchesOtherTemplateDefault) &&
+        !alreadyMatchesCurrentTemplate) {
+      setCustomCSS(currentTemplateCSS);
+    }
+  }, [selectedTemplate]);
 
   // Persist state to localStorage
   useEffect(() => {
@@ -269,7 +388,7 @@ const MarkdownEditor = () => {
           <TabsContent value="css" className="h-[calc(100%-40px)] mt-0">
             <CSSEditor
               initialCSS={customCSS}
-              defaultCSS={defaultInitialCSS}
+              defaultCSS={getTemplateSpecificDefaultCSS(selectedTemplate)}
               onCSSChange={setCustomCSS}
             />
           </TabsContent>

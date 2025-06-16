@@ -6,7 +6,12 @@
 /* -------------------------------------------------------------------------- */
 // Centralized Google font import string so it can be reused by any consumer
 // (live preview, PDF generation, etc.) without duplication.
-export const fontImports = `@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Nunito:wght@300;400;600;700&family=Poppins:wght@400;500;600;700;800&family=Merriweather:wght@300;400;700&family=Ubuntu:wght@300;400;500;700&family=Work+Sans:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap');`;
+//
+// IMPORTANT: All Google Fonts are now loaded via HTML <link> tags in index.html
+// to avoid @import conflicts and ensure reliable font loading in markdown templates.
+// This fontImports is kept for PDF export compatibility but left empty to prevent
+// duplicate loading which was causing font loading failures.
+export const fontImports = `/* Google Fonts loaded via HTML <link> tags in index.html for optimal performance and reliability */`;
 
 export const baseResumeStyles = `
 /* CSS Custom Properties for User Customization - Scoped to Resume Template Only */
@@ -910,16 +915,17 @@ export const templateStyles = {
   text-transform: uppercase;
   letter-spacing: 1.5px;
   position: relative;
-  display: inline-block;
+  display: block;
+  width: 100%;
   background: #f8f8f8;
-  padding: 0.5rem 1rem 0.5rem 1.5rem;
-  border-radius: 0 4px 4px 0;
-  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%);
+  padding: 0.5rem 1rem 0.5rem 1rem;
+  border-radius: 4px;
   border-left: 4px solid #1f2937;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
   /* Ensure proper spacing in two-column layout */
   margin-top: var(--resume-h2-margin-top);
+  margin-bottom: 1rem;
   box-sizing: border-box;
 }
 
@@ -941,6 +947,32 @@ export const templateStyles = {
   color: #374151;
   font-weight: 400;
   display: block;
+  text-align: left !important;
+  text-align: left !important;
+}
+
+/* Keep contact info centered in two-column layout */
+.resume-two-column-layout.template-creative .resume-header {
+  text-align: center;
+}
+
+.resume-two-column-layout.template-creative .resume-header .resume-heading-1 {
+  text-align: center;
+}
+
+.resume-two-column-layout.template-creative .resume-contact-info {
+  justify-content: center;
+  text-align: center;
+}
+
+/* Force left alignment for summary and all other content */
+.resume-two-column-layout.template-creative .resume-summary-section,
+.resume-two-column-layout.template-creative .resume-summary-section p,
+.resume-two-column-layout.template-creative .resume-summary-section div,
+.resume-two-column-layout.template-creative .resume-summary-section span,
+.resume-two-column-layout.template-creative .resume-column-left p,
+.resume-two-column-layout.template-creative .resume-column-right p {
+  text-align: left !important;
 }
 
 /* Enhanced list styling */
@@ -971,6 +1003,30 @@ export const templateStyles = {
   color: #6b7280;
   padding-bottom: 0;
   /* border-bottom removed for cleaner two-column header */
+}
+
+/* Keep contact info centered in two-column layout */
+.resume-two-column-layout.template-creative .resume-header {
+  text-align: center;
+}
+
+.resume-two-column-layout.template-creative .resume-header .resume-heading-1 {
+  text-align: center;
+}
+
+.resume-two-column-layout.template-creative .resume-contact-info {
+  justify-content: center;
+  text-align: center;
+}
+
+/* Force left alignment for summary and all other content */
+.resume-two-column-layout.template-creative .resume-summary-section,
+.resume-two-column-layout.template-creative .resume-summary-section p,
+.resume-two-column-layout.template-creative .resume-summary-section div,
+.resume-two-column-layout.template-creative .resume-summary-section span,
+.resume-two-column-layout.template-creative .resume-column-left p,
+.resume-two-column-layout.template-creative .resume-column-right p {
+  text-align: left !important;
 }
 
 /* Hide HR in creative template */
@@ -1868,7 +1924,9 @@ export const getTemplateStyles = (templateName: string): string => {
 
 // Function to get complete CSS for PDF export
 export const getCompleteCSS = (templateName?: string): string => {
-  let css = fontImports + baseResumeStyles;
+  // Note: Google Fonts are loaded via HTML <link> tags, not CSS @import
+  // This ensures reliable font loading in both live preview and PDF export
+  let css = baseResumeStyles;
 
   if (templateName) {
     css += getTemplateStyles(templateName);
