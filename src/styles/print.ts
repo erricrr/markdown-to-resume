@@ -392,19 +392,41 @@ export const printStyles = `
   }
 
   /* Modern template specific fixes */
-  .resume-two-column-layout.template-modern .resume-heading-2 {
-    font-size: var(--resume-h2-font-size);
-    margin: 1rem 0 0.75rem 0;
-    padding: 0.5rem 0.75rem 0.3rem 1rem;
-    background: #f8f8f8;
-    border-left: 3px solid #333333;
-    border-radius: 0 3px 3px 0;
+  .resume-two-column-layout.template-modern .resume-heading-2,
+  .resume-two-column-layout.template-modern h2 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    color: #000;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    position: relative;
+    padding-left: 1rem;
+    background: linear-gradient(90deg, rgba(107, 114, 128, 0.1), transparent);
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-left: none;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+    margin-top: var(--resume-h2-margin-top);
+    box-sizing: border-box;
     page-break-after: avoid;
     break-after: avoid;
     page-break-inside: avoid;
     break-inside: avoid;
+  }
+
+  .resume-two-column-layout.template-modern .resume-heading-2::before,
+  .resume-two-column-layout.template-modern h2::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    display: block;
   }
 
   /* Modern template - first H2 in columns */
@@ -439,13 +461,25 @@ export const printStyles = `
   }
 
   /* Creative template specific fixes */
-  .resume-two-column-layout.template-creative .resume-heading-2 {
-    font-size: var(--resume-h2-font-size);
-    margin: 1rem 0 0.75rem 0;
-    padding: 0.25rem 0 0 0;
+  .resume-two-column-layout.template-creative .resume-heading-2,
+  .resume-two-column-layout.template-creative h2 {
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 700;
     color: #1f2937;
-    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
     position: relative;
+    display: block;
+    width: 100%;
+    background: #f8f8f8;
+    padding: 0.5rem 1rem 0.5rem 1rem;
+    border-radius: 4px;
+    border-left: 4px solid #1f2937;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    margin-top: var(--resume-h2-margin-top);
+    margin-bottom: 1rem;
+    box-sizing: border-box;
     page-break-after: avoid;
     break-after: avoid;
     page-break-inside: avoid;
@@ -461,28 +495,23 @@ export const printStyles = `
     padding-top: 0.75rem;
   }
 
-  .resume-two-column-layout.template-creative .resume-heading-2::before {
-    content: '';
-    position: absolute;
-    left: -15px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 8px;
-    height: 8px;
-    background: linear-gradient(45deg, #4b5563, #6b7280);
-    border-radius: 50%;
+  /* Executive template specific fixes */
+  .resume-two-column-layout.template-executive .resume-heading-2,
+  .resume-two-column-layout.template-executive h2 {
+    font-family: 'Merriweather', serif;
+    font-weight: 600;
+    color: #333333;
+    padding: 0.25rem 0 0.25rem 0.5rem;
+    border-left: 3px solid #333333;
+    border-bottom: 3px solid #333333;
+    display: block;
+    clear: both;
+    line-height: 1.4;
+    background-color: #f8f9fa;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
-  }
-
-  /* Executive template specific fixes */
-  .resume-two-column-layout.template-executive .resume-heading-2 {
-    font-size: var(--resume-h2-font-size);
-    margin: 1rem 0 0.75rem 0;
-    padding: 0.25rem 0 0 0;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    margin-top: var(--resume-h2-margin-top);
+    box-sizing: border-box;
     page-break-after: avoid;
     break-after: avoid;
     page-break-inside: avoid;
