@@ -19,7 +19,9 @@ const SHORT_SECTION_LINE_THRESHOLD = 3;
 const HEADING_REGEX = /^(#{1,6})\s+(.+)$/;
 const PHONE_REGEX = /\(\d{3}\)|\d{3}-\d{3}-\d{4}|\+\d+/;
 const URL_REGEX = /https?:\/\//;
-const SUMMARY_HEADING_REGEX = /^##?\s*(summary|professional summary|about|profile|objective|overview|bio|introduction)/i;
+// Matches headings like "## Summary", "## **Summary**", "## _Summary_" etc.
+// Allows optional emphasis characters ( * _ ` ~ ) directly after the heading markers.
+const SUMMARY_HEADING_REGEX = /^##?\s*[\*\_`~]*\s*(summary|professional summary|about|profile|objective|overview|bio|introduction)/i;
 
 // Common section types that typically go in the left column
 const LEFT_COLUMN_SECTIONS = [
@@ -138,6 +140,8 @@ export const extractSummary = (markdown: string): string => {
     // Check for summary section headings
     if (SUMMARY_HEADING_REGEX.test(line)) {
       inSummary = true;
+      // Include the heading itself so that it is preserved when switching back to single-column mode
+      summaryLines.push(lines[i]); // use original line with formatting/emphasis preserved
       continue;
     }
 
