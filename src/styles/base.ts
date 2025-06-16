@@ -317,7 +317,6 @@ body {
 }
 
 /* Reset all summary content to use unified spacing */
-.resume-two-column-layout .resume-summary-section *,
 .resume-two-column-layout .resume-summary-section p,
 .resume-two-column-layout .resume-summary-section div,
 .resume-two-column-layout .resume-summary-section span {
