@@ -105,11 +105,6 @@ export const executiveStyles = `
   border-bottom: 3px solid #333333;
 }
 
-.resume-two-column-layout.template-executive .resume-column-left *,
-.resume-two-column-layout.template-executive .resume-column-right * {
-  font-family: 'Ubuntu', sans-serif;
-}
-
 .resume-two-column-layout.template-executive .resume-heading-2 {
   font-family: 'Merriweather', serif;
   font-weight: 600;
@@ -117,7 +112,6 @@ export const executiveStyles = `
 }
 
 .resume-two-column-layout.template-executive .resume-strong {
-  font-family: 'Ubuntu', sans-serif;
   font-weight: 600;
 }
-`;
+`

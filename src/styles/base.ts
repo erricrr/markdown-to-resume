@@ -188,6 +188,14 @@ body {
   line-height: 1.3;
 }
 
+.resume-heading-1 strong, .resume-template h1 strong,
+.resume-heading-2 strong, .resume-template h2 strong,
+.resume-heading-3 strong, .resume-template h3 strong,
+.resume-heading-4 strong, .resume-template h4 strong {
+  font-family: inherit !important;
+  font-weight: bold; /* Ensures consistent bolding */
+}
+
 /* Fix for h3 headings in two-column layout */
 .resume-subheading-container {
   display: block;
@@ -432,28 +440,38 @@ body {
   margin-bottom: var(--resume-section-spacing);
 }
 
-/* Two Column Layout Styles */
-.resume-two-column-layout .resume-two-column {
+/* TWO-COLUMN LAYOUT - APPLIES TO ALL TEMPLATES */
+.resume-two-column-layout {
   display: flex;
-  flex-direction: column;
+  width: 100%;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--resume-column-gap, 0.5in); /* Default gap */
+  page-break-inside: avoid; /* Prevents breaking inside the column container */
 }
 
 .resume-two-column-layout .resume-header {
   width: 100%;
-  margin-bottom: var(--resume-contact-spacing);
-  padding-bottom: 0;
-  /* Don't force text-align here - let templates decide */
-}
-
-.resume-two-column-layout .resume-columns {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 1.5rem;
-  margin-top: 0.125rem; /* REDUCED spacing from summary */
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #ccc;
+  flex: 0 0 100%; /* Header spans full width */
+  page-break-after: avoid; /* Prevents a page break right after the header */
 }
 
 .resume-two-column-layout .resume-column-left {
-  padding-right: 1rem;
+  flex: var(--resume-left-column-width, 1); /* Default width ratio */
+  padding-right: 0.25in;
+}
+
+.resume-two-column-layout .resume-column-right {
+  flex: var(--resume-right-column-width, 2);
+  padding-left: 0.25in;
+}
+
+/* Clear floats and ensure proper layout flow in two-column setup */
+.resume-two-column-layout .resume-section {
+  clear: both;
 }
 
 .resume-two-column-layout .resume-header .resume-heading-1 {
@@ -467,23 +485,11 @@ body {
   margin-bottom: var(--resume-contact-spacing);
   font-size: 11pt;
   line-height: 1.2;
-  /* Remove forced centering for contact info - let templates decide */
 }
 
 .resume-two-column-layout .resume-contact-info {
   margin-top: var(--resume-contact-spacing);
   margin-bottom: var(--resume-contact-spacing);
-  /* Remove forced centering - let templates decide */
-}
-
-/* Note: Summary spacing now handled by unified rule above */
-
-/* Remove all spacing around columns container */
-.resume-two-column-layout .resume-columns {
-  margin: 0;
-  padding: 0;
-  page-break-before: avoid;
-  break-before: avoid;
 }
 
 /* TEMPLATE-SPECIFIC HEADER ALIGNMENT FOR TWO-COLUMN LAYOUTS */
