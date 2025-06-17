@@ -730,4 +730,42 @@ export const printStyles = `
     pointer-events: auto !important;
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/*  FIREFOX-ONLY PRINT FIXES                                                  */
+/* -------------------------------------------------------------------------- */
+/*
+  Gecko currently cannot break CSS Grid containers across printed pages in
+  a reliable way. When a grid is taller than the remaining space on the
+  current page Firefox defers the entire container to the next page,
+  leaving a large blank area. This is exactly what happens to our two-column
+  layout: everything after the header is placed inside the '.resume-columns'
+  grid which then gets pushed to page 2.
+
+  To keep the codebase DRY and avoid touching the live-preview styles we use
+  a Firefox-specific capability query ( @supports (-moz-appearance: none) ).
+  Only Gecko recognises this property, so the override has zero effect in
+  Chrome / Safari, which already paginate the grid correctly.
+
+  The workaround is simple: swap the grid for a flexbox during printing in
+  Firefox. Flexbox items *can* break across pages, so the content flows as
+  expected while the visual appearance (left column ≈30%, right column ≈70%)
+  remains intact.
+*/
+@supports (-moz-appearance: none) {
+  .resume-two-column-layout .resume-columns {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5in; /* keep the same visual gap */
+  }
+
+  /* Maintain the original 1fr / 2fr proportions */
+  .resume-two-column-layout .resume-column-left {
+    flex: 0 0 30%;
+  }
+
+  .resume-two-column-layout .resume-column-right {
+    flex: 1 0 0;
+  }
+}
 `;
