@@ -185,16 +185,24 @@ export const printStyles = `
     padding-bottom: 0;
   }
 
-  /* SELECTIVE PAGE BREAK PREVENTION FOR TWO-COLUMN LAYOUTS */
-  .resume-two-column-layout .resume-header,
-  .resume-two-column-layout .resume-summary-section,
-  .resume-two-column-layout .resume-columns {
-    page-break-before: avoid;
-    break-before: avoid;
-    page-break-after: avoid;
-    break-after: avoid;
+  /* Fine-tuned page break control for two-column layouts to prevent content shifting to page 2 */
+  .resume-two-column-layout .resume-header {
     page-break-inside: avoid;
     break-inside: avoid;
+    page-break-after: avoid; /* Attempt to keep header with content below */
+    break-after: avoid;
+  }
+
+  .resume-two-column-layout .resume-summary-section {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    page-break-before: avoid; /* Attempt to keep summary with header above */
+    break-before: avoid;
+  }
+
+  .resume-two-column-layout .resume-columns {
+    page-break-before: avoid; /* Attempt to keep columns with summary above */
+    break-before: avoid;
   }
 
   /* Allow page breaks only at the very end of content */
@@ -349,7 +357,7 @@ export const printStyles = `
   .resume-two-column-layout .resume-column-right {
     width: 100%;
     max-width: 100%;
-    overflow: hidden;
+    overflow: visible;
     word-wrap: break-word;
     hyphens: auto;
     margin: 0;
@@ -536,13 +544,13 @@ export const printStyles = `
     hyphens: auto;
   }
 
-  /* Prevent column content from overflowing */
+  /* Allow column content to break across pages correctly */
   .resume-two-column-layout .resume-column-left {
-    overflow: hidden;
+    overflow: visible;
   }
 
   .resume-two-column-layout .resume-column-right {
-    overflow: hidden;
+    overflow: visible;
   }
 
   /* Force proper spacing between sections in columns */

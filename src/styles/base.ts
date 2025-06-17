@@ -94,6 +94,22 @@ body {
   min-height: 11.69in;
 }
 
+/* Two-column layout for live preview */
+.resume-two-column-layout .resume-columns {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 0.5in;
+  align-items: start;
+}
+
+.resume-two-column-layout .resume-column-left,
+.resume-two-column-layout .resume-column-right {
+  width: 100%;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
 /* Print-specific styles */
 @media print {
   @page {
