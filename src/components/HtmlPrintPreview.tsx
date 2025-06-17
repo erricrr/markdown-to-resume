@@ -274,6 +274,14 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
               content: "" !important;
               display: none !important;
             }
+
+            @media screen {
+              html, body {
+                overflow: auto !important;
+                height: auto !important;
+                width: auto !important;
+              }
+            }
           </style>
 
           <script>
