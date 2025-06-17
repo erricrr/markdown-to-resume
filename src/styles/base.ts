@@ -110,6 +110,11 @@ body {
   word-wrap: break-word;
 }
 
+/* Remove unwanted border from header in two-column layout */
+.resume-two-column-layout .resume-header .resume-heading-1 {
+  border-bottom: none;
+}
+
 /* Print-specific styles */
 @media print {
   @page {
@@ -470,7 +475,7 @@ body {
   width: 100%;
   padding-bottom: 0.5rem;
   margin-bottom: 0.5rem;
-  border-bottom: 1px solid #ccc;
+  border-bottom: none; /* Removed border to fix horizontal line issue */
   flex: 0 0 100%; /* Header spans full width */
   page-break-after: avoid; /* Prevents a page break right after the header */
 }
@@ -539,7 +544,7 @@ body {
 .resume-two-column-layout.template-professional .resume-header .resume-heading-1 {
   padding-bottom: 0.5rem;
   margin-bottom: 0.5rem;
-  border-bottom: 2px solid #888888;
+  border-bottom: none; /* Removed border to fix horizontal line issue */
 }
 
 /* Note: Template-specific summary spacing now handled by unified rule */
