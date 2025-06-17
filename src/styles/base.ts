@@ -217,6 +217,19 @@ body {
   font-weight: bold; /* Ensures consistent bolding */
 }
 
+.resume-heading-1 em, .resume-template h1 em,
+.resume-heading-1 i, .resume-template h1 i,
+.resume-heading-2 em, .resume-template h2 em,
+.resume-heading-2 i, .resume-template h2 i,
+.resume-heading-3 em, .resume-template h3 em,
+.resume-heading-3 i, .resume-template h3 i,
+.resume-heading-4 em, .resume-template h4 em,
+.resume-heading-4 i, .resume-template h4 i {
+  font-family: inherit !important;
+  font-style: italic; /* Ensures consistent italics */
+  color: inherit; /* Ensures color is inherited from heading */
+}
+
 /* Fix for h3 headings in two-column layout */
 .resume-subheading-container {
   display: block;
