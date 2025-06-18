@@ -1,5 +1,5 @@
 /**
- * Shared HTML processing utility for both preview and PDF export
+ * Unified HTML processing utility for both preview and PDF export
  * This ensures consistent rendering between the live preview and the PDF output
  */
 
@@ -11,17 +11,19 @@ export interface HtmlProcessorOptions {
   uploadedFileUrl?: string;
   uploadedFileName?: string;
   forPrint?: boolean;
+  forPrintWindow?: boolean; // New option for print window specific processing
 }
 
 /**
- * Process HTML content for consistent rendering in both preview and PDF
+ * Unified HTML processor that handles both preview and print scenarios
  */
-export function processHtml(html: string, options: HtmlProcessorOptions = {}) {
+export function processHtmlForDisplay(html: string, options: HtmlProcessorOptions = {}) {
   const {
     paperSize = 'A4',
     uploadedFileUrl = '',
     uploadedFileName = '',
-    forPrint = false
+    forPrint = false,
+    forPrintWindow = false
   } = options;
 
   // Add uploaded file to the HTML if available
@@ -43,8 +45,9 @@ export function processHtml(html: string, options: HtmlProcessorOptions = {}) {
     }
   }
 
-  // Swap filename references to blob URL for inline images
+  // Replace occurrences of the uploaded file name so inline <img> tags show the blob URL
   if (uploadedFileUrl && uploadedFileName) {
+    // Handle both full path and filename-only references
     const escapedName = uploadedFileName.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
     const regex = new RegExp(`src=([\"\'])([^\"\']*${escapedName})\\1`, 'g');
     processedHtml = processedHtml.replace(regex, (_m: string, quote: string) => `src=${quote}${uploadedFileUrl}${quote}`);
@@ -58,7 +61,7 @@ export function processHtml(html: string, options: HtmlProcessorOptions = {}) {
     }
   }
 
-  // Ensure relative image sources work
+  // Ensure relative image URLs load from public root
   processedHtml = processedHtml.replace(/<img([^>]*)src="([^\"\']+)"([^>]*)>/g, (match: string, before: string, src: string, after: string) => {
     if (/^(https?:|data:|blob:|\/)/i.test(src)) return match;
     return `<img${before}src="/${src}"${after}>`;
@@ -121,7 +124,33 @@ export function processHtml(html: string, options: HtmlProcessorOptions = {}) {
     `;
 
     // Base styles for both preview and print
-    const baseStyles = `
+    const baseStyles = getUnifiedStyles(paperSize, forPrint, forPrintWindow);
+
+    processedHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Preview</title>
+    ${forPrintWindow ? '<meta name="print-options" content="no-header,no-footer,no-margins">' : ''}
+    ${fontLinks}
+    ${baseStyles}
+</head>
+<body>
+    ${processedHtml}
+</body>
+</html>
+`;
+  }
+
+  return processedHtml;
+}
+
+/**
+ * Get unified styles that work for both preview and print
+ */
+function getUnifiedStyles(paperSize: 'A4' | 'US_LETTER', forPrint: boolean, forPrintWindow: boolean): string {
+  const baseStyles = `
     <style>
       /* Ensure proper CSS rendering and color preservation */
       html, body {
@@ -138,6 +167,14 @@ export function processHtml(html: string, options: HtmlProcessorOptions = {}) {
         color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
+
+      /* Make sure links are clickable */
+      a, a:link, a:visited {
+        cursor: pointer;
+        pointer-events: auto !important;
+        text-decoration: underline;
+      }
+
       /* Ensure content fits within iframe */
       .resume, body > div {
         max-width: 100% !important;
@@ -146,228 +183,104 @@ export function processHtml(html: string, options: HtmlProcessorOptions = {}) {
         margin: 0 auto !important;
       }
 
-      /* Fix for two-column layouts */
-      .content {
-        display: grid !important;
-        grid-template-columns: 1fr 2fr !important;
-        gap: 20px !important;
-        width: 100% !important;
+      /* IDENTICAL FALLBACK STYLES FOR BOTH PREVIEW AND PDF */
+      /* These styles only apply if user hasn't defined their own layout */
+
+      /* Apply fallback grid layout only to elements that don't already have explicit styling */
+      .content:not([style*="display"]):not([style*="grid"]):not([style*="flex"]) {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 20px;
+        width: 100%;
       }
 
-      .left-column, .right-column {
-        width: 100% !important;
-        overflow: hidden !important;
+      /* Fallback for column elements without explicit width styling */
+      .left-column:not([style*="width"]):not([style*="flex"]):not([style*="max-width"]),
+      .right-column:not([style*="width"]):not([style*="flex"]):not([style*="max-width"]) {
+        overflow: hidden;
       }
 
-      /* Support for flex-based column layouts */
-      [class*="column-layout"],
-      [class*="two-column"],
-      [class*="columns"],
-      [class*="col-layout"] {
-        display: grid !important;
-        grid-template-columns: 1fr 2fr !important;
-        gap: 20px !important;
-        width: 100% !important;
+      /* Support for flex-based column layouts - only as fallback when no explicit styles exist */
+      [class*="column-layout"]:not([style*="display"]):not([style*="grid"]):not([style*="flex"]),
+      [class*="two-column"]:not([style*="display"]):not([style*="grid"]):not([style*="flex"]),
+      [class*="columns"]:not([style*="display"]):not([style*="grid"]):not([style*="flex"]),
+      [class*="col-layout"]:not([style*="display"]):not([style*="grid"]):not([style*="flex"]) {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 20px;
+        width: 100%;
       }
 
-      /* Ensure all column elements have proper display */
-      [class*="column-left"],
-      [class*="left-col"],
-      [class*="sidebar"],
-      [class*="col-1"] {
-        width: 100% !important;
-        overflow: hidden !important;
+      /* Fallback for column elements without explicit styling */
+      [class*="column-left"]:not([style*="width"]):not([style*="flex"]):not([style*="max-width"]),
+      [class*="left-col"]:not([style*="width"]):not([style*="flex"]):not([style*="max-width"]),
+      [class*="sidebar"]:not([style*="width"]):not([style*="flex"]):not([style*="max-width"]),
+      [class*="col-1"]:not([style*="width"]):not([style*="flex"]):not([style*="max-width"]),
+      [class*="column-right"]:not([style*="width"]):not([style*="flex"]):not([style*="max-width"]),
+      [class*="right-col"]:not([style*="width"]):not([style*="flex"]):not([style*="max-width"]),
+      [class*="main-content"]:not([style*="width"]):not([style*="flex"]):not([style*="max-width"]),
+      [class*="col-2"]:not([style*="width"]):not([style*="flex"]):not([style*="max-width"]) {
+        overflow: hidden;
       }
 
-      [class*="column-right"],
-      [class*="right-col"],
-      [class*="main-content"],
-      [class*="col-2"] {
-        width: 100% !important;
-        overflow: hidden !important;
-      }
-
-      /* Scale content to fit the available width */
-      @media (max-width: 1000px) {
+      /* Scale content to fit the available width (only for screen preview, not print) */
+      @media screen and (max-width: 1000px) {
         .resume, body > div {
           transform: scale(0.95);
           transform-origin: top center;
         }
       }
-      @media (max-width: 800px) {
+      @media screen and (max-width: 800px) {
         .resume, body > div {
           transform: scale(0.9);
           transform-origin: top center;
         }
       }
+
+      /* Print-specific styles */
       @media print {
         @page {
           size: ${paperSize === 'A4' ? 'A4 portrait' : 'letter portrait'};
           margin: 0.5in;
         }
+
         html, body {
           -webkit-print-color-adjust: exact !important;
           color-adjust: exact !important;
           print-color-adjust: exact !important;
-        }
-        /* Force background colors to print */
-        * {
-          -webkit-print-color-adjust: exact !important;
-          color-adjust: exact !important;
-          print-color-adjust: exact !important;
-        }
-      }
-    </style>
-    `;
-
-    processedHtml = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resume Preview</title>
-    ${fontLinks}
-    ${baseStyles}
-</head>
-<body>
-    ${processedHtml}
-</body>
-</html>
-`;
-  }
-
-  return processedHtml;
-}
-
-/**
- * Generate print-specific styles and scripts
- */
-export function getPrintEnhancements(paperSize: 'A4' | 'US_LETTER' = 'A4') {
-  // Preconnect and Google Fonts links for print window
-  const fontLinks = `
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lato:wght@300;400;700&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;600&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
-  `;
-
-  // Detect browser for specific fixes
-  const browserDetection = `
-    <script>
-      // Browser detection for specific print fixes
-      function detectBrowser() {
-        const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-        const isChrome = /chrome/i.test(navigator.userAgent) && !/edge|edg/i.test(navigator.userAgent);
-
-        document.documentElement.setAttribute('data-browser',
-          isFirefox ? 'firefox' : (isSafari ? 'safari' : (isChrome ? 'chrome' : 'other')));
-
-        return { isFirefox, isSafari, isChrome };
-      }
-
-      const browser = detectBrowser();
-      console.log('Detected browser:', browser);
-    </script>
-  `;
-
-  // Add cross-browser print-specific CSS that preserves layouts
-  const printStyles = `
-    <style>
-      /* Base page setup */
-      @page {
-        size: ${paperSize === 'A4' ? 'A4 portrait' : 'letter portrait'};
-        margin: 0;
-        padding: 0;
-      }
-
-      /* Safari-specific: Hide header and footer */
-      @media print {
-        @page {
-          margin: 0;
-          size: ${paperSize === 'A4' ? 'A4 portrait' : 'letter portrait'};
-          /* Hide header/footer margin boxes */
-          @top-left { content: none; }
-          @top-center { content: none; }
-          @top-right { content: none; }
-          @bottom-left { content: none; }
-          @bottom-center { content: none; }
-          @bottom-right { content: none; }
-        }
-        body {
+          ${forPrintWindow ? `
           margin: 0 !important;
-          padding: 0 !important;
-          transform: none !important;
+          padding: 20px !important;
+          overflow: visible !important;
+          height: auto !important;
+          ` : ''}
         }
 
-        /* Ensure explicit page dimensions across all browsers */
-        html, body {
-          width: ${paperSize === 'A4' ? '210mm' : '8.5in'};
-          height: ${paperSize === 'A4' ? '297mm' : '11in'};
-          max-width: ${paperSize === 'A4' ? '210mm' : '8.5in'};
-          max-height: ${paperSize === 'A4' ? '297mm' : '11in'};
-        }
-      }
-
-        /* Base styles for all browsers */
-        html, body {
-          margin: 0 !important;
-          padding: 0 !important;
-          height: 100% !important;
-          width: 100% !important;
-          overflow: hidden !important;
-          -webkit-print-color-adjust: exact !important;
-          print-color-adjust: exact !important;
-          color-adjust: exact !important;
-        }
-
+        ${forPrintWindow ? `
+        /* Keep content flowing naturally on single page */
         body {
-          /* Ensure content fits within page boundaries */
           box-sizing: border-box !important;
           position: relative !important;
+          max-width: none !important;
+          height: auto !important;
         }
 
-        /* Force colors for ALL browsers */
+        /* Remove animations and transitions for clean print */
         *, *::before, *::after {
-          -webkit-print-color-adjust: exact !important;
-          print-color-adjust: exact !important;
-          color-adjust: exact !important;
-          forced-color-adjust: none !important;
+          animation-duration: 0s !important;
+          animation-delay: 0s !important;
+          transition-duration: 0s !important;
+          transition-delay: 0s !important;
         }
 
-        /* Firefox-specific fixes - scale content properly */
-        html[data-browser="firefox"] {
-          transform-origin: top left !important;
-          transform: scale(1) !important;
-          height: 100% !important;
-        }
-
-        /* Firefox-specific: ensure content fits in page */
-        html[data-browser="firefox"] body {
-          height: ${paperSize === 'A4' ? '297mm' : '11in'} !important;
-          width: ${paperSize === 'A4' ? '210mm' : '8.5in'} !important;
-          max-height: ${paperSize === 'A4' ? '297mm' : '11in'} !important;
-          max-width: ${paperSize === 'A4' ? '210mm' : '8.5in'} !important;
-        }
-
-        /* Safari-specific fixes */
-        html[data-browser="safari"] {
-          -webkit-print-color-adjust: exact !important;
-        }
-
-        html[data-browser="safari"] body {
-          /* Remove all margins/padding to avoid clipping and disable scaling */
-          margin: 0 !important;
-          padding: 0 !important;
-          transform: none !important;
-        }
-
-        /* Safari: Ensure content doesn't get cut off at the top */
-        html[data-browser="safari"] .resume-container,
-        html[data-browser="safari"] [class*="resume"],
-        html[data-browser="safari"] [id*="resume"] {
-          padding-top: 0 !important;
-          padding-bottom: 0 !important;
+        /* Hide interactive elements that don't make sense in print */
+        button:not([class*="print"]):not([class*="visible"]),
+        input[type="button"],
+        input[type="submit"],
+        input[type="reset"],
+        .interactive-section,
+        [class*="interactive"]:not([class*="print"]) {
+          display: none !important;
         }
 
         /* Force background colors specifically */
@@ -388,151 +301,117 @@ export function getPrintEnhancements(paperSize: 'A4' | 'US_LETTER' = 'A4') {
           forced-color-adjust: none !important;
         }
 
-        /* Remove animations and transitions for clean print */
-        *, *::before, *::after {
-          animation-duration: 0s !important;
-          animation-delay: 0s !important;
-          transition-duration: 0s !important;
-          transition-delay: 0s !important;
-        }
-
-        /* Force specific grid containers to preserve their layout */
-        .resume-container {
-          display: grid !important;
-          grid-template-columns: 350px 1fr !important;
-          width: 100% !important;
-          height: 100% !important;
-          overflow: hidden !important;
-          page-break-inside: avoid !important;
-          break-inside: avoid !important;
-        }
-
-        /* Fix for two-column layouts in print */
-        .content {
-          display: grid !important;
-          grid-template-columns: 1fr 2fr !important;
-          gap: 20px !important;
-          width: 100% !important;
-          page-break-inside: avoid !important;
-          break-inside: avoid !important;
-        }
-
-        .left-column, .right-column {
-          width: 100% !important;
-          overflow: hidden !important;
-          page-break-inside: avoid !important;
-          break-inside: avoid !important;
-        }
-
-        /* Support for flex-based column layouts */
-        [class*="column-layout"],
-        [class*="two-column"],
-        [class*="columns"],
-        [class*="col-layout"] {
-          display: grid !important;
-          grid-template-columns: 1fr 2fr !important;
-          gap: 20px !important;
-          width: 100% !important;
-          page-break-inside: avoid !important;
-          break-inside: avoid !important;
-        }
-
-        /* Ensure all column elements have proper display */
-        [class*="column-left"],
-        [class*="left-col"],
-        [class*="sidebar"],
-        [class*="col-1"] {
-          width: 100% !important;
-          overflow: hidden !important;
-          page-break-inside: avoid !important;
-          break-inside: avoid !important;
-        }
-
-        [class*="column-right"],
-        [class*="right-col"],
-        [class*="main-content"],
-        [class*="col-2"] {
-          width: 100% !important;
-          overflow: hidden !important;
-          page-break-inside: avoid !important;
-          break-inside: avoid !important;
-        }
-
         /* Preserve inline grid styles */
         *[style*="display: grid"],
         *[style*="display:grid"] {
           display: grid !important;
         }
 
-        /* Hide interactive elements that don't make sense in print */
-        button:not([class*="print"]):not([class*="visible"]),
-        input[type="button"],
-        input[type="submit"],
-        input[type="reset"],
-        .interactive-section,
-        [class*="interactive"]:not([class*="print"]) {
-          display: none !important;
+        /* Keep content together on single page */
+        .resume, .resume-container, body > div {
+          page-break-inside: avoid !important;
+          break-inside: avoid !important;
         }
+        ` : ''}
 
-        /* Hide URL display in Safari */
-        a {
-          text-decoration: none !important;
+        /* Force background colors to print */
+        * {
+          -webkit-print-color-adjust: exact !important;
+          color-adjust: exact !important;
+          print-color-adjust: exact !important;
         }
-
-        a::after {
-          content: "" !important;
-          display: none !important;
-        }
+      }
     </style>
+  `;
 
+  return baseStyles;
+}
+
+/**
+ * Get browser detection script for print windows
+ */
+export function getBrowserDetectionScript(): string {
+  return `
     <script>
+      // Browser detection for specific print fixes
+      function detectBrowser() {
+        const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+        const isChrome = /chrome/i.test(navigator.userAgent) && !/edge|edg/i.test(navigator.userAgent);
+
+        document.documentElement.setAttribute('data-browser',
+          isFirefox ? 'firefox' : (isSafari ? 'safari' : (isChrome ? 'chrome' : 'other')));
+
+        return { isFirefox, isSafari, isChrome };
+      }
+
       window.onload = function() {
-        // Detect browser and apply specific fixes
         const browser = detectBrowser();
+        console.log('Detected browser:', browser);
 
         // Firefox-specific fixes
         if (browser.isFirefox) {
-          // Apply Firefox-specific adjustments
           const resumeContainer = document.querySelector('.resume-container') ||
                                  document.querySelector('[class*="resume"]') ||
                                  document.querySelector('[id*="resume"]') ||
                                  document.body;
 
           if (resumeContainer) {
-            resumeContainer.style.height = '${paperSize === 'A4' ? '297mm' : '11in'}';
-            resumeContainer.style.width = '${paperSize === 'A4' ? '210mm' : '8.5in'}';
-            resumeContainer.style.maxHeight = '${paperSize === 'A4' ? '297mm' : '11in'}';
-            resumeContainer.style.maxWidth = '${paperSize === 'A4' ? '210mm' : '8.5in'}';
+            const paperSize = document.body.dataset.paperSize || 'A4';
+            const height = paperSize === 'A4' ? '297mm' : '11in';
+            const width = paperSize === 'A4' ? '210mm' : '8.5in';
+
+            resumeContainer.style.height = height;
+            resumeContainer.style.width = width;
+            resumeContainer.style.maxHeight = height;
+            resumeContainer.style.maxWidth = width;
             resumeContainer.style.overflow = 'hidden';
           }
         }
 
-        // Safari-specific fixes
-        if (browser.isSafari) {
-          // Apply Safari-specific adjustments
-          const style = document.createElement('style');
-          style.textContent = \`
-            @media print {
-              @page { margin: 0; padding: 0; }
-              body { margin: 0 !important; padding: 0 !important; transform: none !important; }
-              #safari-print-header-fix {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 0;
-                background: transparent;
-                z-index: 9999;
-              }
+                // Browser-specific fixes (simplified to avoid layout issues)
+        const style = document.createElement('style');
+        style.textContent = \`
+          @media print {
+            @page {
+              margin: 0.5in !important;
+              size: \${document.body.dataset.paperSize === 'A4' ? 'A4' : 'letter'} !important;
             }
-          \`;
-          document.head.appendChild(style);
+            body {
+              margin: 0 !important;
+              padding: 20px !important;
+              transform: none !important;
+            }
+            html {
+              margin: 0 !important;
+              padding: 0 !important;
+            }
+          }
+        \`;
+        document.head.appendChild(style);
 
-          // Add invisible element to prevent Safari header/footer
-          const headerFix = document.createElement('div');
-          headerFix.id = 'safari-print-header-fix';
-          document.body.prepend(headerFix);
+        // Try to programmatically set print settings (browser-dependent)
+        try {
+          // For browsers that support it, attempt to set print options
+          if (window.chrome && window.chrome.webstore) {
+            // Chrome-specific attempt to hide headers/footers
+            const printSettings = {
+              shouldPrintHeaderAndFooter: false,
+              shouldPrintBackgrounds: true,
+              marginType: 0, // NO_MARGINS
+            };
+
+            // This won't work due to security restrictions, but we try anyway
+            if (window.print.settings) {
+              Object.assign(window.print.settings, printSettings);
+            }
+          }
+        } catch (e) {
+          // Silently fail - this is expected due to browser security
+          console.log('Cannot programmatically set print options - user must disable headers/footers manually');
         }
+
+        // Instructions removed - no more popup!
 
         // Delay printing slightly to ensure all styles are applied
         setTimeout(() => {
@@ -541,6 +420,4 @@ export function getPrintEnhancements(paperSize: 'A4' | 'US_LETTER' = 'A4') {
       };
     </script>
   `;
-
-  return { fontLinks, browserDetection, printStyles };
 }
