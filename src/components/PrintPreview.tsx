@@ -73,7 +73,7 @@ export const PrintPreview = ({
       className="bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
     >
       <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
-      {isExporting ? 'Generating...' : 'Preview'}
+      <span className="hidden sm:inline">{isExporting ? 'Generating...' : 'Preview'}</span>
     </Button>
   );
 };

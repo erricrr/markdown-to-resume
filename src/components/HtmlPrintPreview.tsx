@@ -75,7 +75,7 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
       className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
     >
       <Eye className="h-4 w-4" />
-      {isExporting ? 'Generating...' : 'Preview'}
+      <span className="hidden sm:inline">{isExporting ? 'Generating...' : 'Preview'}</span>
     </Button>
   );
 };
