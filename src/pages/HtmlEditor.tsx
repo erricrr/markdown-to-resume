@@ -431,9 +431,7 @@ const HtmlEditor = () => {
               Live Preview
             </h2>
           </div>
-          <div className="text-sm text-gray-600">
-            Interactive & Print-ready
-          </div>
+
         </div>
       </div>
       <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 bg-gray-50">
