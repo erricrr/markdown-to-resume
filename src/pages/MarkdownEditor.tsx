@@ -433,9 +433,9 @@ const MarkdownEditor = () => {
                     <Eye className="h-4 w-4 text-primary shrink-0" />
                     <h2 className="text-base font-semibold text-foreground truncate">Live Preview</h2>
                   </div>
-                   <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200 shrink-0">
-                      PDF-accurate preview
-                    </Badge>
+                   <div className="text-sm text-gray-600">
+          Print-accurate preview
+        </div>
                 </div>
               </div>
               <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 bg-gray-50">

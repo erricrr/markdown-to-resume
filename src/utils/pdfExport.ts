@@ -4,6 +4,30 @@ import {
   type ResumeContentData,
 } from './resumeContentGenerator';
 
+// Shared function to generate print hint HTML with consistent styling
+export const getPrintHintHtml = (): string => {
+  return `
+    <div class="print-hint" style="
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-weight: 400;
+      line-height: 1.4;
+      z-index: 1000;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      backdrop-filter: blur(4px);
+    ">
+      🖨️ Preview Mode - Press Ctrl+P (or Cmd+P) to print
+    </div>
+  `;
+};
+
 // Helper to append !important to each declaration so user rules reliably override template styles
 const addImportantToDeclarations = (css: string): string => {
   return css.replace(/:([^;{}]+);/g, (match, value) => {
@@ -99,6 +123,21 @@ export const exportToPDF = async (resumeData: ResumeData) => {
       print-color-adjust: exact !important;
     }
 
+    /* Hide print hint when actually printing */
+    @media print {
+      .print-hint {
+        display: none !important;
+      }
+    }
+
+    /* Ensure print hint font is not overridden by resume template styles */
+    .print-hint {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+      font-weight: 400 !important;
+      font-size: 12px !important;
+      line-height: 1.4 !important;
+    }
+
     /* Guarantee background colors span all printed pages by using a fixed pseudo-element */
     @media print {
       .resume-template::before {
@@ -132,9 +171,11 @@ export const exportToPDF = async (resumeData: ResumeData) => {
       <div class="resume-template ${templateClasses}" data-paper-size="${paperSize}">
         ${bodyHtml}
       </div>
+      ${getPrintHintHtml()}
       <script>
         window.onload = () => {
-          setTimeout(() => window.print(), 500); // Delay to ensure fonts and styles render
+          // Remove automatic print trigger - let user manually print when ready
+          console.log('Preview ready. Use Ctrl+P (or Cmd+P) to print.');
         };
       </script>
     </body>

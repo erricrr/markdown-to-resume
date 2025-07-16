@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Download } from 'lucide-react';
+import { Eye } from 'lucide-react';
 import { exportToPDF } from '@/utils/pdfExport';
 import { useToast } from '@/hooks/use-toast';
 
@@ -41,7 +41,7 @@ export const PrintPreview = ({
   const handleExportPDF = async () => {
     setIsExporting(true);
     try {
-      console.log(`Exporting PDF with paper size: ${paperSize}`);
+      console.log(`Opening preview with paper size: ${paperSize}`);
       await exportToPDF({
         markdown,
         leftColumn,
@@ -57,10 +57,10 @@ export const PrintPreview = ({
         uploadedFileUrl,
         uploadedFileName
       });
-      toast({ title: 'PDF Generated', description: 'Your resume PDF has opened in a new tab.' });
+      toast({ title: 'Preview Ready', description: 'Your resume preview has opened in a new tab. Use Ctrl+P (or Cmd+P) to print.' });
     } catch (error) {
-      console.error('PDF export error:', error);
-      toast({ title: 'Export Failed', description: 'Could not generate PDF. Please try again.', variant: 'destructive' });
+      console.error('Preview error:', error);
+      toast({ title: 'Preview Failed', description: 'Could not open preview. Please try again.', variant: 'destructive' });
     } finally {
       setIsExporting(false);
     }
@@ -72,8 +72,8 @@ export const PrintPreview = ({
       disabled={isExporting}
       className="bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
     >
-      <Download className="h-3 w-3 sm:h-4 sm:w-4" />
-      {isExporting ? 'Generating...' : 'PDF'}
+      <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
+      {isExporting ? 'Generating...' : 'Preview'}
     </Button>
   );
 };

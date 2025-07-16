@@ -431,9 +431,9 @@ const HtmlEditor = () => {
               Live Preview
             </h2>
           </div>
-          <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200 shrink-0">
-            Interactive & PDF-ready
-          </Badge>
+          <div className="text-sm text-gray-600">
+            Interactive & Print-ready
+          </div>
         </div>
       </div>
       <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 bg-gray-50">

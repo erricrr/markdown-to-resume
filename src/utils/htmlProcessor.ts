@@ -312,6 +312,19 @@ function getUnifiedStyles(paperSize: 'A4' | 'US_LETTER', forPrint: boolean, forP
           page-break-inside: avoid !important;
           break-inside: avoid !important;
         }
+
+        /* Hide print hint when actually printing */
+        .print-hint {
+          display: none !important;
+        }
+
+        /* Ensure print hint font is not overridden by any styles */
+        .print-hint {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+          font-weight: 400 !important;
+          font-size: 12px !important;
+          line-height: 1.4 !important;
+        }
         ` : ''}
 
         /* Force background colors to print */
@@ -413,10 +426,8 @@ export function getBrowserDetectionScript(): string {
 
         // Instructions removed - no more popup!
 
-        // Delay printing slightly to ensure all styles are applied
-        setTimeout(() => {
-          window.print();
-        }, 800);
+        // Remove automatic print trigger - let user manually print when ready
+        console.log('Preview ready. Use Ctrl+P (or Cmd+P) to print.');
       };
     </script>
   `;

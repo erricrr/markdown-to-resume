@@ -51,7 +51,7 @@ export const TipTooltip: React.FC<TipTooltipProps> = ({
           <div><strong>CSS Variables:</strong> Use --resume-font-family, --resume-font-size, --resume-h1-font-size for easy customization</div>
           <div><strong>Colors:</strong> Target .template-{selectedTemplate} for template-specific styling</div>
           <div><strong>Priority:</strong> Add !important if styles aren't applying</div>
-          <div><strong>Live Updates:</strong> Changes apply immediately to preview and PDF</div>
+          <div><strong>Live Updates:</strong> Changes apply immediately to preview and print-ready output</div>
           <div><strong>Learn CSS:</strong> <a href="https://www.w3schools.com/css/" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">W3Schools CSS Tutorial</a></div>
         </div>
       );

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Eye } from "lucide-react";
 import { processHtmlForDisplay, getBrowserDetectionScript } from "@/utils/htmlProcessor";
+import { getPrintHintHtml } from "@/utils/pdfExport";
 
 interface HtmlPrintPreviewProps {
   html: string;
@@ -41,9 +42,13 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
       // Insert the browser detection script before closing body tag
       let enhancedHtml = processedHtml;
       if (enhancedHtml.includes('</body>')) {
-        enhancedHtml = enhancedHtml.replace('</body>', `${browserDetectionScript}</body>`);
+        enhancedHtml = enhancedHtml.replace('</body>', `
+          ${getPrintHintHtml()}
+          ${browserDetectionScript}</body>`);
       } else {
-        enhancedHtml = enhancedHtml + browserDetectionScript;
+        enhancedHtml = enhancedHtml + `
+          ${getPrintHintHtml()}
+          ${browserDetectionScript}`;
       }
 
       // Add paper size data attribute for script access
@@ -62,15 +67,15 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
     }
   };
 
-  // Direct PDF button without dialog
+  // Direct preview button without dialog
   return (
     <Button
       onClick={handlePrint}
       disabled={isExporting}
       className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
     >
-      <Download className="h-4 w-4" />
-      {isExporting ? 'Generating...' : 'PDF'}
+      <Eye className="h-4 w-4" />
+      {isExporting ? 'Generating...' : 'Preview'}
     </Button>
   );
 };
