@@ -238,7 +238,7 @@ function getUnifiedStyles(paperSize: 'A4' | 'US_LETTER', forPrint: boolean, forP
           }
         }
 
-                /* Ensure print window can scroll */
+                        /* Ensure print window can scroll */
         ${forPrintWindow ? `
         html {
           overflow-y: auto !important;
@@ -283,13 +283,31 @@ function getUnifiedStyles(paperSize: 'A4' | 'US_LETTER', forPrint: boolean, forP
           height: auto !important;
           min-height: auto !important;
         }
+
+        /* Ensure skill badges maintain their styling */
+        .skill {
+          -webkit-print-color-adjust: exact !important;
+          color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          forced-color-adjust: none !important;
+          background-attachment: local !important;
+        }
+
+        /* Ensure all badge-like elements maintain styling */
+        [class*="badge"], [class*="skill"], [class*="tag"] {
+          -webkit-print-color-adjust: exact !important;
+          color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          forced-color-adjust: none !important;
+          background-attachment: local !important;
+        }
         ` : ''}
 
       /* Print-specific styles */
       @media print {
         @page {
           size: ${paperSize === 'A4' ? 'A4 portrait' : 'letter portrait'};
-          margin: 0.5in;
+          margin: 0;
         }
 
         html, body {
@@ -298,7 +316,7 @@ function getUnifiedStyles(paperSize: 'A4' | 'US_LETTER', forPrint: boolean, forP
           print-color-adjust: exact !important;
           ${forPrintWindow ? `
           margin: 0 !important;
-          padding: 20px !important;
+          padding: 0 !important;
           overflow-y: auto !important;
           overflow-x: hidden !important;
           height: auto !important;
@@ -316,6 +334,8 @@ function getUnifiedStyles(paperSize: 'A4' | 'US_LETTER', forPrint: boolean, forP
           overflow-y: auto !important;
           overflow-x: hidden !important;
           min-height: 100vh !important;
+          margin: 0 !important;
+          padding: 0 !important;
         }
 
         /* Remove animations and transitions for clean print */
@@ -354,6 +374,24 @@ function getUnifiedStyles(paperSize: 'A4' | 'US_LETTER', forPrint: boolean, forP
           forced-color-adjust: none !important;
         }
 
+        /* Ensure skill badges maintain their styling in print */
+        .skill {
+          -webkit-print-color-adjust: exact !important;
+          color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          forced-color-adjust: none !important;
+          background-attachment: local !important;
+        }
+
+        /* Ensure all badge-like elements maintain styling */
+        [class*="badge"], [class*="skill"], [class*="tag"] {
+          -webkit-print-color-adjust: exact !important;
+          color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          forced-color-adjust: none !important;
+          background-attachment: local !important;
+        }
+
         /* Preserve inline grid styles */
         *[style*="display: grid"],
         *[style*="display:grid"] {
@@ -373,6 +411,8 @@ function getUnifiedStyles(paperSize: 'A4' | 'US_LETTER', forPrint: boolean, forP
           overflow: visible !important;
           max-height: none !important;
           height: auto !important;
+          margin: 0 !important;
+          padding: 0 !important;
         }
 
         /* Hide print hint when actually printing */
@@ -472,8 +512,29 @@ export function getBrowserDetectionScript(): string {
           document.body.style.overflowX = 'hidden';
           document.body.style.height = 'auto';
           document.body.style.minHeight = '100vh';
+          document.body.style.margin = '0';
+          document.body.style.padding = '0';
+
+          // Ensure resume container has no margins
+          const resumeElements = document.querySelectorAll('.resume, [class*="resume"]');
+          resumeElements.forEach(element => {
+            element.style.margin = '0';
+            element.style.padding = '0';
+          });
 
           console.log('✅ Print window scrolling fixes applied');
+
+          // Ensure skill badges maintain their styling
+          const skillElements = document.querySelectorAll('.skill, [class*="badge"], [class*="tag"]');
+          skillElements.forEach(element => {
+            element.style.setProperty('-webkit-print-color-adjust', 'exact', 'important');
+            element.style.setProperty('color-adjust', 'exact', 'important');
+            element.style.setProperty('print-color-adjust', 'exact', 'important');
+            element.style.setProperty('forced-color-adjust', 'none', 'important');
+            element.style.setProperty('background-attachment', 'local', 'important');
+          });
+
+          console.log('✅ Skill badge styling fixes applied');
         }
 
                 // Browser-specific fixes (simplified to avoid layout issues)
@@ -481,15 +542,19 @@ export function getBrowserDetectionScript(): string {
         style.textContent = \`
           @media print {
             @page {
-              margin: 0.5in !important;
+              margin: 0 !important;
               size: \${document.body.dataset.paperSize === 'A4' ? 'A4' : 'letter'} !important;
             }
             body {
               margin: 0 !important;
-              padding: 20px !important;
+              padding: 0 !important;
               transform: none !important;
             }
             html {
+              margin: 0 !important;
+              padding: 0 !important;
+            }
+            .resume {
               margin: 0 !important;
               padding: 0 !important;
             }
