@@ -602,6 +602,7 @@ export const printStyles = `
   .resume-template li::before {
     font-size: var(--resume-bullet-size);
     font-weight: normal;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;  /* Force consistent font for bullets */
     color: inherit;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
@@ -615,6 +616,7 @@ export const printStyles = `
   .resume-table-bullet-item::before {
     font-size: var(--resume-bullet-size);
     font-weight: normal;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;  /* Force consistent font for bullets */
     color: inherit;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;

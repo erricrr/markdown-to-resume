@@ -122,7 +122,7 @@ export const creativeStyles = `
 /* Enhanced list styling */
 .template-creative ul,
 .template-creative ol {
-  padding-left: 1.25rem; /* Match the unified bullet point padding */
+  padding-left: 1.5rem; /* Match the unified bullet point padding */
 }
 
 /* Links with accent styling */
@@ -188,6 +188,7 @@ export const creativeStyles = `
 .template-creative li::before,
 .template-executive li::before {
   font-size: var(--resume-bullet-size);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;  /* Force consistent font for bullets */
   top: var(--resume-bullet-offset);
   display: inline-block;
   width: 1em;
@@ -201,6 +202,7 @@ export const creativeStyles = `
   .resume-template li::before {
     font-size: var(--resume-bullet-size);
     font-weight: normal;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;  /* Force consistent font for bullets */
     color: inherit;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
@@ -214,6 +216,7 @@ export const creativeStyles = `
   .resume-table-bullet-item::before {
     font-size: var(--resume-bullet-size);
     font-weight: normal;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;  /* Force consistent font for bullets */
     color: inherit;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;

@@ -79,7 +79,7 @@ export const executiveStyles = `
 
 .template-executive ul,
 .template-executive ol {
-  padding-left: 1.25rem; /* Match the unified bullet point padding */
+  padding-left: 1.5rem; /* Match the unified bullet point padding */
   font-family: 'Ubuntu', sans-serif;
 }
 

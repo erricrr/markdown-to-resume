@@ -103,7 +103,7 @@ export const modernStyles = `
 
 .template-modern ul,
 .template-modern ol {
-  padding-left: 1.25rem; /* Match the unified bullet point padding */
+  padding-left: 1.5rem; /* Match the unified bullet point padding */
 }
 
 /* Hide HR in modern template */

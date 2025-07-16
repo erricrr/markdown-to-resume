@@ -18,8 +18,8 @@ export const baseResumeStyles = `
   --resume-contact-spacing: 0.2rem;
   /* BULLET SIZING AND ALIGNMENT */
   /* Unified across all templates for DRY maintenance */
-  --resume-bullet-size: 0.8em;      /* Reduced size for better proportion */
-  --resume-bullet-offset: 0.4em;    /* Adjusted for smaller bullet alignment */
+  --resume-bullet-size: 1.7em;      /* Larger size for better visibility */
+  --resume-bullet-offset: -0.15em;    /* Adjusted for larger bullet alignment */
 
   /* UNIFIED SPACING VARIABLES FOR CONSISTENCY */
   --resume-margin-top: 0.5in;
@@ -270,7 +270,7 @@ body {
 .resume-template ul,
 .resume-template ol {
   list-style: none;
-  padding-left: 1.25rem;  /* Increased padding to accommodate bullets */
+  padding-left: 1.5rem;  /* Increased padding for more space between bullets and text */
   margin-top: var(--resume-ul-margin-top);
   margin-bottom: var(--resume-ul-margin-bottom);
 }
@@ -289,9 +289,10 @@ body {
 .resume-template li::before {
   content: "•";
   position: absolute;
-  left: -1.25rem;  /* Adjusted position */
+  left: -1.5rem;  /* Adjusted position for increased padding */
   font-size: var(--resume-bullet-size);  /* Using variable */
   font-weight: normal;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;  /* Force consistent font for bullets */
   color: inherit;
   line-height: 1.0;
   top: var(--resume-bullet-offset);  /* Using variable for consistent alignment */
@@ -442,7 +443,7 @@ body {
 /* Style for table-based bullet points */
 .resume-table-bullet-item {
   position: relative;
-  padding-left: 1.25rem;  /* Increased padding to match list items */
+  padding-left: 1.5rem;  /* Increased padding to match list items */
 }
 
 .resume-table-bullet-item::before {
@@ -451,6 +452,7 @@ body {
   left: 0;
   font-size: var(--resume-bullet-size);  /* Using variable */
   font-weight: normal;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;  /* Force consistent font for bullets */
   color: inherit;
   line-height: 1.0;
   top: var(--resume-bullet-offset);  /* Using variable for consistent alignment */
