@@ -47,9 +47,36 @@ const defaultHtml = `<!DOCTYPE html>
       min-height: 100vh;
       background: white;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      margin: auto;
-      border-radius: 8px;
+      margin: 0;
+      border-radius: 0;
       overflow: hidden;
+    }
+
+    /* A4 specific styling to ensure left column extends to bottom */
+    @media screen and (min-width: 800px) {
+      .resume {
+        min-height: 11.69in; /* A4 height */
+        max-height: 11.69in;
+        margin: 0;
+        border-radius: 0;
+        padding: 0;
+      }
+
+      .left-column {
+        min-height: 11.69in; /* Ensure left column extends to A4 height */
+        height: 100%;
+        border-radius: 0;
+        padding-bottom: 0;
+        margin-bottom: 0;
+      }
+
+      .right-column {
+        min-height: 11.69in;
+        height: 100%;
+        border-radius: 0;
+        padding-bottom: 0;
+        margin-bottom: 0;
+      }
     }
 
     .left-column {
@@ -57,27 +84,33 @@ const defaultHtml = `<!DOCTYPE html>
       max-width: 35%;
       background: #1e3a8a;
       color: white;
-      padding: 60px 40px;
+      padding: 40px 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
     }
 
     .right-column {
       flex: 0 0 65%;
       max-width: 65%;
-      padding: 50px 50px;
+      padding: 40px 35px;
       background: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
     }
 
     h1 {
-      margin: 0 0 30px 0;
-      font-size: 48px;
+      margin: 0 0 20px 0;
+      font-size: 36px;
       font-weight: 700;
       color: white;
       letter-spacing: -0.5px;
     }
 
     h2 {
-      font-size: 24px;
-      margin: 0 0 20px 0;
+      font-size: 20px;
+      margin: 0 0 15px 0;
       color: white;
       font-weight: 700;
       letter-spacing: -0.3px;
@@ -86,8 +119,8 @@ const defaultHtml = `<!DOCTYPE html>
 
     .left-column h2 {
       color: white;
-      font-size: 26px;
-      margin: 0 0 25px 0;
+      font-size: 22px;
+      margin: 0 0 20px 0;
     }
 
     .right-column h2 {
@@ -106,15 +139,15 @@ const defaultHtml = `<!DOCTYPE html>
     }
 
     h3 {
-      margin: 20px 0 8px 0;
-      font-size: 16px;
+      margin: 15px 0 6px 0;
+      font-size: 15px;
       font-weight: 600;
       color: #1a1a1a;
       letter-spacing: -0.2px;
     }
 
     .section {
-      margin-bottom: 35px;
+      margin-bottom: 25px;
       position: relative;
     }
 
@@ -128,13 +161,13 @@ const defaultHtml = `<!DOCTYPE html>
     }
 
     ul {
-      margin: 8px 0 15px 0;
+      margin: 6px 0 12px 0;
       padding-left: 0;
       list-style: none;
     }
 
     ul li {
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       font-size: 14px;
       position: relative;
       padding-left: 20px;
@@ -157,7 +190,7 @@ const defaultHtml = `<!DOCTYPE html>
 
     .subheading {
       font-weight: 600;
-      margin: 20px 0 10px 0;
+      margin: 15px 0 8px 0;
       color: #1a1a1a;
       font-size: 14px;
       letter-spacing: 0.2px;
@@ -165,14 +198,14 @@ const defaultHtml = `<!DOCTYPE html>
 
     .left-column .subheading {
       color: white;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
     }
 
     .contact-info {
       font-size: 14px;
       line-height: 1.6;
-      margin-bottom: 40px;
+      margin-bottom: 30px;
     }
 
     .contact-info p {
@@ -274,6 +307,15 @@ const defaultHtml = `<!DOCTYPE html>
         background: #1e3a8a !important;
         -webkit-print-color-adjust: exact !important;
         color-adjust: exact !important;
+        min-height: 11.69in !important;
+        height: 100% !important;
+        border-radius: 0 !important;
+      }
+
+      .right-column {
+        min-height: 11.69in !important;
+        height: 100% !important;
+        border-radius: 0 !important;
       }
     }
   </style>
@@ -317,6 +359,9 @@ const defaultHtml = `<!DOCTYPE html>
         <p><strong>University of Technology</strong><br>Bachelor of Science in Computer Science – 2015-2019</p>
         <p><strong>GPA:</strong> 3.8/4.0</p>
       </div>
+
+      <!-- Spacer to push content to bottom for A4 -->
+      <div style="flex-grow: 1; min-height: 2rem;"></div>
     </div>
 
     <!-- RIGHT COLUMN -->
@@ -377,6 +422,9 @@ const defaultHtml = `<!DOCTYPE html>
         </button>
         <p id="demo-text" style="margin-top: 15px;">Click the button to see JavaScript in action!</p>
       </div>
+
+      <!-- Spacer to push content to bottom for A4 -->
+      <div style="flex-grow: 1; min-height: 2rem;"></div>
     </div>
   </div>
 

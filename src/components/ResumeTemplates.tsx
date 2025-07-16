@@ -160,13 +160,13 @@ export const ResumeTemplates: React.FC<ResumeTemplatesProps> = ({
           transformOrigin: 'top left',
           transform: `scale(${scale})`,
           margin: '0 auto',
-          padding: '0.5in',
+          padding: '0',
           boxSizing: 'border-box',
         } : undefined}
       />
       {isPreview && (
         <div className="text-xs text-center text-muted-foreground mt-3 px-4">
-          <p className="mb-1">Preview uses 0.5 inch margins on all sides. Font size 11pt with 1.15 line spacing.</p>
+          <p className="mb-1">Preview shows full page without margins. Font size 11pt with 1.15 line spacing.</p>
           <p className="mb-1">Paper size: {paperSize === 'A4' ? 'A4 (210 × 297 mm)' : 'US Letter (8.5 × 11 in)'}</p>
           <p>Section spacing of 8pt creates professional "breathing room" between content.</p>
         </div>
