@@ -11,7 +11,7 @@ export const creativeStyles = `
 /* Creative template styling - spacing handled by unified system */
 .template-creative .resume-heading-1,
 .template-creative h1 {
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Nunito', sans-serif;
   font-weight: 800;
   color: #1f2937;
   padding: var(--resume-header-spacing) 0 calc(var(--resume-header-spacing) + 0.25rem) 0;
@@ -53,7 +53,7 @@ export const creativeStyles = `
 /* Section headings with modern accent */
 .template-creative .resume-heading-2,
 .template-creative h2 {
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Nunito', sans-serif;
   font-weight: 700;
   color: #1f2937;
   text-transform: uppercase;
@@ -75,13 +75,13 @@ export const creativeStyles = `
 
 .template-creative .resume-heading-3,
 .template-creative h3 {
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Nunito', sans-serif;
   color: #1f2937;
 }
 
 .template-creative .resume-heading-4,
 .template-creative h4 {
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Nunito', sans-serif;
   color: #1f2937;
 }
 

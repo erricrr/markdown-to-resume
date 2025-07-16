@@ -471,7 +471,7 @@ export const printStyles = `
   /* Creative template specific fixes */
   .resume-two-column-layout.template-creative .resume-heading-2,
   .resume-two-column-layout.template-creative h2 {
-    font-family: 'Work Sans', sans-serif;
+    font-family: 'Nunito', sans-serif;
     font-weight: 700;
     color: #1f2937;
     text-transform: uppercase;

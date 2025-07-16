@@ -118,7 +118,7 @@ body {
  */
 
 h1, h2, h3 {
-  font-family: 'Work Sans', sans-serif;
+ font-family: 'Nunito', sans-serif;
 }
 
 body {
