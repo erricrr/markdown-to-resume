@@ -18,8 +18,8 @@ export const baseResumeStyles = `
   --resume-contact-spacing: 0.2rem;
   /* BULLET SIZING AND ALIGNMENT */
   /* Unified across all templates for DRY maintenance */
-  --resume-bullet-size: 1.3em;      /* Slightly larger for better readability */
-  --resume-bullet-offset: 0.1em;    /* Fine-tuned vertical alignment */
+  --resume-bullet-size: 0.8em;      /* Reduced size for better proportion */
+  --resume-bullet-offset: 0.4em;    /* Adjusted for smaller bullet alignment */
 
   /* UNIFIED SPACING VARIABLES FOR CONSISTENCY */
   --resume-margin-top: 0.5in;
