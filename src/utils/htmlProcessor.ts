@@ -159,6 +159,7 @@ function getUnifiedStyles(paperSize: 'A4' | 'US_LETTER', forPrint: boolean, forP
         width: 100%;
         height: auto;
         overflow-x: hidden;
+        overflow-y: auto;
         max-width: 100%;
       }
       * {
@@ -223,19 +224,66 @@ function getUnifiedStyles(paperSize: 'A4' | 'US_LETTER', forPrint: boolean, forP
         overflow: hidden;
       }
 
-      /* Scale content to fit the available width (only for screen preview, not print) */
-      @media screen and (max-width: 1000px) {
-        .resume, body > div {
-          transform: scale(0.95);
-          transform-origin: top center;
+              /* Scale content to fit the available width (only for screen preview, not print) */
+        @media screen and (max-width: 1000px) {
+          .resume, body > div {
+            transform: scale(0.95);
+            transform-origin: top center;
+          }
         }
-      }
-      @media screen and (max-width: 800px) {
-        .resume, body > div {
-          transform: scale(0.9);
-          transform-origin: top center;
+        @media screen and (max-width: 800px) {
+          .resume, body > div {
+            transform: scale(0.9);
+            transform-origin: top center;
+          }
         }
-      }
+
+                /* Ensure print window can scroll */
+        ${forPrintWindow ? `
+        html {
+          overflow-y: auto !important;
+          overflow-x: hidden !important;
+        }
+
+        body {
+          overflow-y: auto !important;
+          overflow-x: hidden !important;
+          min-height: 100vh !important;
+        }
+
+        .resume, body > div {
+          overflow: visible !important;
+          max-height: none !important;
+        }
+
+        /* Override any overflow restrictions on all elements */
+        * {
+          overflow: visible !important;
+        }
+
+        /* Ensure the main resume container can scroll */
+        .resume {
+          overflow: visible !important;
+          max-height: none !important;
+          height: auto !important;
+          min-height: auto !important;
+        }
+
+        /* Ensure body and html can scroll */
+        html, body {
+          overflow-y: auto !important;
+          overflow-x: hidden !important;
+          height: auto !important;
+          min-height: 100vh !important;
+        }
+
+        /* Remove any height restrictions that might prevent scrolling */
+        .resume, body > div, [class*="resume"] {
+          max-height: none !important;
+          height: auto !important;
+          min-height: auto !important;
+        }
+        ` : ''}
 
       /* Print-specific styles */
       @media print {
@@ -251,8 +299,10 @@ function getUnifiedStyles(paperSize: 'A4' | 'US_LETTER', forPrint: boolean, forP
           ${forPrintWindow ? `
           margin: 0 !important;
           padding: 20px !important;
-          overflow: visible !important;
+          overflow-y: auto !important;
+          overflow-x: hidden !important;
           height: auto !important;
+          min-height: 100vh !important;
           ` : ''}
         }
 
@@ -263,6 +313,9 @@ function getUnifiedStyles(paperSize: 'A4' | 'US_LETTER', forPrint: boolean, forP
           position: relative !important;
           max-width: none !important;
           height: auto !important;
+          overflow-y: auto !important;
+          overflow-x: hidden !important;
+          min-height: 100vh !important;
         }
 
         /* Remove animations and transitions for clean print */
@@ -311,6 +364,15 @@ function getUnifiedStyles(paperSize: 'A4' | 'US_LETTER', forPrint: boolean, forP
         .resume, .resume-container, body > div {
           page-break-inside: avoid !important;
           break-inside: avoid !important;
+          overflow: visible !important;
+          max-height: none !important;
+        }
+
+        /* Override any overflow: hidden on resume containers for print window */
+        .resume {
+          overflow: visible !important;
+          max-height: none !important;
+          height: auto !important;
         }
 
         /* Hide print hint when actually printing */
@@ -387,6 +449,31 @@ export function getBrowserDetectionScript(): string {
             resumeContainer.style.maxWidth = width;
             resumeContainer.style.overflow = 'hidden';
           }
+        }
+
+        // Force scrolling to work in print window
+        if (document.body.dataset.paperSize) {
+          console.log('🔧 Applying print window scrolling fixes...');
+
+          // Override any overflow: hidden on resume elements
+          const resumeElements = document.querySelectorAll('.resume, [class*="resume"]');
+          console.log('Found resume elements:', resumeElements.length);
+          resumeElements.forEach(element => {
+            element.style.overflow = 'visible';
+            element.style.maxHeight = 'none';
+            element.style.height = 'auto';
+            console.log('Fixed resume element:', element);
+          });
+
+          // Ensure body and html can scroll
+          document.documentElement.style.overflowY = 'auto';
+          document.documentElement.style.overflowX = 'hidden';
+          document.body.style.overflowY = 'auto';
+          document.body.style.overflowX = 'hidden';
+          document.body.style.height = 'auto';
+          document.body.style.minHeight = '100vh';
+
+          console.log('✅ Print window scrolling fixes applied');
         }
 
                 // Browser-specific fixes (simplified to avoid layout issues)

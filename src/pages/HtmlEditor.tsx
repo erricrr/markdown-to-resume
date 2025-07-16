@@ -20,12 +20,12 @@ const defaultHtml = `<!DOCTYPE html>
   <meta charset="UTF-8">
   <title>Jane Doe - Resume</title>
 
-  <!-- Google Font: Work Sans -->
-  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Google Font: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     @page {
       size: A4;
-      margin: 1.5cm 2cm;
+      margin: 0;
     }
 
     * {
@@ -33,11 +33,12 @@ const defaultHtml = `<!DOCTYPE html>
     }
 
     body {
-      font-family: 'Work Sans', sans-serif;
-      color: #333;
-      background: #f5f5f5;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #1a1a1a;
+      background: #fafafa;
       margin: 0;
       padding: 0;
+      line-height: 1.6;
     }
 
     .resume {
@@ -45,130 +46,205 @@ const defaultHtml = `<!DOCTYPE html>
       max-width: 100%;
       min-height: 100vh;
       background: white;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       margin: auto;
+      border-radius: 8px;
+      overflow: hidden;
     }
 
     .left-column {
       flex: 0 0 35%;
       max-width: 35%;
-      background-color: #f0f0f0;
-      padding: 40px 30px 40px 40px;
-      border-right: 4px solid #1976d2; /* Blue Accent */
+      background: #1e3a8a;
+      color: white;
+      padding: 60px 40px;
     }
 
     .right-column {
       flex: 0 0 65%;
       max-width: 65%;
-      padding: 40px 40px;
+      padding: 50px 50px;
+      background: white;
     }
 
     h1 {
-      margin-top: 5px;
-      font-size: 36px;
+      margin: 0 0 30px 0;
+      font-size: 48px;
       font-weight: 700;
-      color: #222;
+      color: white;
+      letter-spacing: -0.5px;
     }
 
     h2 {
-      font-size: 18px;
-      margin-bottom: 8px;
-      color: #1976d2;
-      font-weight: 600;
-      border-bottom: 1px solid #1976d2;
-      padding-bottom: 4px;
+      font-size: 24px;
+      margin: 0 0 20px 0;
+      color: white;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      position: relative;
+    }
+
+    .left-column h2 {
+      color: white;
+      font-size: 26px;
+      margin: 0 0 25px 0;
+    }
+
+    .right-column h2 {
+      color: #1e3a8a;
+    }
+
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 40px;
+      height: 3px;
+      background: currentColor;
+      border-radius: 2px;
     }
 
     h3 {
-      margin: 10px 0 4px;
-      font-size: 15px;
+      margin: 20px 0 8px 0;
+      font-size: 16px;
       font-weight: 600;
-      color: #333;
+      color: #1a1a1a;
+      letter-spacing: -0.2px;
     }
 
     .section {
-      margin-bottom: 30px;
+      margin-bottom: 35px;
+      position: relative;
     }
 
     .job-title {
-      font-style: italic;
-      color: #555;
-      font-size: 13px;
-      margin-bottom: 4px;
+      font-style: normal;
+      color: #1e3a8a;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      letter-spacing: 0.2px;
     }
 
     ul {
-      margin: 5px 0 10px 20px;
+      margin: 8px 0 15px 0;
       padding-left: 0;
+      list-style: none;
     }
 
     ul li {
-      margin-bottom: 5px;
-      font-size: 13px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      position: relative;
+      padding-left: 20px;
+      line-height: 1.5;
     }
 
-    p, li {
+    ul li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: #1e3a8a;
+      font-weight: bold;
+    }
+
+    p {
       font-size: 14px;
       line-height: 1.6;
+      margin: 0 0 8px 0;
     }
 
     .subheading {
       font-weight: 600;
-      margin-top: 15px;
-      margin-bottom: 8px;
-      color: #444;
+      margin: 20px 0 10px 0;
+      color: #1a1a1a;
       font-size: 14px;
+      letter-spacing: 0.2px;
+    }
+
+    .left-column .subheading {
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
     }
 
     .contact-info {
       font-size: 14px;
       line-height: 1.6;
-      margin-bottom: 30px;
+      margin-bottom: 40px;
     }
 
     .contact-info p {
-      margin-bottom: 8px;
+      margin-bottom: 10px;
+      opacity: 0.9;
+    }
+
+    .contact-info a {
+      color: white;
+      text-decoration: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .contact-info a:hover {
+      opacity: 0.8;
     }
 
     .skills {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.375rem;
-      margin: 0 0 0.9375rem -0.625rem;
+      gap: 8px;
+      margin: 10px 0 20px 0;
     }
 
     .skill {
-      background: #e3f2fd;
-      color: #1976d2;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
       padding: 6px 12px;
-      border-radius: 12px;
+      border-radius: 20px;
       font-size: 12px;
       font-weight: 500;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      transition: all 0.2s ease;
+    }
+
+    .right-column .skill {
+      background: #f1f5f9;
+      color: #1e3a8a;
+      border: 1px solid #e2e8f0;
     }
 
     .interactive-section {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: #1e3a8a;
       color: white;
-      padding: 20px;
-      border-radius: 10px;
-      margin: 30px 0;
+      padding: 25px;
+      border-radius: 12px;
+      margin: 40px 0;
       text-align: center;
+      position: relative;
+      overflow: hidden;
     }
 
     .interactive-button {
-      background: rgba(255,255,255,0.2);
+      background: rgba(255, 255, 255, 0.15);
       color: white;
-      border: 2px solid white;
-      padding: 10px 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      padding: 12px 24px;
       border-radius: 25px;
       cursor: pointer;
-      font-weight: bold;
+      font-weight: 600;
+      font-size: 14px;
       transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      position: relative;
+      z-index: 1;
     }
 
     .interactive-button:hover {
-      background: white;
-      color: #667eea;
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     }
 
     @media print {
@@ -179,21 +255,23 @@ const defaultHtml = `<!DOCTYPE html>
       .resume {
         box-shadow: none !important;
         margin: 0 !important;
+        border-radius: 0 !important;
       }
 
       .interactive-section {
         display: none !important;
       }
 
-      .skill {
-        background: #e3f2fd !important;
-        color: #1976d2 !important;
-        -webkit-print-color-adjust: exact !important;
-        color-adjust: exact !important;
-      }
+              .skill {
+          background: #f1f5f9 !important;
+          color: #1e3a8a !important;
+          border: 1px solid #e2e8f0 !important;
+          -webkit-print-color-adjust: exact !important;
+          color-adjust: exact !important;
+        }
 
       .left-column {
-        background-color: #f0f0f0 !important;
+        background: #1e3a8a !important;
         -webkit-print-color-adjust: exact !important;
         color-adjust: exact !important;
       }
@@ -312,7 +390,8 @@ const defaultHtml = `<!DOCTYPE html>
         text.style.backgroundColor = '';
         text.textContent = 'Click the button to see JavaScript in action!';
         skills.forEach(skill => {
-          skill.style.background = '#e3f2fd';
+          skill.style.background = skill.classList.contains('right-column') ? '#f1f5f9' : 'rgba(255, 255, 255, 0.1)';
+          skill.style.color = skill.classList.contains('right-column') ? '#1e3a8a' : 'white';
           skill.style.transform = 'scale(1)';
         });
       } else {
