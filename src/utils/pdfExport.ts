@@ -23,7 +23,7 @@ export const getPrintHintHtml = (): string => {
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
       backdrop-filter: blur(4px);
     ">
-      🖨️ Preview Mode - Press Ctrl+P (or Cmd+P) to print
+    Preview Mode 🖨️ Press Ctrl+P (or Cmd+P) to print
     </div>
     <style>
       @media print {
