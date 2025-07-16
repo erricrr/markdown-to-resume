@@ -125,11 +125,7 @@ const Index = () => {
           </Card>
         </div>
 
-        <div className="mt-12 text-center">
-          <p className="text-sm text-gray-500">
-            You can switch between editors anytime.
-          </p>
-        </div>
+
       </div>
     </div>
   );
