@@ -25,6 +25,18 @@ export const getPrintHintHtml = (): string => {
     ">
       🖨️ Preview Mode - Press Ctrl+P (or Cmd+P) to print
     </div>
+    <style>
+      @media print {
+        .print-hint {
+          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          position: absolute !important;
+          left: -9999px !important;
+          top: -9999px !important;
+        }
+      }
+    </style>
   `;
 };
 
@@ -125,8 +137,15 @@ export const exportToPDF = async (resumeData: ResumeData) => {
 
     /* Hide print hint when actually printing */
     @media print {
-      .print-hint {
+      .print-hint,
+      div[class*="print-hint"],
+      div[style*="print-hint"] {
         display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        position: absolute !important;
+        left: -9999px !important;
+        top: -9999px !important;
       }
     }
 

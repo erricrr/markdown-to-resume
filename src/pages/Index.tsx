@@ -18,7 +18,7 @@ const Index = () => {
               </div>
               <div>
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-                Paste to Print
+                Paste to PDF
                 </h1>
                 <p className="text-xs sm:text-sm text-gray-600">
                 Create resumes with Markdown or HTML                </p>

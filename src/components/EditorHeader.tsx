@@ -55,7 +55,7 @@ export const EditorHeader = ({
                   size="sm"
                   aria-label="Home"
                   onClick={() => navigate("/")}
-                  className="bg-white hover:bg-gray-50 hover:text-gray-900 hidden sm:flex items-center gap-2 font-medium"
+                  className="bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white border-0 hover:text-white hidden sm:flex items-center gap-2 font-medium"
                 >
                   <Home className="h-4 w-4" />
                   <span>Home</span>
@@ -72,7 +72,7 @@ export const EditorHeader = ({
                   size="icon"
                   aria-label="Home"
                   onClick={() => navigate("/")}
-                  className="bg-white hover:bg-gray-50 hover:text-gray-900 sm:hidden font-medium"
+                  className="bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white border-0 hover:text-white sm:hidden font-medium"
                 >
                   <Home className="h-4 w-4" />
                 </Button>

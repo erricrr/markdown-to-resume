@@ -314,8 +314,15 @@ function getUnifiedStyles(paperSize: 'A4' | 'US_LETTER', forPrint: boolean, forP
         }
 
         /* Hide print hint when actually printing */
-        .print-hint {
+        .print-hint,
+        div[class*="print-hint"],
+        div[style*="print-hint"] {
           display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          position: absolute !important;
+          left: -9999px !important;
+          top: -9999px !important;
         }
 
         /* Ensure print hint font is not overridden by any styles */
