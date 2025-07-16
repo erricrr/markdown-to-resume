@@ -12,6 +12,7 @@ interface EditorHeaderProps {
   alternateEditorPath: string;
   alternateEditorIcon: ReactNode;
   alternateEditorLabel: string;
+  alternateEditorColor: string;
   children?: ReactNode;
 }
 
@@ -23,6 +24,7 @@ export const EditorHeader = ({
   alternateEditorPath,
   alternateEditorIcon,
   alternateEditorLabel,
+  alternateEditorColor,
   children
 }: EditorHeaderProps) => {
   const navigate = useNavigate();
@@ -86,7 +88,7 @@ export const EditorHeader = ({
                   size="sm"
                   aria-label={alternateEditorLabel}
                   onClick={() => navigate(alternateEditorPath)}
-                  className="bg-white hover:bg-gray-50 hover:text-gray-900 hidden sm:flex items-center gap-2 font-medium"
+                  className={`${alternateEditorColor} hover:opacity-90 hidden sm:flex items-center gap-2 font-medium text-white border-0 hover:text-white`}
                 >
                   {alternateEditorIcon}
                   <span>{alternateEditorLabel}</span>
@@ -103,7 +105,7 @@ export const EditorHeader = ({
                   size="icon"
                   aria-label={alternateEditorLabel}
                   onClick={() => navigate(alternateEditorPath)}
-                  className="bg-white hover:bg-gray-50 hover:text-gray-900 sm:hidden font-medium"
+                  className={`${alternateEditorColor} hover:opacity-90 sm:hidden font-medium text-white border-0 hover:text-white`}
                 >
                   {alternateEditorIcon}
                 </Button>

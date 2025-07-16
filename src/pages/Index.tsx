@@ -18,7 +18,7 @@ const Index = () => {
               </div>
               <div>
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-                Paste to PDF
+                Paste to Print
                 </h1>
                 <p className="text-xs sm:text-sm text-gray-600">
                 Create resumes with Markdown or HTML                </p>
@@ -127,7 +127,7 @@ const Index = () => {
 
         <div className="mt-12 text-center">
           <p className="text-sm text-gray-500">
-            You can switch between editors anytime. Both support print-ready export for professional printing.
+            You can switch between editors anytime.
           </p>
         </div>
       </div>
