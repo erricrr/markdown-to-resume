@@ -450,29 +450,29 @@ const MarkdownEditor = () => {
                     <h2 className="text-base font-semibold text-foreground truncate">Live Preview</h2>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button
-                      onClick={async () => {
-                        await openPreviewWindow({
-                          markdown,
-                          leftColumn,
-                          rightColumn,
-                          header,
-                          summary,
-                          firstPage: '',
-                          secondPage: '',
-                          template: selectedTemplate,
-                          isTwoColumn,
-                          isTwoPage: false,
-                          paperSize,
-                          uploadedFileUrl,
-                          uploadedFileName
-                        });
-                      }}
-                      className="bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
-                    >
-                      <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4" />
-                      <span className="hidden sm:inline">Open in New Window</span>
-                    </Button>
+                  <Button
+                    onClick={async () => {
+                      await openPreviewWindow({
+                        markdown,
+                        leftColumn,
+                        rightColumn,
+                        header,
+                        summary,
+                        firstPage: '',
+                        secondPage: '',
+                        template: selectedTemplate,
+                        isTwoColumn,
+                        isTwoPage: false,
+                        paperSize,
+                        uploadedFileUrl,
+                        uploadedFileName,
+                      });
+                    }}
+                    className="bg-transparent hover:bg-transparent text-gray-600 hover:text-gray-900 flex items-center p-1"
+                  >
+                    <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4" />
+                  </Button>
+
                   </div>
                 </div>
               </div>

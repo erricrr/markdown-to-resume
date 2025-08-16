@@ -571,26 +571,28 @@ const HtmlEditor = () => {
           </div>
           <div className="flex items-center gap-2">
             <Button
-              onClick={() => {
-                const processed = processHtmlForDisplay(html, {
-                  paperSize,
-                  uploadedFileUrl,
-                  uploadedFileName,
-                  forPrintWindow: true
-                });
-                const w = window.open('', '_blank');
-                if (w) {
-                  w.document.write(processed);
-                  w.document.close();
-                } else {
-                  alert('Could not open preview window. Please disable your popup blocker and try again.');
-                }
-              }}
-              className="bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
-            >
-              <ExternalLink className="h-4 w-4" />
-              <span className="hidden sm:inline">Open in New Window</span>
-            </Button>
+  onClick={() => {
+    const processed = processHtmlForDisplay(html, {
+      paperSize,
+      uploadedFileUrl,
+      uploadedFileName,
+      forPrintWindow: true,
+    });
+    const w = window.open("", "_blank");
+    if (w) {
+      w.document.write(processed);
+      w.document.close();
+    } else {
+      alert(
+        "Could not open preview window. Please disable your popup blocker and try again."
+      );
+    }
+  }}
+  className="bg-transparent hover:bg-transparent text-gray-600 hover:text-gray-900 flex items-center p-1"
+>
+  <ExternalLink className="h-4 w-4" />
+</Button>
+
           </div>
         </div>
       </div>

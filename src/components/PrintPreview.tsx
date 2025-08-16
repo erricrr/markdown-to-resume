@@ -100,7 +100,7 @@ export const PrintPreview = ({
         className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
       >
         <Printer className="h-3 w-3 sm:h-4 sm:w-4" />
-        <span className="hidden sm:inline">{isExporting ? 'Printing…' : 'Print'}</span>
+        <span className="hidden sm:inline">Print</span>
       </Button>
       <Button
         onClick={handlePreview}

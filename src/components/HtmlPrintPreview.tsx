@@ -139,6 +139,10 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
         doc.close();
       }
 
+      // Match Markdown behavior: don't keep the button in a busy state during the print dialog
+      // Reset the button shortly after triggering print, regardless of dialog outcome
+      setTimeout(() => setIsExporting(false), 700);
+
       // Fallback cleanup
       setTimeout(cleanup, 60000);
     } catch (e) {
@@ -155,7 +159,7 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
       className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
     >
       <Printer className="h-4 w-4" />
-      <span className="hidden sm:inline">{isExporting ? 'Printing…' : 'Print'}</span>
+      <span className="hidden sm:inline">Print</span>
     </Button>
   );
 };
