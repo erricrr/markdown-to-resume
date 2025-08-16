@@ -156,8 +156,8 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
     <Button
       onClick={handleDirectPrint}
       disabled={isExporting}
-      className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
-    >
+      className="bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-700 hover:to-violet-800 text-white font-bold flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
+      >
       <Printer className="h-4 w-4" />
       <span className="hidden sm:inline">Print</span>
     </Button>

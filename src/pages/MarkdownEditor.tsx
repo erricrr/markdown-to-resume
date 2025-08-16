@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { FileText, Columns2, Code, Eye, Home, Info } from "lucide-react";
 import { ResumePreview } from "@/components/ResumePreview";
-import { openPreviewWindow, printToPDF } from "@/utils/pdfExport";
+import { openPreviewWindow, printToPDF, exportToPDF } from "@/utils/pdfExport";
 import { ExternalLink, Printer } from "lucide-react";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { PaperSizeSelector } from "@/components/PaperSizeSelector";
@@ -25,6 +25,7 @@ import { EditorLayout } from '@/components/EditorLayout';
 import { EditorHeader } from '@/components/EditorHeader';
 import { usePanelManagement } from '@/hooks/usePanelManagement';
 import { useImageReferenceDetection } from '@/hooks/useImageReferenceDetection';
+import { PrintPreview } from "@/components/PrintPreview";
 
 const defaultMarkdown = `# Jane Doe
 **Software Engineer** | jane.doe@email.com | (555) 123-4567 | linkedin.com/in/janedoe
@@ -410,33 +411,22 @@ const MarkdownEditor = () => {
         alternateEditorLabel="HTML Editor"
         alternateEditorColor="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700"
       >
-        <PaperSizeSelector selectedPaperSize={paperSize} onPaperSizeChange={setPaperSize} />
-        <div className="flex items-center gap-2">
-          <Button
-            onClick={async () => {
-              await printToPDF({
-                markdown,
-                leftColumn,
-                rightColumn,
-                header,
-                summary,
-                firstPage: '',
-                secondPage: '',
-                template: selectedTemplate,
-                isTwoColumn,
-                isTwoPage: false,
-                paperSize,
-                uploadedFileUrl,
-                uploadedFileName
-              });
-            }}
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
-          >
-            <Printer className="h-3 w-3 sm:h-4 sm:w-4" />
-            <span className="hidden sm:inline">Print</span>
-          </Button>
-
-        </div>
+        <PaperSizeSelector
+        selectedPaperSize={paperSize}
+        onPaperSizeChange={setPaperSize} />
+        <PrintPreview
+          markdown={markdown}
+          leftColumn={leftColumn}
+          rightColumn={rightColumn}
+          header={header}
+          summary={summary}
+          template={selectedTemplate}
+          isTwoColumn={isTwoColumn}
+          paperSize={paperSize}
+          uploadedFileUrl={uploadedFileUrl}
+          uploadedFileName={uploadedFileName}
+          showPreviewButton={false}
+        />
       </EditorHeader>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <EditorLayout
@@ -468,7 +458,7 @@ const MarkdownEditor = () => {
                         uploadedFileName,
                       });
                     }}
-                    className="bg-transparent hover:bg-transparent text-gray-600 hover:text-gray-900 flex items-center p-1"
+                                         className="bg-transparent hover:bg-transparent text-gray-600 hover:text-gray-900 font-semibold flex items-center p-1"
                   >
                     <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>

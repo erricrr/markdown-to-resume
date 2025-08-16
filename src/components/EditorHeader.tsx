@@ -55,7 +55,7 @@ export const EditorHeader = ({
                   size="sm"
                   aria-label="Home"
                   onClick={() => navigate("/")}
-                  className="bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white border-0 hover:text-white hidden sm:flex items-center gap-2 font-medium"
+                  className="bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white border-0 hover:text-white hidden sm:flex items-center gap-2 font-bold"
                 >
                   <Home className="h-4 w-4" />
                   <span>Home</span>
@@ -72,7 +72,7 @@ export const EditorHeader = ({
                   size="icon"
                   aria-label="Home"
                   onClick={() => navigate("/")}
-                  className="bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white border-0 hover:text-white sm:hidden font-medium"
+                  className="bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white border-0 hover:text-white sm:hidden font-bold"
                 >
                   <Home className="h-4 w-4" />
                 </Button>
@@ -88,7 +88,7 @@ export const EditorHeader = ({
                   size="sm"
                   aria-label={alternateEditorLabel}
                   onClick={() => navigate(alternateEditorPath)}
-                  className={`${alternateEditorColor} hover:opacity-90 hidden sm:flex items-center gap-2 font-medium text-white border-0 hover:text-white`}
+                  className={`${alternateEditorColor} hover:opacity-90 hidden sm:flex items-center gap-2 font-bold text-white border-0 hover:text-white`}
                 >
                   {alternateEditorIcon}
                   <span>{alternateEditorLabel}</span>
@@ -105,7 +105,7 @@ export const EditorHeader = ({
                   size="icon"
                   aria-label={alternateEditorLabel}
                   onClick={() => navigate(alternateEditorPath)}
-                  className={`${alternateEditorColor} hover:opacity-90 sm:hidden font-medium text-white border-0 hover:text-white`}
+                  className={`${alternateEditorColor} hover:opacity-90 sm:hidden font-bold text-white border-0 hover:text-white`}
                 >
                   {alternateEditorIcon}
                 </Button>

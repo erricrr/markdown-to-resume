@@ -18,6 +18,7 @@ interface PrintPreviewProps {
   paperSize?: 'A4' | 'US_LETTER';
   uploadedFileUrl?: string;
   uploadedFileName?: string;
+  showPreviewButton?: boolean;
 }
 
 export const PrintPreview = ({
@@ -33,7 +34,8 @@ export const PrintPreview = ({
   isTwoPage = false,
   paperSize = 'A4',
   uploadedFileUrl = '',
-  uploadedFileName = ''
+  uploadedFileName = '',
+  showPreviewButton = true
 }: PrintPreviewProps) => {
   const [isExporting, setIsExporting] = useState(false);
   const { toast } = useToast();
@@ -93,23 +95,25 @@ export const PrintPreview = ({
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <>
       <Button
         onClick={handleDirectPrint}
         disabled={isExporting}
-        className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
+        className="bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-700 hover:to-violet-800 text-white font-bold flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
       >
-        <Printer className="h-3 w-3 sm:h-4 sm:w-4" />
+        <Printer className="h-4 w-4" />
         <span className="hidden sm:inline">Print</span>
       </Button>
+      {showPreviewButton && (
       <Button
         onClick={handlePreview}
         disabled={isExporting}
-        className="bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
+        className="bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white font-bold flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
       >
-        <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
+        <Eye className="h-4 w-4" />
         <span className="hidden sm:inline">{isExporting ? 'Generating…' : 'Preview'}</span>
       </Button>
-    </div>
+      )}
+    </>
   );
 };

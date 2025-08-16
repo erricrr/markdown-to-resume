@@ -588,7 +588,7 @@ const HtmlEditor = () => {
       );
     }
   }}
-  className="bg-transparent hover:bg-transparent text-gray-600 hover:text-gray-900 flex items-center p-1"
+  className="bg-transparent hover:bg-transparent text-gray-600 hover:text-gray-900 font-semibold flex items-center p-1"
 >
   <ExternalLink className="h-4 w-4" />
 </Button>
