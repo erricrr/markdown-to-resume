@@ -104,16 +104,6 @@ export const PrintPreview = ({
         <Printer className="h-4 w-4" />
         <span className="hidden sm:inline">Print</span>
       </Button>
-      {showPreviewButton && (
-      <Button
-        onClick={handlePreview}
-        disabled={isExporting}
-        className="bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white font-bold flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
-      >
-        <Eye className="h-4 w-4" />
-        <span className="hidden sm:inline">{isExporting ? 'Generating…' : 'Preview'}</span>
-      </Button>
-      )}
     </>
   );
 };
