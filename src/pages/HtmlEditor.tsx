@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from "react";
-import { Code, Eye, FileText } from "lucide-react";
+import { Code, Eye, FileText, ExternalLink } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
+import Editor from "@monaco-editor/react";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { HtmlPreview } from "@/components/HtmlPreview";
 import { HtmlPrintPreview } from "@/components/HtmlPrintPreview";
+import { processHtmlForDisplay } from "@/utils/htmlProcessor";
 import { FileUpload } from "@/components/FileUpload";
 import { PaperSizeSelector } from "@/components/PaperSizeSelector";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -537,13 +539,22 @@ const HtmlEditor = () => {
           </div>
         </div>
       </div>
-      <div className="flex-1 overflow-hidden">
-        <Textarea
-          value={html}
-          onChange={(e) => setHtml(e.target.value)}
-          className="h-full w-full font-mono text-sm resize-none overflow-y-auto p-4"
-          placeholder="Enter your HTML content with embedded CSS and JavaScript..."
-        />
+      <div className="flex-1 min-h-0 border-t">
+        <div className="h-full">
+          <Editor
+            height="100%"
+            language="html"
+            value={html}
+            onChange={(value) => setHtml(value || "")}
+            theme="vs-dark"
+            options={{
+              minimap: { enabled: false },
+              fontSize: 14,
+              wordWrap: 'on',
+              automaticLayout: true,
+            }}
+          />
+        </div>
       </div>
     </Card>
   );
@@ -558,7 +569,29 @@ const HtmlEditor = () => {
               Live Preview
             </h2>
           </div>
-
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => {
+                const processed = processHtmlForDisplay(html, {
+                  paperSize,
+                  uploadedFileUrl,
+                  uploadedFileName,
+                  forPrintWindow: true
+                });
+                const w = window.open('', '_blank');
+                if (w) {
+                  w.document.write(processed);
+                  w.document.close();
+                } else {
+                  alert('Could not open preview window. Please disable your popup blocker and try again.');
+                }
+              }}
+              className="bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
+            >
+              <ExternalLink className="h-4 w-4" />
+              <span className="hidden sm:inline">Open in New Window</span>
+            </Button>
+          </div>
         </div>
       </div>
       <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 bg-gray-50">

@@ -210,6 +210,204 @@ export const exportToPDF = async (resumeData: ResumeData) => {
   }
 };
 
+/**
+ * Generate the resume HTML and immediately open the browser print dialog without a manual Cmd/Ctrl+P.
+ * Uses a hidden iframe to avoid opening a new tab and cleans it up afterward.
+ */
+export const printToPDF = async (resumeData: ResumeData) => {
+  const bodyHtml = generateCompleteResumeHTML(resumeData as ResumeContentData);
+
+  // Get all <link> tags from the main document's head, excluding title and styles we'll replace
+  const headLinks = Array.from(document.head.children)
+    .filter(el => el.tagName.toLowerCase() === 'link')
+    .map(el => el.outerHTML)
+    .join('\n');
+
+  // Retrieve the user's custom CSS from localStorage
+  const customCSS = localStorage.getItem('custom-css-content') || '';
+  const { paperSize = 'A4', template } = resumeData;
+
+  const processedUserCSS = processAndScopeUserCSS(customCSS);
+  const fullCss = getCompleteCSS(template) + processedUserCSS;
+
+  // FONT LOADING FIX: Use explicit font links instead of @import to ensure reliable loading
+  const fontLinks = `
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Nunito:wght@300;400;600;700&family=Poppins:wght@400;500;600;700;800&family=Work+Sans:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Ubuntu:wght@300;400;500;700&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+  `;
+
+  const finalCss = `
+    ${fullCss}
+
+    @page {
+      size: ${paperSize === 'A4' ? 'A4' : 'letter'};
+      margin: 0;
+    }
+    body {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    .resume-two-page-layout .resume-page-first {
+      page-break-after: always !important;
+    }
+  `;
+
+  const templateClasses = getTemplateClasses(resumeData);
+
+  // No preview hint for direct print
+  const fullHtml = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      ${fontLinks}
+      <title>Resume - ${paperSize === 'A4' ? 'A4' : 'US Letter'} Format</title>
+      <style id="pdf-styles">${finalCss}</style>
+    </head>
+    <body>
+      <div class="resume-template ${templateClasses}" data-paper-size="${paperSize}">
+        ${bodyHtml}
+      </div>
+      <script>
+        (function() {
+          function triggerPrint() {
+            try {
+              window.focus();
+              window.print();
+            } catch (e) {
+              console.log('Print failed to trigger automatically:', e);
+            }
+          }
+          const start = () => {
+            if (document.fonts && document.fonts.ready) {
+              document.fonts.ready.then(() => setTimeout(triggerPrint, 50));
+            } else {
+              setTimeout(triggerPrint, 300);
+            }
+          };
+          if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            start();
+          } else {
+            window.addEventListener('load', start);
+          }
+        })();
+      </script>
+    </body>
+    </html>
+  `;
+
+  // Create a hidden iframe and inject the HTML
+  const iframe = document.createElement('iframe');
+  iframe.style.position = 'fixed';
+  iframe.style.right = '0';
+  iframe.style.bottom = '0';
+  iframe.style.width = '0';
+  iframe.style.height = '0';
+  iframe.style.border = '0';
+  iframe.style.visibility = 'hidden';
+  document.body.appendChild(iframe);
+
+  const cleanup = () => {
+    try {
+      document.body.removeChild(iframe);
+    } catch {}
+  };
+
+  const onAfterPrint = () => {
+    // Always cleanup, even if afterprint is unreliable
+    setTimeout(cleanup, 0);
+  };
+
+  try {
+    const win = iframe.contentWindow;
+    if (!win) {
+      cleanup();
+      throw new Error('No iframe contentWindow available');
+    }
+
+    win.onafterprint = onAfterPrint;
+
+    // Prefer srcdoc for reliable load event
+    if ('srcdoc' in iframe) {
+      (iframe as HTMLIFrameElement).srcdoc = fullHtml;
+    } else {
+      const doc = win.document;
+      doc.open();
+      doc.write(fullHtml);
+      doc.close();
+    }
+
+    // Fallback cleanup in case afterprint never fires (Safari sometimes)
+    setTimeout(onAfterPrint, 60000);
+  } catch (error) {
+    console.error('Direct print failed, falling back to preview window:', error);
+    cleanup();
+    // Fallback to opening a preview window so the user can still print
+    await exportToPDF(resumeData);
+  }
+};
+
+/**
+ * Open the resume preview in a new window without any print hint overlay or auto print.
+ * Mirrors the styling used for PDF/preview to ensure fidelity.
+ */
+export const openPreviewWindow = async (resumeData: ResumeData) => {
+  const bodyHtml = generateCompleteResumeHTML(resumeData as ResumeContentData);
+
+  // Retrieve the user's custom CSS from localStorage
+  const customCSS = localStorage.getItem('custom-css-content') || '';
+  const { paperSize = 'A4', template } = resumeData;
+
+  const processedUserCSS = processAndScopeUserCSS(customCSS);
+  const fullCss = getCompleteCSS(template) + processedUserCSS;
+
+  const fontLinks = `
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Nunito:wght@300;400;600;700&family=Poppins:wght@400;500;600;700;800&family=Work+Sans:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Ubuntu:wght@300;400;500;700&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+  `;
+
+  const finalCss = `
+    ${fullCss}
+    @page { size: ${paperSize === 'A4' ? 'A4' : 'letter'}; margin: 0; }
+    body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    .resume-two-page-layout .resume-page-first { page-break-after: always !important; }
+  `;
+
+  const templateClasses = getTemplateClasses(resumeData);
+
+  const fullHtml = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      ${fontLinks}
+      <title>Resume - ${paperSize === 'A4' ? 'A4' : 'US Letter'} Format</title>
+      <style id="pdf-styles">${finalCss}</style>
+    </head>
+    <body>
+      <div class="resume-template ${templateClasses}" data-paper-size="${paperSize}">
+        ${bodyHtml}
+      </div>
+    </body>
+    </html>
+  `;
+
+  const win = window.open('', '_blank');
+  if (win) {
+    win.document.write(fullHtml);
+    win.document.close();
+  } else {
+    alert('Could not open preview window. Please disable your popup blocker and try again.');
+  }
+};
+
 // Helper function to get template classes
 const getTemplateClasses = (resumeData: ResumeData) => {
   const { template, isTwoColumn = false, isTwoPage = false, paperSize = 'A4' } = resumeData;

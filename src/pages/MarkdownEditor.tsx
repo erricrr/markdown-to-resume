@@ -8,7 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { FileText, Columns2, Code, Eye, Home, Info } from "lucide-react";
 import { ResumePreview } from "@/components/ResumePreview";
-import { PrintPreview } from "@/components/PrintPreview";
+import { openPreviewWindow, printToPDF } from "@/utils/pdfExport";
+import { ExternalLink, Printer } from "lucide-react";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { PaperSizeSelector } from "@/components/PaperSizeSelector";
 import { FileUpload } from "@/components/FileUpload";
@@ -410,18 +411,32 @@ const MarkdownEditor = () => {
         alternateEditorColor="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700"
       >
         <PaperSizeSelector selectedPaperSize={paperSize} onPaperSizeChange={setPaperSize} />
-        <PrintPreview
-          markdown={markdown}
-          leftColumn={leftColumn}
-          rightColumn={rightColumn}
-          header={header}
-          summary={summary}
-          template={selectedTemplate}
-          isTwoColumn={isTwoColumn}
-          paperSize={paperSize}
-          uploadedFileUrl={uploadedFileUrl}
-          uploadedFileName={uploadedFileName}
-        />
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={async () => {
+              await printToPDF({
+                markdown,
+                leftColumn,
+                rightColumn,
+                header,
+                summary,
+                firstPage: '',
+                secondPage: '',
+                template: selectedTemplate,
+                isTwoColumn,
+                isTwoPage: false,
+                paperSize,
+                uploadedFileUrl,
+                uploadedFileName
+              });
+            }}
+            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
+          >
+            <Printer className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Print</span>
+          </Button>
+
+        </div>
       </EditorHeader>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <EditorLayout
@@ -434,7 +449,31 @@ const MarkdownEditor = () => {
                     <Eye className="h-4 w-4 text-primary shrink-0" />
                     <h2 className="text-base font-semibold text-foreground truncate">Live Preview</h2>
                   </div>
-
+                  <div className="flex items-center gap-2">
+                    <Button
+                      onClick={async () => {
+                        await openPreviewWindow({
+                          markdown,
+                          leftColumn,
+                          rightColumn,
+                          header,
+                          summary,
+                          firstPage: '',
+                          secondPage: '',
+                          template: selectedTemplate,
+                          isTwoColumn,
+                          isTwoPage: false,
+                          paperSize,
+                          uploadedFileUrl,
+                          uploadedFileName
+                        });
+                      }}
+                      className="bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
+                    >
+                      <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4" />
+                      <span className="hidden sm:inline">Open in New Window</span>
+                    </Button>
+                  </div>
                 </div>
               </div>
               <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 bg-gray-50">

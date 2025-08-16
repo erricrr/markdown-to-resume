@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Eye } from 'lucide-react';
-import { exportToPDF } from '@/utils/pdfExport';
+import { Eye, Printer } from 'lucide-react';
+import { exportToPDF, printToPDF } from '@/utils/pdfExport';
 import { useToast } from '@/hooks/use-toast';
 
 interface PrintPreviewProps {
@@ -38,7 +38,7 @@ export const PrintPreview = ({
   const [isExporting, setIsExporting] = useState(false);
   const { toast } = useToast();
 
-  const handleExportPDF = async () => {
+  const handlePreview = async () => {
     setIsExporting(true);
     try {
       console.log(`Opening preview with paper size: ${paperSize}`);
@@ -66,14 +66,50 @@ export const PrintPreview = ({
     }
   };
 
+  const handleDirectPrint = async () => {
+    setIsExporting(true);
+    try {
+      await printToPDF({
+        markdown,
+        leftColumn,
+        rightColumn,
+        header,
+        summary,
+        firstPage,
+        secondPage,
+        template,
+        isTwoColumn,
+        isTwoPage,
+        paperSize,
+        uploadedFileUrl,
+        uploadedFileName
+      });
+    } catch (error) {
+      console.error('Direct print error:', error);
+      toast({ title: 'Print Failed', description: 'Could not open the print dialog. We opened a preview window as a fallback.', variant: 'destructive' });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
-    <Button
-      onClick={handleExportPDF}
-      disabled={isExporting}
-      className="bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
-    >
-      <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
-      <span className="hidden sm:inline">{isExporting ? 'Generating...' : 'Preview'}</span>
-    </Button>
+    <div className="flex items-center gap-2">
+      <Button
+        onClick={handleDirectPrint}
+        disabled={isExporting}
+        className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
+      >
+        <Printer className="h-3 w-3 sm:h-4 sm:w-4" />
+        <span className="hidden sm:inline">{isExporting ? 'Printing…' : 'Print'}</span>
+      </Button>
+      <Button
+        onClick={handlePreview}
+        disabled={isExporting}
+        className="bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
+      >
+        <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
+        <span className="hidden sm:inline">{isExporting ? 'Generating…' : 'Preview'}</span>
+      </Button>
+    </div>
   );
 };
