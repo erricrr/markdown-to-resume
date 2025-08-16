@@ -413,7 +413,8 @@ const MarkdownEditor = () => {
       >
         <PaperSizeSelector
         selectedPaperSize={paperSize}
-        onPaperSizeChange={setPaperSize} />
+        onPaperSizeChange={setPaperSize}
+        className="font-bold"/>
         <PrintPreview
           markdown={markdown}
           leftColumn={leftColumn}

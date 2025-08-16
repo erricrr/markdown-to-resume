@@ -626,6 +626,7 @@ const HtmlEditor = () => {
         <PaperSizeSelector
           selectedPaperSize={paperSize}
           onPaperSizeChange={handlePaperSizeChange}
+          className="font-bold"
         />
         <HtmlPrintPreview
           html={html}

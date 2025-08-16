@@ -10,11 +10,13 @@ import {
 interface PaperSizeSelectorProps {
   selectedPaperSize: 'A4' | 'US_LETTER';
   onPaperSizeChange: (paperSize: 'A4' | 'US_LETTER') => void;
+  className?: string;
 }
 
 export const PaperSizeSelector = ({
   selectedPaperSize,
   onPaperSizeChange,
+  className = ''
 }: PaperSizeSelectorProps) => {
   const paperSizes = [
     { id: 'A4', name: 'A4 (210 × 297 mm)', dimensions: '210 × 297 mm' },
@@ -29,7 +31,7 @@ export const PaperSizeSelector = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2 bg-white hover:bg-gray-50 hover:text-gray-900 font-semibold">
+        <Button variant="outline" size="sm" className={`gap-2 bg-white hover:bg-gray-50 hover:text-gray-900 ${className}`}>
           <Ruler className="h-4 w-4" />
           {getSelectedPaperSizeName()}
         </Button>
