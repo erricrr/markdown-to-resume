@@ -31,7 +31,7 @@ export const PaperSizeSelector = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className={`gap-2 bg-white hover:bg-gray-50 hover:text-gray-900 ${className}`}>
+        <Button variant="outline" size="sm" className={`gap-2 bg-white hover:bg-gray-50 text-gray-800 hover:text-gray-900 ${className}`}>
           <Ruler className="h-4 w-4" />
           {getSelectedPaperSizeName()}
         </Button>
