@@ -409,7 +409,7 @@ const MarkdownEditor = () => {
         alternateEditorPath="/html"
         alternateEditorIcon={<Code className="h-4 w-4" />}
         alternateEditorLabel="HTML Editor"
-        alternateEditorColor="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700"
+        alternateEditorColor="bg-gradient-to-r font-bold from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700"
       >
         <PaperSizeSelector
         selectedPaperSize={paperSize}

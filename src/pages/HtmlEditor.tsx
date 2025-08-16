@@ -527,7 +527,7 @@ const HtmlEditor = () => {
         <div className="flex items-center justify-between gap-4 mb-3">
           <div className="flex items-center gap-2">
             <Code className="h-4 w-4 text-primary shrink-0" />
-            <h2 className="text-base font-semibold text-foreground truncate">
+            <h2 className="text-base font-bold text-foreground truncate">
               HTML Editor
             </h2>
           </div>
