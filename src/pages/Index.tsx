@@ -56,7 +56,7 @@ const Index = () => {
               <div className="space-y-4 mb-8">
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-sm text-gray-700">Resume templates with CSS customization</span>
+                  <span className="text-sm text-gray-700">PDF templates with CSS customization</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
@@ -68,7 +68,7 @@ const Index = () => {
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-sm text-gray-700">Perfect for traditional resumes</span>
+                  <span className="text-sm text-gray-700">Perfect for traditional PDFs</span>
                 </div>
               </div>
 

@@ -614,8 +614,8 @@ const HtmlEditor = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <EditorHeader
-        title="HTML Resume Editor"
-        description="Create interactive resumes with HTML, CSS, and JavaScript"
+        title="HTML Editor"
+        description="Create a PDF with HTML, CSS, and JavaScript"
         icon={<Code className="h-6 w-6 text-white" />}
         iconBgColor="bg-gradient-to-br from-orange-500 to-red-600"
         alternateEditorPath="/markdown"

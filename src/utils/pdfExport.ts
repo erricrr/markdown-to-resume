@@ -183,7 +183,7 @@ export const exportToPDF = async (resumeData: ResumeData) => {
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       ${fontLinks}
-      <title>Resume - ${paperSize === 'A4' ? 'A4' : 'US Letter'} Format</title>
+      <title>PDF - ${paperSize === 'A4' ? 'A4' : 'US Letter'} Format</title>
       <style id="pdf-styles">${finalCss}</style>
     </head>
     <body>
@@ -265,7 +265,7 @@ export const printToPDF = async (resumeData: ResumeData) => {
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       ${fontLinks}
-      <title>Resume - ${paperSize === 'A4' ? 'A4' : 'US Letter'} Format</title>
+      <title>PDF - ${paperSize === 'A4' ? 'A4' : 'US Letter'} Format</title>
       <style id="pdf-styles">${finalCss}</style>
     </head>
     <body>
@@ -388,7 +388,7 @@ export const openPreviewWindow = async (resumeData: ResumeData) => {
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       ${fontLinks}
-      <title>Resume - ${paperSize === 'A4' ? 'A4' : 'US Letter'} Format</title>
+      <title>PDF - ${paperSize === 'A4' ? 'A4' : 'US Letter'} Format</title>
       <style id="pdf-styles">${finalCss}</style>
     </head>
     <body>

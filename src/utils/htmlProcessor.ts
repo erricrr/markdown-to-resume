@@ -159,7 +159,7 @@ export function processHtmlForDisplay(html: string, options: HtmlProcessorOption
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resume Preview</title>
+    <title>PDF Preview</title>
     ${forPrintWindow ? '<meta name="print-options" content="no-header,no-footer,no-margins">' : ''}
     ${fontLinks}
     ${baseStyles}

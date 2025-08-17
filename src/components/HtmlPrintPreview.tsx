@@ -55,7 +55,7 @@ export const HtmlPrintPreview = ({ html, paperSize = 'A4', uploadedFileUrl = '',
       enhancedHtml = enhancedHtml.replace('<body>', `<body data-paper-size="${paperSize}">`);
 
       // Set document title
-      enhancedHtml = enhancedHtml.replace('<title>Resume Preview</title>', `<title>${documentTitle}</title>`);
+      enhancedHtml = enhancedHtml.replace('<title>PDF Preview</title>', `<title>${documentTitle}</title>`);
 
       printWindow.document.write(enhancedHtml);
       printWindow.document.close();

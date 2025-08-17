@@ -341,7 +341,7 @@ const MarkdownEditor = () => {
                 <div className="flex items-center justify-between bg-blue-50 p-2.5 rounded-md border border-blue-100 text-blue-700">
                   <div className="flex items-center gap-2">
                     <Columns2 className="h-4 w-4" />
-                    <span className="text-sm font-medium">Two-Column Resume Editor</span>
+                    <span className="text-sm font-medium">Two-Column Editor</span>
                   </div>
                   <TipTooltip type="two-column" compact={shouldUseCompactUI} />
                 </div>
@@ -402,8 +402,8 @@ const MarkdownEditor = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <EditorHeader
-        title="Markdown Resume Editor"
-        description="Transform markdown into professional resumes"
+        title="Markdown Editor"
+        description="Transform markdown into professional PDF"
         icon={<FileText className="h-6 w-6 text-white" />}
         iconBgColor="bg-gradient-to-br from-green-500 to-teal-600"
         alternateEditorPath="/html"
