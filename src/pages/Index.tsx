@@ -35,7 +35,7 @@ const Index = () => {
           Choose Your Editor
         </h2>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-        Got a resume from AI in Markdown or HTML? Paste it in, polish it up, and export a clean print-ready document — while learning how the code shapes your layout.
+        Got a response from AI that has Markdown or HTML? Paste it in, polish it up, and export a clean print-ready document — while learning how the code shapes your layout.
         </p>
         </div>
 
