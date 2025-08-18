@@ -125,6 +125,12 @@ const Index = () => {
           </Card>
         </div>
 
+        {/* Subtle contact information */}
+        <div className="mt-16 text-center">
+          <p className="text-xs text-gray-400">
+            Questions or feedback? <a href="mailto:voicevoz321@gmail.com" className="hover:text-gray-600 transition-colors">Email me</a>.
+          </p>
+        </div>
 
       </div>
     </div>
