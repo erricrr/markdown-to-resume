@@ -21,7 +21,7 @@ const Index = () => {
                 Paste to PDF
                 </h1>
                 <p className="text-xs sm:text-sm text-gray-600">
-                Create resumes with Markdown or HTML                </p>
+                Create PDFs with Markdown or HTML                </p>
               </div>
             </div>
           </div>
