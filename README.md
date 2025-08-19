@@ -1,113 +1,136 @@
-# Welcome to your Lovable project
+# Paste to PDF
 
-## Project info
+A modern web application that converts Markdown and HTML content into professional PDF documents. Perfect for creating resumes, reports, and other documents from AI-generated content or existing markup.
 
-**URL**: https://lovable.dev/projects/be9e87e3-b7d6-4210-9990-0ccccb898757
+## Features
 
-## How can I edit this code?
+### Markdown Editor
+- **PDF Templates**: Multiple professional templates with CSS customization
+- **Two-Column Layouts**: Easy creation of side-by-side content layouts
+- **Simple Syntax**: Clean, readable Markdown with live preview
+- **Template Selection**: Choose from Professional, Modern, Minimalist, Creative, and Executive styles
+- **Custom CSS**: Fine-tune styling with built-in CSS editor
+- **Print Preview**: WYSIWYG preview before PDF export
 
-There are several ways of editing your application.
+### HTML Editor
+- **Full HTML Support**: Complete HTML, CSS, and JavaScript capabilities
+- **Interactive Elements**: Support for animations and dynamic content
+- **Design Freedom**: Complete control over layout and styling
+- **Monaco Editor**: Professional code editing experience
+- **Live Preview**: Real-time preview of HTML content
+- **Print Optimization**: Automatic print-friendly styling
 
-**Use Lovable**
+### Shared Features
+- **Image Support**: Upload and reference images in both editors
+- **Auto-Refresh**: Automatic preview updates when content changes
+- **Paper Size Selection**: A4, Letter, and custom paper sizes
+- **PDF Export**: Direct PDF generation with print optimization
+- **File Upload**: Drag-and-drop file upload support
+- **Responsive Design**: Works on desktop and mobile devices
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/be9e87e3-b7d6-4210-9990-0ccccb898757) and start prompting.
+## Supported Image Types
+- JPG/JPEG
+- PNG
+- GIF
+- WebP
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
+## Technology Stack
 
 This project is built with:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- **Frontend**: React 18 with TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS with shadcn/ui components
+- **Editor**: Monaco Editor for HTML, custom Markdown editor
+- **PDF Generation**: jsPDF with html2canvas
+- **Routing**: React Router DOM
+- **State Management**: React Query and Context API
 
-## How can I deploy this project?
+## Getting Started
 
-Simply open [Lovable](https://lovable.dev/projects/be9e87e3-b7d6-4210-9990-0ccccb898757) and click on Share -> Publish.
+### Prerequisites
+- Node.js (version 18 or higher)
+- npm or yarn package manager
 
-## Can I connect a custom domain to my Lovable project?
+### Installation
 
-Yes, you can!
+1. **Clone the repository**
+   ```bash
+   git clone <YOUR_REPOSITORY_URL>
+   cd markdown-to-resume
+   ```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+3. **Start the development server**
+   ```bash
+   npm run dev
+   ```
 
-## Image Support and Auto-Refresh
-
-The application includes smart image handling for both Markdown and HTML editors:
-
-1. **Adding Images**:
-   - You can reference images in your Markdown (`![alt text](image.jpg)`) or HTML (`<img src="image.jpg">`)
-   - Then upload the image using the upload button
-   - The preview will automatically refresh to show your image
-
-2. **Deleting Images**:
-   - When you remove image references from your content
-   - The preview will automatically refresh to reflect the changes
-
-3. **Supported Image Types**:
-   - JPG/JPEG
-   - PNG
-   - GIF
-   - WebP
+4. **Open your browser**
+   Navigate to `http://localhost:5173` to access the application.
 
 ## Usage
 
-1. Choose between Markdown or HTML editor
-2. Write or paste your resume content
-3. Upload any images you want to include
-4. Select a template and adjust formatting as needed
-5. Use the Print Preview to export your resume as PDF
+1. **Choose Your Editor**: Select between Markdown or HTML editor based on your needs
+2. **Write Content**: Paste or write your content in the chosen format
+3. **Upload Images**: Add any images you want to include in your document
+4. **Select Template**: Choose a template and customize the styling
+5. **Preview**: Use the print preview to see how your document will look
+6. **Export**: Generate and download your PDF
 
 ## Development
 
-To run the project locally:
+### Available Scripts
 
-```bash
-npm install
-npm run dev
+- `npm run dev` - Start development server with hot reload
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+
+### Project Structure
+
 ```
+src/
+├── components/          # Reusable UI components
+├── contexts/           # React contexts for state management
+├── hooks/              # Custom React hooks
+├── pages/              # Main application pages
+├── styles/             # CSS and styling files
+├── types/              # TypeScript type definitions
+└── utils/              # Utility functions
+```
+
+## Deployment
+
+### Build for Production
+```bash
+npm run build
+```
+
+The built files will be in the `dist/` directory, ready for deployment to any static hosting service.
+
+### Deployment Options
+- **Vercel**: Connect your repository for automatic deployments
+- **Netlify**: Drag and drop the `dist/` folder
+- **GitHub Pages**: Use GitHub Actions for automatic deployment
+- **Any Static Host**: Upload the contents of `dist/` to your preferred hosting service
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-MIT
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Support
+
+For questions or feedback, please contact: voicevoz321@gmail.com
