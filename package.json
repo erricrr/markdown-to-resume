@@ -88,6 +88,7 @@
   },
   "overrides": {
     "esbuild": "^0.25.0",
-    "glob": "^10.5.0"
+    "glob": "^10.5.0",
+    "@remix-run/router": "^1.23.2"
   }
 }
